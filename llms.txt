@@ -1,0 +1,24 @@
+# SideFrog
+
+> SideFrog is a free side hustle idea checker: type an idea and get a straight verdict, who would pay, a first test to run, related searches and business names with an open .com, checked live. Built by Mark Flournoy. SideFrog doesn't store the ideas people type.
+
+## Tool
+- [Check an idea](https://sidefrog.com/): the idea checker
+
+## Guides
+- [Vibe coding 101: build the ugly first version](https://sidefrog.com/break-room/build/vibe-coding-101/): How someone who has never written code can use AI tools like Claude or ChatGPT to build a small, working first version of an idea, one step at a time.
+- [Before you put it on the internet](https://sidefrog.com/break-room/build/before-you-put-it-online/): The security and cost basics to check before you share a vibe-coded site: secret keys, spending limits, rate limits, user input, privacy and backups.
+- [Six people use it. Now what?](https://sidefrog.com/break-room/build/six-users-now-what/): What to watch, what to fix and what to ignore when a small vibe-coded project gets its first real users, without rebuilding everything too early.
+- [Test a side hustle idea in a week](https://sidefrog.com/break-room/start/test-an-idea-in-a-week/): A cheap, one-week way to find out if strangers will pay for your side hustle idea, before you buy a domain, a logo or anything else.
+- [Is anyone searching for this?](https://sidefrog.com/break-room/start/is-anyone-searching-for-this/): How to check whether people search for what you want to sell, using Google autocomplete, Google Trends and the free Keyword Planner.
+- [Who's already doing it?](https://sidefrog.com/break-room/start/size-up-the-competition/): A one-hour way to find your competitors, read what their customers complain about and spot the opening for a small side hustle.
+- [How to check if a business name is taken](https://sidefrog.com/break-room/name/check-if-a-business-name-is-taken/): Where business names get registered, and how to check the domain, your state's business records, DBA filings and federal trademarks in about fifteen minutes.
+- [How to buy a domain](https://sidefrog.com/break-room/name/how-to-buy-a-domain/): Where to buy a .com, what it should cost, which checkout add-ons to skip, and what to do with the domain once you have it.
+- [How to get your first 10 customers](https://sidefrog.com/break-room/sell/first-ten-customers/): A plain, honest way to find the first ten paying customers for a side hustle: start with people you know, send short messages, ask clearly, follow up and do the work by hand.
+- [What should I charge?](https://sidefrog.com/break-room/sell/what-to-charge/): A plain way to price a side hustle: check the going rate, work out the lowest price that covers your costs and time, think about what it's worth to the customer, and say the number without apologizing.
+- [Getting found when people ask AI instead of Google](https://sidefrog.com/break-room/launch/getting-found-by-ai-answers/): What zero-click searches and AI answers mean for a small business, and plain steps to become the name an AI summary mentions.
+- [Before you leap](https://sidefrog.com/break-room/leap/before-you-leap/): What to line up before you quit a steady job for a side hustle: a cash cushion, what your job quietly pays for, proof the business works, the people it affects, a checkpoint, and leaving on good terms.
+
+## About
+- [About SideFrog](https://sidefrog.com/about/): SideFrog is a free side hustle idea checker built by Mark Flournoy, who retired early from Amazon and learned to build sites one cheap idea at a time.
+- [What it costs](https://sidefrog.com/what-it-costs/): Mark's real stack and monthly bills for testing side hustle ideas online: a $16 domain, about $8 a month for the sites, and free tools for the rest.

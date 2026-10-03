@@ -1,0 +1,102 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <title>Six People Use It. Now What? Scaling a Side Project Sensibly | SideFrog</title>
+  <meta name="description" content="What to watch, what to fix and what to ignore when a small vibe-coded project gets its first real users, without rebuilding everything too early.">
+  <link rel="canonical" href="https://sidefrog.com/break-room/build/six-users-now-what/">
+  <meta property="og:site_name" content="SideFrog">
+  <meta property="og:image" content="https://sidefrog.com/og/six-users-now-what.jpg">
+  <meta property="og:image:width" content="1200">
+  <meta property="og:image:height" content="630">
+  <meta property="og:image:alt" content="SideFrog: Six People Use It. Now What? Scaling a Side Project Sensibly | SideFrog">
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:image" content="https://sidefrog.com/og/six-users-now-what.jpg">
+  <meta property="og:title" content="Six People Use It. Now What? Scaling a Side Project Sensibly | SideFrog">
+  <meta property="og:description" content="What to watch, what to fix and what to ignore when a small vibe-coded project gets its first real users, without rebuilding everything too early.">
+  <meta property="og:type" content="article">
+  <meta property="og:url" content="https://sidefrog.com/break-room/build/six-users-now-what/">
+  <meta name="theme-color" content="#FBF7EF">
+  <link rel="icon" type="image/svg+xml" href="../../../frogs/favicon.svg?v=e31ddc16">
+  <link rel="icon" type="image/png" sizes="32x32" href="../../../favicon-32.png?v=cd3c4402">
+  <link rel="icon" href="../../../favicon.ico?v=30c21763" sizes="any">
+  <link rel="apple-touch-icon" href="../../../apple-touch-icon.png?v=fa6ec965">
+  <link rel="manifest" href="../../../site.webmanifest?v=9ac89d47">
+  <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin><link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,400..800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="../../../styles.css?v=2879e390">
+  <script type="application/ld+json">{"@context": "https://schema.org", "@type": "FAQPage", "mainEntity": [{"@type": "Question", "name": "When does a side project need a real server?", "acceptedAnswer": {"@type": "Answer", "text": "Usually much later than you think. Serverless functions and static hosting handle thousands of visitors a day without you managing anything. Move when your host tells you you're hitting limits, not before."}}, {"@type": "Question", "name": "What should I do if it suddenly gets popular?", "acceptedAnswer": {"@type": "Answer", "text": "Check your bill and your rate limits first, then your error alerts. A sudden spike is often a bot, not a fan club."}}, {"@type": "Question", "name": "Should I rewrite it properly now that it works?", "acceptedAnswer": {"@type": "Answer", "text": "Not until something specific hurts. Rewrites eat months. Fix the part that's actually causing trouble."}}]}</script><script type="application/ld+json">{"@context": "https://schema.org", "@type": "Article", "headline": "Six people use it. Now what?", "description": "What to watch, what to fix and what to ignore when a small vibe-coded project gets its first real users, without rebuilding everything too early.", "dateModified": "2026-10-03", "url": "https://sidefrog.com/break-room/build/six-users-now-what/", "author": {"@type": "Person", "name": "Mark Flournoy", "url": "https://sidefrog.com/about/"}, "publisher": {"@type": "Organization", "name": "SideFrog", "url": "https://sidefrog.com/"}}</script><script type="application/ld+json">{"@context": "https://schema.org", "@type": "BreadcrumbList", "itemListElement": [{"@type": "ListItem", "position": 1, "name": "SideFrog", "item": "https://sidefrog.com/"}, {"@type": "ListItem", "position": 2, "name": "Break Room", "item": "https://sidefrog.com/break-room/"}, {"@type": "ListItem", "position": 3, "name": "Six people use it. Now what?", "item": "https://sidefrog.com/break-room/build/six-users-now-what/"}]}</script>
+</head>
+<body class="page">
+  <header class="site-header">
+    <a class="wordmark" href="../../../"><svg class="frog wordmark-frog can-sip look-right" data-mood="smirk" viewBox="19 21 576 524" aria-hidden="true" focusable="false"><g class="arm"><path d="M150 292 Q 98 330 82 368 Q 72 404 150 426" fill="none" stroke="#111" stroke-width="100" stroke-linecap="round" stroke-linejoin="round"/><path d="M150 292 Q 98 330 82 368 Q 72 404 150 426" fill="none" stroke="#8DAA3F" stroke-width="80" stroke-linecap="round" stroke-linejoin="round"/><path d="M152 290 L112 322 L96 356 L94 392 L112 414 L152 424 Z" fill="#8DAA3F"/></g><image href="../../../frogs/coffee-body.svg?v=f704ffe4" width="640" height="550"/><g class="face face-smirk"><circle cx="202" cy="158" r="48" fill="#fff" stroke="#111" stroke-width="10" stroke-linecap="round" stroke-linejoin="round"/><ellipse class="pupil" cx="202" cy="162" rx="13" ry="19" fill="#111"/><circle cx="394" cy="161" r="48" fill="#fff" stroke="#111" stroke-width="10" stroke-linecap="round" stroke-linejoin="round"/><ellipse class="pupil" cx="394" cy="165" rx="13" ry="19" fill="#111"/><path d="M180 258 Q275 302 372 256" fill="none" stroke="#111" stroke-width="10" stroke-linecap="round" stroke-linejoin="round"/><path d="M168 250 Q174 258 182 258" fill="none" stroke="#111" stroke-width="8" stroke-linecap="round" stroke-linejoin="round"/><ellipse cx="249" cy="206" rx="5" ry="6.5" fill="#111"/><ellipse cx="282" cy="206" rx="5" ry="6.5" fill="#111"/></g><g class="face face-sip"><path d="M164 160 Q202 186 240 160" fill="none" stroke="#111" stroke-width="10" stroke-linecap="round" stroke-linejoin="round"/><path d="M356 163 Q394 189 432 163" fill="none" stroke="#111" stroke-width="10" stroke-linecap="round" stroke-linejoin="round"/><ellipse cx="262" cy="268" rx="15" ry="11" fill="#7A2420" stroke="#111" stroke-width="8" stroke-linecap="round" stroke-linejoin="round"/><ellipse cx="249" cy="206" rx="5" ry="6.5" fill="#111"/><ellipse cx="282" cy="206" rx="5" ry="6.5" fill="#111"/></g><g class="mug"><g class="mug-flat"><image href="../../../frogs/coffee-mug.svg?v=08e7a455" width="640" height="550"/></g><g class="mug-tilt"><image href="../../../frogs/coffee-mug-tilt.svg?v=e2a25595" width="640" height="550"/></g></g></svg>SideFrog</a>
+    <nav class="site-nav" aria-label="Sections"><a href="../../../break-room/">Break Room</a><a href="../../../break-room/build/vibe-coding-101/" aria-current="page">Build it</a><a class="nav-about" href="../../../about/">About</a></nav>
+  </header>
+
+  <main>
+    <p class="crumbs"><a href="../../../break-room/">Break Room</a> / Build it yourself</p>
+    
+    <h1>Six people use it. Now what?</h1>
+    <div class="take">
+      <svg class="frog take-frog can-sip look-right" data-mood="smirk" viewBox="19 21 576 524" aria-hidden="true" focusable="false"><g class="arm"><path d="M150 292 Q 98 330 82 368 Q 72 404 150 426" fill="none" stroke="#111" stroke-width="100" stroke-linecap="round" stroke-linejoin="round"/><path d="M150 292 Q 98 330 82 368 Q 72 404 150 426" fill="none" stroke="#8DAA3F" stroke-width="80" stroke-linecap="round" stroke-linejoin="round"/><path d="M152 290 L112 322 L96 356 L94 392 L112 414 L152 424 Z" fill="#8DAA3F"/></g><image href="../../../frogs/coffee-body.svg?v=f704ffe4" width="640" height="550"/><g class="face face-smirk"><circle cx="202" cy="158" r="48" fill="#fff" stroke="#111" stroke-width="10" stroke-linecap="round" stroke-linejoin="round"/><ellipse class="pupil" cx="202" cy="162" rx="13" ry="19" fill="#111"/><circle cx="394" cy="161" r="48" fill="#fff" stroke="#111" stroke-width="10" stroke-linecap="round" stroke-linejoin="round"/><ellipse class="pupil" cx="394" cy="165" rx="13" ry="19" fill="#111"/><path d="M180 258 Q275 302 372 256" fill="none" stroke="#111" stroke-width="10" stroke-linecap="round" stroke-linejoin="round"/><path d="M168 250 Q174 258 182 258" fill="none" stroke="#111" stroke-width="8" stroke-linecap="round" stroke-linejoin="round"/><ellipse cx="249" cy="206" rx="5" ry="6.5" fill="#111"/><ellipse cx="282" cy="206" rx="5" ry="6.5" fill="#111"/></g><g class="face face-sip"><path d="M164 160 Q202 186 240 160" fill="none" stroke="#111" stroke-width="10" stroke-linecap="round" stroke-linejoin="round"/><path d="M356 163 Q394 189 432 163" fill="none" stroke="#111" stroke-width="10" stroke-linecap="round" stroke-linejoin="round"/><ellipse cx="262" cy="268" rx="15" ry="11" fill="#7A2420" stroke="#111" stroke-width="8" stroke-linecap="round" stroke-linejoin="round"/><ellipse cx="249" cy="206" rx="5" ry="6.5" fill="#111"/><ellipse cx="282" cy="206" rx="5" ry="6.5" fill="#111"/></g><g class="mug"><g class="mug-flat"><image href="../../../frogs/coffee-mug.svg?v=08e7a455" width="640" height="550"/></g><g class="mug-tilt"><image href="../../../frogs/coffee-mug-tilt.svg?v=e2a25595" width="640" height="550"/></g></g></svg>
+      <div><p class="take-label">Frank ran the numbers</p><blockquote>Congratulations on the six users. Don't rebuild anything yet. Watch for errors, watch the bill, and let real problems tell you what to fix next.</blockquote></div>
+    </div>
+    <div class="prose">
+      
+      <p>The internet is full of advice for running sites with millions of users. You have six, and that's the right number to be thinking about.</p>
+      <p class="aside">Six users is not a reason to read about Kubernetes. Please step away from the architecture diagrams.</p>
+
+      <h2>Know when it breaks</h2>
+      <p>Set up a free uptime check that emails you if the site goes down, and turn on error alerts from your host or server function. Most small sites don't fail dramatically. Something quietly stops working and nobody tells you, so the goal is to hear about it before your users do.</p>
+
+      <h2>Watch the bill weekly</h2>
+      <p>For most AI-powered side projects, the AI calls are the biggest cost. Look at your spending once a week while it's new. If one feature costs more than the rest combined, that's the thing to look at, usually with a shorter prompt, a cheaper model or saving answers you've already paid for. SideFrog runs on about $8 a month for the site itself; <a href="../../../what-it-costs/">here's the breakdown</a>.</p>
+
+      <h2>Count what matters</h2>
+      <p>Free analytics tell you which pages people visit and what they click. Pick the one or two numbers that tell you the idea is working, like sign-ups or completed checks, and ignore the rest for now.</p>
+
+      <h2>Add pieces only when you need them</h2>
+      <ul>
+        <li><strong>A database,</strong> when the site has to remember something between visits.</li>
+        <li><strong>Logins,</strong> when people need their own stuff. Use a sign-in service rather than building it.</li>
+        <li><strong>Payments,</strong> when someone wants to pay. Use a hosted checkout.</li>
+        <li><strong>More servers,</strong> when your host's own charts say you're running out. On serverless hosting, that's rarely your problem first.</li>
+      </ul>
+
+      <h2>Know when to stop vibe coding</h2>
+      <p>Vibe coding is great for getting to the first real users. When real money, sensitive data or a lot of customers depend on the site, it's time for someone who does this for a living to look it over.</p>
+
+      <div class="help-box">
+      <p class="help-box-label">When to get real help</p>
+      <p>Some things are worth paying a professional for, even on a side project:</p>
+      <ul>
+        <li>Taking payments. Use a hosted checkout like Stripe's so card numbers never touch your code.</li>
+        <li>Health, financial or other sensitive personal information.</li>
+        <li>Logins and passwords. Use a sign-in service instead of building your own.</li>
+        <li>Anything aimed at kids.</li>
+        <li>Real customers depending on it every day.</li>
+      </ul>
+      <p>That's where you stop being cheap. If you want a second pair of eyes before you get there, <a href="https://calendly.com/markflournoy/vibe-code?utm_source=sidefrog&amp;utm_medium=six-users-now-what" target="_blank" rel="noopener">pick a time with Mark</a> or <a href="https://www.linkedin.com/in/markflournoy/" target="_blank" rel="noopener">message him on LinkedIn</a>.</p>
+    </div>
+      <div class="cta-box">
+      <p><strong>Got an idea?</strong> SideFrog gives you a straight verdict, who'd pay, a first test to run and names with an open .com, in about ten seconds.</p>
+      <a class="plate-btn" href="../../../">Check your idea</a>
+      <p class="help-line">Want help building it? Mark helps people vibe code their first site with AI. <a href="https://calendly.com/markflournoy/vibe-code?utm_source=sidefrog&amp;utm_medium=six-users-now-what" target="_blank" rel="noopener">Pick a time with Mark</a> or <a href="https://www.linkedin.com/in/markflournoy/" target="_blank" rel="noopener">message him on LinkedIn</a>.</p>
+    </div>
+      <section class="faq"><h2>Questions people ask</h2><h3>When does a side project need a real server?</h3><p>Usually much later than you think. Serverless functions and static hosting handle thousands of visitors a day without you managing anything. Move when your host tells you you're hitting limits, not before.</p><h3>What should I do if it suddenly gets popular?</h3><p>Check your bill and your rate limits first, then your error alerts. A sudden spike is often a bot, not a fan club.</p><h3>Should I rewrite it properly now that it works?</h3><p>Not until something specific hurts. Rewrites eat months. Fix the part that's actually causing trouble.</p></section>
+      <section class="related"><h2>Read next</h2><ul class="rows"><li><a class="row" href="../../../break-room/build/before-you-put-it-online/"><span class="row-main">Before you put it on the internet</span><span class="row-cue" aria-hidden="true">Read</span></a></li><li><a class="row" href="../../../break-room/build/vibe-coding-101/"><span class="row-main">Vibe coding 101: build the ugly first version</span><span class="row-cue" aria-hidden="true">Read</span></a></li><li><a class="row" href="../../../what-it-costs/"><span class="row-main">What it costs me to test an idea</span><span class="row-cue" aria-hidden="true">Read</span></a></li></ul></section>
+      
+    </div>
+  </main>
+
+  <footer class="site-footer">
+    <p class="footer-tag">Made for coffee breaks. Your manager remains uninformed.</p>
+    <nav class="footer-nav" aria-label="More from SideFrog"><a href="../../../break-room/">Break Room</a><span class="dot" aria-hidden="true">·</span><a href="../../../what-it-costs/">What it costs</a><span class="dot" aria-hidden="true">·</span><a href="../../../about/">About</a><span class="dot" aria-hidden="true">·</span><a href="../../../about/#help">Get help</a></nav>
+    <p class="fine-print"><span class="label">The fine print</span>Frank’s verdict is a quick AI read using Gemini 3.5 Flash-Lite, not market research. .com names are checked live at the registry. “Open” means no registry record was found, but premium or reserved names can still be unavailable, so confirm before you buy. Not legal, financial, or trademark advice. Your idea goes to Google’s Gemini to write the verdict; SideFrog itself doesn’t store what you type.</p>
+    <p class="colophon"><span class="label">Colophon</span>SideFrog is made by <a href="../../../about/">Mark Flournoy</a> in California. Vibe coded with Claude over a weekend for about $20. So yeah, <a href="../../../break-room/build/vibe-coding-101/">you can probably build your thing too</a>. Set in Bricolage Grotesque. Printed on the internet. Updated October 2026.</p>
+  </footer>
+  <script src="../../../analytics.js?v=ef6e6b98" defer></script>
+  <script src="../../../frank.js?v=fd02fdfa" defer></script>
+  <script src="../../../local-links.js?v=a3f9a95e" defer></script>
+</body>
+</html>

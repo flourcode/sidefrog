@@ -1,0 +1,43 @@
+// SideFrog analytics (Google Analytics 4).
+//
+// To turn it on: paste your GA4 measurement ID below, e.g. "G-ABC123XYZ".
+// Until then this file does nothing. It also does nothing when you open the
+// files from your desktop, or on any address not listed in LIVE_HOSTS, so
+// testing never pollutes your numbers.
+//
+// What it never sends: the idea someone typed. "We don't save your idea" stays true.
+// In GA, under Admin > Data streams > Enhanced measurement, turn OFF
+// "Outbound clicks": those record full link addresses, and the Google search
+// links contain search phrases. This file counts those clicks without the text.
+(function () {
+  var GA_ID = "";                                        // <- your GA4 ID goes here
+  var LIVE_HOSTS = ["sidefrog.com", "www.sidefrog.com"]; // only count real visits
+
+  window.sfTrack = function () {};                       // safe no-op until GA is on
+  if (!GA_ID || location.protocol === "file:" || LIVE_HOSTS.indexOf(location.hostname) === -1) return;
+
+  var s = document.createElement("script");
+  s.async = true;
+  s.src = "https://www.googletagmanager.com/gtag/js?id=" + encodeURIComponent(GA_ID);
+  document.head.appendChild(s);
+  window.dataLayer = window.dataLayer || [];
+  function gtag() { window.dataLayer.push(arguments); }
+  window.gtag = gtag;
+  gtag("js", new Date());
+  gtag("config", GA_ID);
+
+  // Events with no personal text in them.
+  window.sfTrack = function (name, params) { gtag("event", name, params || {}); };
+
+  // Clicks that leave the site, counted by destination type only.
+  document.addEventListener("click", function (e) {
+    var a = e.target.closest && e.target.closest("a[href]");
+    if (!a) return;
+    var h = a.href;
+    if (/calendly\.com/.test(h)) window.sfTrack("help_click", { via: "calendly" });
+    else if (/linkedin\.com/.test(h)) window.sfTrack("help_click", { via: "linkedin" });
+    else if (/porkbun\.com/.test(h)) window.sfTrack("register_click");
+    else if (/google\.com\/search/.test(h)) window.sfTrack("search_click");
+    else if (/quotabird\.com/.test(h)) window.sfTrack("quotabird_click");
+  }, true);
+})();

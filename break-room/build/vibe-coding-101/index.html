@@ -1,0 +1,93 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <title>Vibe Coding 101: Build the Ugly First Version | SideFrog</title>
+  <meta name="description" content="How someone who has never written code can use AI tools like Claude or ChatGPT to build a small, working first version of an idea, one step at a time.">
+  <link rel="canonical" href="https://sidefrog.com/break-room/build/vibe-coding-101/">
+  <meta property="og:site_name" content="SideFrog">
+  <meta property="og:image" content="https://sidefrog.com/og/vibe-coding-101.jpg">
+  <meta property="og:image:width" content="1200">
+  <meta property="og:image:height" content="630">
+  <meta property="og:image:alt" content="SideFrog: Vibe Coding 101: Build the Ugly First Version | SideFrog">
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:image" content="https://sidefrog.com/og/vibe-coding-101.jpg">
+  <meta property="og:title" content="Vibe Coding 101: Build the Ugly First Version | SideFrog">
+  <meta property="og:description" content="How someone who has never written code can use AI tools like Claude or ChatGPT to build a small, working first version of an idea, one step at a time.">
+  <meta property="og:type" content="article">
+  <meta property="og:url" content="https://sidefrog.com/break-room/build/vibe-coding-101/">
+  <meta name="theme-color" content="#FBF7EF">
+  <link rel="icon" type="image/svg+xml" href="../../../frogs/favicon.svg?v=e31ddc16">
+  <link rel="icon" type="image/png" sizes="32x32" href="../../../favicon-32.png?v=cd3c4402">
+  <link rel="icon" href="../../../favicon.ico?v=30c21763" sizes="any">
+  <link rel="apple-touch-icon" href="../../../apple-touch-icon.png?v=fa6ec965">
+  <link rel="manifest" href="../../../site.webmanifest?v=9ac89d47">
+  <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin><link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,400..800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="../../../styles.css?v=2879e390">
+  <script type="application/ld+json">{"@context": "https://schema.org", "@type": "FAQPage", "mainEntity": [{"@type": "Question", "name": "Do I need to learn to code first?", "acceptedAnswer": {"@type": "Answer", "text": "No. It helps to learn a little as you go, like reading an error message or knowing which file does what, and the AI will explain anything you ask about. Start building and learn what the project needs."}}, {"@type": "Question", "name": "Which AI tool should I use?", "acceptedAnswer": {"@type": "Answer", "text": "Any of the big ones can write a first version. Claude, ChatGPT and Gemini all work in a chat window. Tools like Cursor or Claude Code work directly on your files once you're comfortable. Pick one and stick with it for the first project."}}, {"@type": "Question", "name": "What if it breaks something that used to work?", "acceptedAnswer": {"@type": "Answer", "text": "Go back to your last commit on GitHub, then ask for the change again in a smaller step. This is the main reason to save often."}}, {"@type": "Question", "name": "Why does my AI-built site look like every other site?", "acceptedAnswer": {"@type": "Answer", "text": "Because the AI gives you the most likely answer when you don't give it yours. Tell it what you believe about the work, how it should feel, a look you like and one detail only your business would think of, then have it critique the result as a skeptical customer."}}, {"@type": "Question", "name": "Is code written by AI safe to put online?", "acceptedAnswer": {"@type": "Answer", "text": "It can be, but don't assume it. AI tools will happily put a secret key where anyone can read it. The next guide covers what to check before you share the link."}}]}</script><script type="application/ld+json">{"@context": "https://schema.org", "@type": "Article", "headline": "Vibe coding 101: build the ugly first version", "description": "How someone who has never written code can use AI tools like Claude or ChatGPT to build a small, working first version of an idea, one step at a time.", "dateModified": "2026-10-03", "url": "https://sidefrog.com/break-room/build/vibe-coding-101/", "author": {"@type": "Person", "name": "Mark Flournoy", "url": "https://sidefrog.com/about/"}, "publisher": {"@type": "Organization", "name": "SideFrog", "url": "https://sidefrog.com/"}}</script><script type="application/ld+json">{"@context": "https://schema.org", "@type": "BreadcrumbList", "itemListElement": [{"@type": "ListItem", "position": 1, "name": "SideFrog", "item": "https://sidefrog.com/"}, {"@type": "ListItem", "position": 2, "name": "Break Room", "item": "https://sidefrog.com/break-room/"}, {"@type": "ListItem", "position": 3, "name": "Vibe coding 101: build the ugly first version", "item": "https://sidefrog.com/break-room/build/vibe-coding-101/"}]}</script>
+</head>
+<body class="page">
+  <header class="site-header">
+    <a class="wordmark" href="../../../"><svg class="frog wordmark-frog can-sip look-right" data-mood="smirk" viewBox="19 21 576 524" aria-hidden="true" focusable="false"><g class="arm"><path d="M150 292 Q 98 330 82 368 Q 72 404 150 426" fill="none" stroke="#111" stroke-width="100" stroke-linecap="round" stroke-linejoin="round"/><path d="M150 292 Q 98 330 82 368 Q 72 404 150 426" fill="none" stroke="#8DAA3F" stroke-width="80" stroke-linecap="round" stroke-linejoin="round"/><path d="M152 290 L112 322 L96 356 L94 392 L112 414 L152 424 Z" fill="#8DAA3F"/></g><image href="../../../frogs/coffee-body.svg?v=f704ffe4" width="640" height="550"/><g class="face face-smirk"><circle cx="202" cy="158" r="48" fill="#fff" stroke="#111" stroke-width="10" stroke-linecap="round" stroke-linejoin="round"/><ellipse class="pupil" cx="202" cy="162" rx="13" ry="19" fill="#111"/><circle cx="394" cy="161" r="48" fill="#fff" stroke="#111" stroke-width="10" stroke-linecap="round" stroke-linejoin="round"/><ellipse class="pupil" cx="394" cy="165" rx="13" ry="19" fill="#111"/><path d="M180 258 Q275 302 372 256" fill="none" stroke="#111" stroke-width="10" stroke-linecap="round" stroke-linejoin="round"/><path d="M168 250 Q174 258 182 258" fill="none" stroke="#111" stroke-width="8" stroke-linecap="round" stroke-linejoin="round"/><ellipse cx="249" cy="206" rx="5" ry="6.5" fill="#111"/><ellipse cx="282" cy="206" rx="5" ry="6.5" fill="#111"/></g><g class="face face-sip"><path d="M164 160 Q202 186 240 160" fill="none" stroke="#111" stroke-width="10" stroke-linecap="round" stroke-linejoin="round"/><path d="M356 163 Q394 189 432 163" fill="none" stroke="#111" stroke-width="10" stroke-linecap="round" stroke-linejoin="round"/><ellipse cx="262" cy="268" rx="15" ry="11" fill="#7A2420" stroke="#111" stroke-width="8" stroke-linecap="round" stroke-linejoin="round"/><ellipse cx="249" cy="206" rx="5" ry="6.5" fill="#111"/><ellipse cx="282" cy="206" rx="5" ry="6.5" fill="#111"/></g><g class="mug"><g class="mug-flat"><image href="../../../frogs/coffee-mug.svg?v=08e7a455" width="640" height="550"/></g><g class="mug-tilt"><image href="../../../frogs/coffee-mug-tilt.svg?v=e2a25595" width="640" height="550"/></g></g></svg>SideFrog</a>
+    <nav class="site-nav" aria-label="Sections"><a href="../../../break-room/">Break Room</a><a href="../../../break-room/build/vibe-coding-101/" aria-current="page">Build it</a><a class="nav-about" href="../../../about/">About</a></nav>
+  </header>
+
+  <main>
+    <p class="crumbs"><a href="../../../break-room/">Break Room</a> / Build it yourself</p>
+    
+    <h1>Vibe coding 101: build the ugly first version</h1>
+    <div class="take">
+      <svg class="frog take-frog can-sip look-right" data-mood="smirk" viewBox="19 21 576 524" aria-hidden="true" focusable="false"><g class="arm"><path d="M150 292 Q 98 330 82 368 Q 72 404 150 426" fill="none" stroke="#111" stroke-width="100" stroke-linecap="round" stroke-linejoin="round"/><path d="M150 292 Q 98 330 82 368 Q 72 404 150 426" fill="none" stroke="#8DAA3F" stroke-width="80" stroke-linecap="round" stroke-linejoin="round"/><path d="M152 290 L112 322 L96 356 L94 392 L112 414 L152 424 Z" fill="#8DAA3F"/></g><image href="../../../frogs/coffee-body.svg?v=f704ffe4" width="640" height="550"/><g class="face face-smirk"><circle cx="202" cy="158" r="48" fill="#fff" stroke="#111" stroke-width="10" stroke-linecap="round" stroke-linejoin="round"/><ellipse class="pupil" cx="202" cy="162" rx="13" ry="19" fill="#111"/><circle cx="394" cy="161" r="48" fill="#fff" stroke="#111" stroke-width="10" stroke-linecap="round" stroke-linejoin="round"/><ellipse class="pupil" cx="394" cy="165" rx="13" ry="19" fill="#111"/><path d="M180 258 Q275 302 372 256" fill="none" stroke="#111" stroke-width="10" stroke-linecap="round" stroke-linejoin="round"/><path d="M168 250 Q174 258 182 258" fill="none" stroke="#111" stroke-width="8" stroke-linecap="round" stroke-linejoin="round"/><ellipse cx="249" cy="206" rx="5" ry="6.5" fill="#111"/><ellipse cx="282" cy="206" rx="5" ry="6.5" fill="#111"/></g><g class="face face-sip"><path d="M164 160 Q202 186 240 160" fill="none" stroke="#111" stroke-width="10" stroke-linecap="round" stroke-linejoin="round"/><path d="M356 163 Q394 189 432 163" fill="none" stroke="#111" stroke-width="10" stroke-linecap="round" stroke-linejoin="round"/><ellipse cx="262" cy="268" rx="15" ry="11" fill="#7A2420" stroke="#111" stroke-width="8" stroke-linecap="round" stroke-linejoin="round"/><ellipse cx="249" cy="206" rx="5" ry="6.5" fill="#111"/><ellipse cx="282" cy="206" rx="5" ry="6.5" fill="#111"/></g><g class="mug"><g class="mug-flat"><image href="../../../frogs/coffee-mug.svg?v=08e7a455" width="640" height="550"/></g><g class="mug-tilt"><image href="../../../frogs/coffee-mug-tilt.svg?v=e2a25595" width="640" height="550"/></g></g></svg>
+      <div><p class="take-label">Frank has notes</p><blockquote>You don't need to learn to code to build a first version. You need to describe one small thing clearly, change one thing at a time, and save your work when it works. Keep the first version embarrassingly small.</blockquote></div>
+    </div>
+    <div class="prose">
+      
+      <p>Vibe coding means describing what you want in plain English and letting an AI tool write the code. It's how SideFrog was built: Claude, Notepad, GitHub and a $16 domain, by someone whose last job was sales. This guide is the version of that process we'd hand a friend.</p>
+
+      <h2><span class="step">1.</span> Write the one-sentence version</h2>
+      <p>Before you open any AI tool, write one sentence: who it's for, and the one thing it does for them. “A page where dog owners in my building can book a walk for tomorrow.” If you can't write the sentence, the AI can't build it either. It will build something, just not your thing.</p>
+
+      <h2><span class="step">2.</span> Brief it like a new contractor</h2>
+      <p>The AI is fast and knows nothing about your business. Tell it who uses the page, what they see, what happens when they click, and what it should not do. Paste in real wording and real examples. A good first brief is a few paragraphs, not a few words.</p>
+      <p>Then give it your point of view, because if you don't, it fills in the most average one. Say what you believe about the work, how it should feel, a look you like (an old diner menu, a 1970s travel poster, a brand you admire) and one detail only someone in your business would think of. Stripe's head of design, Katie Dill, calls the generic alternative “zombie UI”: pages that work but could belong to anyone.</p>
+      <p class="aside">Brief it like the contractor who started this morning. Skip the acronyms, and don't assume it read last quarter's deck.</p>
+
+      <h2><span class="step">3.</span> Ask for the smallest thing that works</h2>
+      <p>Ask for one page in one file, with no logins, no database and no accounts. You can add those later if anyone uses it. SideFrog's “Build the page” prompt, under every answer, is a ready-made brief for exactly this kind of first version.</p>
+
+      <h2><span class="step">4.</span> Change one thing at a time</h2>
+      <p>Ask for one change, open the page, check that it worked, then ask for the next. When something breaks, copy the exact error message and paste it back in. “It doesn't work” gets you guesses; the error message gets you a fix.</p>
+
+      <h2><span class="step">5.</span> Use it like a customer before you call it done</h2>
+      <p>AI makes things look finished very fast, often before they are. When it works, open it on your phone from a link, the way a customer would, and try to do the one thing it's for without explaining anything to yourself. Does it solve the problem? Where did you hesitate?</p>
+      <p>Then ask the AI to critique its own work: “Look at this as a skeptical customer. List the five things that feel generic, confusing or unfinished.” Fix the best few, and go one detail further than you think anyone will notice. SideFrog's “Build the page” prompt asks for this pass automatically.</p>
+
+      <h2><span class="step">6.</span> Save your work when it works</h2>
+      <p>GitHub is a free place to keep your files with every version saved. Each save point is called a commit. Make one every time something works, and you can always get back to the last good version when a change goes sideways. It's the undo button you'll wish you had the first time the AI “improves” something that was fine.</p>
+
+      <h2><span class="step">7.</span> Put it online</h2>
+      <p>A simple page can live for free or close to it on hosts like GitHub Pages, Netlify or AWS Amplify (what SideFrog uses), pointed at your domain. Before you share the link with anyone, read <a href="../../../break-room/build/before-you-put-it-online/">Before you put it on the internet</a>. It's an hour of boring work that saves you from the expensive kind of surprise.</p>
+
+      <div class="cta-box">
+      <p><strong>Got an idea?</strong> SideFrog gives you a straight verdict, who'd pay, a first test to run and names with an open .com, in about ten seconds.</p>
+      <a class="plate-btn" href="../../../">Check your idea</a>
+      <p class="help-line">Want help building it? Mark helps people vibe code their first site with AI. <a href="https://calendly.com/markflournoy/vibe-code?utm_source=sidefrog&amp;utm_medium=vibe-coding-101" target="_blank" rel="noopener">Pick a time with Mark</a> or <a href="https://www.linkedin.com/in/markflournoy/" target="_blank" rel="noopener">message him on LinkedIn</a>.</p>
+    </div>
+      <section class="faq"><h2>Questions people ask</h2><h3>Do I need to learn to code first?</h3><p>No. It helps to learn a little as you go, like reading an error message or knowing which file does what, and the AI will explain anything you ask about. Start building and learn what the project needs.</p><h3>Which AI tool should I use?</h3><p>Any of the big ones can write a first version. Claude, ChatGPT and Gemini all work in a chat window. Tools like Cursor or Claude Code work directly on your files once you're comfortable. Pick one and stick with it for the first project.</p><h3>What if it breaks something that used to work?</h3><p>Go back to your last commit on GitHub, then ask for the change again in a smaller step. This is the main reason to save often.</p><h3>Why does my AI-built site look like every other site?</h3><p>Because the AI gives you the most likely answer when you don't give it yours. Tell it what you believe about the work, how it should feel, a look you like and one detail only your business would think of, then have it critique the result as a skeptical customer.</p><h3>Is code written by AI safe to put online?</h3><p>It can be, but don't assume it. AI tools will happily put a secret key where anyone can read it. The next guide covers what to check before you share the link.</p></section>
+      <section class="related"><h2>Read next</h2><ul class="rows"><li><a class="row" href="../../../break-room/build/before-you-put-it-online/"><span class="row-main">Before you put it on the internet</span><span class="row-cue" aria-hidden="true">Read</span></a></li><li><a class="row" href="../../../break-room/build/six-users-now-what/"><span class="row-main">Six people use it. Now what?</span><span class="row-cue" aria-hidden="true">Read</span></a></li><li><a class="row" href="../../../what-it-costs/"><span class="row-main">What it costs me to test an idea</span><span class="row-cue" aria-hidden="true">Read</span></a></li></ul></section>
+      
+    </div>
+  </main>
+
+  <footer class="site-footer">
+    <p class="footer-tag">Made for coffee breaks. Your manager remains uninformed.</p>
+    <nav class="footer-nav" aria-label="More from SideFrog"><a href="../../../break-room/">Break Room</a><span class="dot" aria-hidden="true">·</span><a href="../../../what-it-costs/">What it costs</a><span class="dot" aria-hidden="true">·</span><a href="../../../about/">About</a><span class="dot" aria-hidden="true">·</span><a href="../../../about/#help">Get help</a></nav>
+    <p class="fine-print"><span class="label">The fine print</span>Frank’s verdict is a quick AI read using Gemini 3.5 Flash-Lite, not market research. .com names are checked live at the registry. “Open” means no registry record was found, but premium or reserved names can still be unavailable, so confirm before you buy. Not legal, financial, or trademark advice. Your idea goes to Google’s Gemini to write the verdict; SideFrog itself doesn’t store what you type.</p>
+    <p class="colophon"><span class="label">Colophon</span>SideFrog is made by <a href="../../../about/">Mark Flournoy</a> in California. Vibe coded with Claude over a weekend for about $20. So yeah, <a href="../../../break-room/build/vibe-coding-101/">you can probably build your thing too</a>. Set in Bricolage Grotesque. Printed on the internet. Updated October 2026.</p>
+  </footer>
+  <script src="../../../analytics.js?v=ef6e6b98" defer></script>
+  <script src="../../../frank.js?v=fd02fdfa" defer></script>
+  <script src="../../../local-links.js?v=a3f9a95e" defer></script>
+</body>
+</html>

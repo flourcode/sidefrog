@@ -1,0 +1,954 @@
+/* ==========================================================================
+   SideFrog: a coffee-break accomplice for side-hustle daydreams.
+   Look: responsible adult meets tiny act of rebellion. Warm, light, retro-smart.
+   Rules of thumb:
+   - The page is mostly light cream and off-white. The frog owns the bright green.
+   - Deep green is for structure and emphasis, never a blanket fill.
+   - Lime is the "go" colour: the main buttons and a highlighter mark.
+   - Controls get confident ink outlines and a small hard offset shadow,
+     the deliberate "10-15% less polished than fintech" touch.
+   ========================================================================== */
+
+:root {
+  /* "Avocado Kitchen": vintage mid-century mod. Mostly toasted white and coffee black;
+     colour lands where the meaning is (the frog, the button, the verdict).
+     Rough mix: 60% paper/cream, 25% ink and rules, 10% avocado/olive, 5% orange/rust/mustard. */
+  --paper: #FBF7EF;        /* Toasted White: page */
+  --surface: #FFFDF9;      /* Warm White: cards, the idea box (a shade lighter than the page) */
+  --ink: #1F241F;          /* Coffee Black: text, outlines */
+  --muted: #5A5A4A;        /* Taupe Ink: supporting text (5.8:1) */
+  --placeholder: #66614F;   /* readable (6.1:1) but clearly not typed text */
+  --line: #E2D8C6;         /* soft dividers, decorative */
+  --rule: #A89B84;         /* Olive Gray: printed rules, decorative */
+  --frog: #8DAA3F;         /* Avocado: the frog himself */
+  --deep: #4A5C34;         /* Forest Olive: labels (6.0:1) */
+  --lime: #97AE43;         /* Warm avocado: main button fill (ink text 6.35:1) */
+  --lime-hover: #A6BC52;
+  --lime-tint: #F6EFD3;    /* mustard wash: chip hover */
+  --on-lime: #1F241F;
+  --blue: #2F6F73;         /* Atomic Teal: links, focus rings (5.4:1) */
+  --blue-hover: #1F5356;
+  --accent-text: #A4501F;  /* Deep Burnt: "RE:" and small warm accents (4.6:1) */
+  --shadow: #1F241F;
+
+  /* Status */
+  --ok: #4A5C34;
+  --ok-soft: #E8EDD3;
+  --warn: #8A6A12;
+  --warn-soft: #F6EDCB;
+  --bad: #B74A2F;
+  --bad-soft: #F7E2D8;
+
+  /* Type: Bricolage Grotesque throughout */
+  --font: "Bricolage Grotesque", "Avenir Next", "Segoe UI", system-ui, -apple-system, sans-serif;
+
+  /* Shape */
+  --radius: 16px;
+  --radius-sm: 10px;
+  --measure: 62ch;
+  --gutter: clamp(1.1rem, 4vw, 2.5rem);
+  color-scheme: light dark;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    /* After hours: wood-panelled den */
+    --paper: #1E211B;
+    --surface: #272B22;
+    --ink: #F1E7D4;
+    --muted: #BEB49F;
+    --placeholder: #A39C86;
+    --line: #3A3F32;
+    --rule: #6C6655;
+    --deep: #B9CC7A;
+    --lime: #9DBA4F;
+    --lime-hover: #AECB5E;
+    --lime-tint: #353A2B;
+    --on-lime: #1F241F;
+    --blue: #7DB9BC;
+    --blue-hover: #A3D0D2;
+    --accent-text: #E39A62;
+    --shadow: #0E100C;
+    --ok: #B9CC7A;
+    --ok-soft: #2F3A22;
+    --warn: #E2C460;
+    --warn-soft: #3A321A;
+    --bad: #E58063;
+    --bad-soft: #3D2219;
+  }
+}
+
+*, *::before, *::after { box-sizing: border-box; }
+[hidden] { display: none !important; }
+
+body {
+  margin: 0;
+  background: var(--paper);
+  color: var(--ink);
+  font-family: var(--font);
+  font-weight: 400;
+  font-size: 1.0625rem;
+  line-height: 1.55;
+  font-optical-sizing: auto;
+  padding-top: env(safe-area-inset-top, 0px);
+  padding-bottom: env(safe-area-inset-bottom, 0px);
+}
+
+a { color: var(--blue); text-underline-offset: 0.18em; text-decoration-thickness: 1.5px; }
+a:hover { color: var(--blue-hover); }
+:focus-visible { outline: 3px solid var(--blue); outline-offset: 3px; border-radius: 6px; }
+
+/* --------------------------------------------------------------------------
+   Page frame and header
+   -------------------------------------------------------------------------- */
+
+.site-header, main, .site-footer {
+  max-width: 50rem;
+  margin: 0 auto;
+  padding-left: var(--gutter);
+  padding-right: var(--gutter);
+}
+
+.site-header {
+  padding-top: 1.1rem;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.6rem 1rem;
+  flex-wrap: wrap;
+}
+/* Printed masthead rule, full width */
+.site-header::after {
+  content: "";
+  flex-basis: 100%;
+  height: 0;
+  border-top: 1.5px solid var(--ink);
+  margin-top: 0.3rem;
+}
+/* The old cover price box */
+.price-box {
+  margin: 0;
+  padding: 0.35rem 0.6rem 0.4rem;
+  border: 1.5px solid var(--ink);
+  background: var(--surface);
+  font-size: 0.8rem;
+  line-height: 1.3;
+  color: var(--ink);
+  max-width: 12.5rem;
+}
+.price-box strong { display: block; font-weight: 800; text-transform: uppercase; letter-spacing: 0.06em; font-size: 0.78rem; }
+.price-box span { display: block; font-weight: 500; }
+
+.wordmark {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.45rem;
+  font-weight: 800;
+  font-size: 1.4rem;
+  letter-spacing: -0.03em;
+  color: var(--ink);
+  text-decoration: none;
+}
+.wordmark:hover { color: var(--ink); }
+.wordmark-frog { width: 2.75rem; height: auto; }
+
+/* --------------------------------------------------------------------------
+   The coffee frog: one body, many faces. data-mood picks the face;
+   look-left / look-right aims his eyes at whatever he's reacting to.
+   -------------------------------------------------------------------------- */
+
+.frog { display: block; overflow: visible; }
+.frog .face { display: none; }
+.frog[data-mood="yeah"] .face-yeah,
+.frog[data-mood="smirk"] .face-smirk,
+.frog[data-mood="meh"] .face-meh,
+.frog[data-mood="nah"] .face-nah,
+.frog[data-mood="sad"] .face-sad,
+.frog[data-mood="think"] .face-think,
+.frog[data-mood="oops"] .face-oops { display: inline; }
+
+/* ---- The sip ----------------------------------------------------------------
+   The mug is its own layer. While a check runs, the loading frog sips on a slow
+   loop. When the answer lands, the answer frog is still mid-sip, lowers the mug,
+   and his face settles into the verdict. Reduced motion: static frog. */
+.frog .mug { transform-box: view-box; transform-origin: 122px 447px; }
+/* The forearm and elbow: behind the body, grows out from the shoulder as the mug rises */
+.frog .arm { opacity: 0; transform-box: view-box; transform-origin: 150px 430px; transform: scale(0.4); }
+
+.sticker.is-sipping .arm { animation: arm-sip-once 1.5s ease-in-out both; }
+.frog .face-sip { display: none; }
+
+.sticker.is-sipping .mug { animation: mug-sip-once 1.5s ease-in-out both; }
+.sticker.is-sipping .face:not(.face-sip) { animation: face-in-late 1.5s step-end both; }
+.sticker.is-sipping .face-sip { display: inline; animation: face-away-late 1.5s step-end both; }
+
+@keyframes face-in-late   { 0% { opacity: 0; } 54%, 100% { opacity: 1; } }
+@keyframes face-away-late { 0% { opacity: 1; } 54%, 100% { opacity: 0; } }
+.frog .pupil { transition: transform 0.3s ease; }
+.frog.look-left .pupil { transform: translateX(-12px); }
+.frog.look-right .pupil { transform: translateX(12px); }
+
+/* --------------------------------------------------------------------------
+   Hero
+   -------------------------------------------------------------------------- */
+
+main { padding-top: clamp(2rem, 6vw, 3.5rem); padding-bottom: 2rem; }
+
+h1 {
+  font-weight: 800;
+  font-size: clamp(2.3rem, 6vw, 3.75rem);
+  line-height: 1.02;
+  letter-spacing: -0.035em;
+  margin: 0 0 0.9rem;
+  max-width: 17ch;
+}
+.lede {
+  margin: 0 0 1.75rem;
+  color: var(--muted);
+  font-size: clamp(1.12rem, 2vw, 1.25rem);
+  line-height: 1.5;
+  max-width: 46ch;
+}
+
+/* --------------------------------------------------------------------------
+   The idea box: the emotional centre. Light, outlined, alive.
+   -------------------------------------------------------------------------- */
+
+.plate {
+  background: var(--surface);
+  color: var(--ink);
+  border: 2px solid var(--ink);
+  border-radius: var(--radius);
+  box-shadow: 6px 6px 0 var(--shadow);
+  padding: clamp(1.1rem, 3vw, 1.6rem) clamp(1.15rem, 3.5vw, 1.9rem) clamp(1.1rem, 3vw, 1.5rem);
+  transition: box-shadow 0.15s ease, transform 0.15s ease;
+}
+/* Typing: the box lifts and its outline turns deep green (keyboard users still see focus) */
+.plate:focus-within {
+  border-color: var(--deep);
+  transform: translate(-2px, -2px);
+  box-shadow: 8px 8px 0 var(--shadow);
+}
+.plate:has(.plate-input[aria-invalid="true"]) { border-color: var(--bad); }
+
+.plate-label { display: block; margin-bottom: 0.3rem; color: var(--deep); }
+.label-caps, .facts dt, .part h3 {
+  font-family: var(--font);
+  font-weight: 700;
+  font-size: 0.78rem;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--deep);
+}
+.label-aside { font-size: 0.98rem; color: var(--muted); margin-left: 0.25rem; }
+
+.plate-input {
+  display: block;
+  width: 100%;
+  margin: 0;
+  padding: 0.1em 0 0.2em;
+  background: transparent;
+  color: var(--ink);
+  border: 0;
+  border-radius: 0;
+  font-family: var(--font);
+  font-weight: 700;
+  font-size: clamp(1.6rem, 4.4vw, 2.5rem);
+  line-height: 1.15;
+  letter-spacing: -0.025em;
+  caret-color: var(--deep);
+  resize: none;
+  overflow: hidden;
+}
+.plate-input::placeholder { color: var(--placeholder); font-weight: 600; }
+.plate-input:focus, .plate-input:focus-visible { outline: none; }
+
+.plate-foot {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.75rem 1.1rem;
+  margin-top: 1.1rem;
+}
+
+/* Buttons: ink outline, hard shadow, a little press when clicked */
+.plate-btn, .again-btn {
+  font: inherit;
+  font-weight: 700;
+  font-size: 1.05rem;
+  padding: 0.7rem 1.4rem;
+  line-height: 1.2;
+  border: 2px solid var(--ink);
+  border-radius: var(--radius-sm);
+  background: var(--lime);
+  color: var(--on-lime);
+  box-shadow: 3px 3px 0 var(--shadow);
+  cursor: pointer;
+  transition: transform 0.1s ease, box-shadow 0.1s ease, background-color 0.1s ease;
+}
+@media (hover: hover) {
+  .plate-btn:hover, .again-btn:hover {
+    background: var(--lime-hover);
+    transform: translate(-1px, -1px);
+    box-shadow: 4px 4px 0 var(--shadow);
+  }
+}
+.plate-btn:active, .again-btn:active {
+  transform: translate(2px, 2px);
+  box-shadow: 1px 1px 0 var(--shadow);
+}
+.plate-btn { font-size: 1.16rem; padding: 0.8rem 1.9rem; }
+.plate-btn:disabled { cursor: progress; transform: none; box-shadow: 3px 3px 0 var(--shadow); opacity: 0.8; }
+@media (prefers-color-scheme: dark) {
+  .plate-btn, .again-btn { border-color: var(--lime); }
+}
+
+.plate-clear {
+  min-height: 2.75rem;
+  font: inherit;
+  font-weight: 600;
+  font-size: 0.95rem;
+  padding: 0.5rem 0.9rem;
+  border: 1.5px solid var(--line);
+  border-radius: var(--radius-sm);
+  background: transparent;
+  color: var(--muted);
+  cursor: pointer;
+}
+.plate-clear:hover { border-color: var(--ink); color: var(--ink); }
+
+.plate-hint { margin: 0; color: var(--muted); font-size: 1rem; }
+
+.form-error {
+  margin: 1rem 0 0;
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  color: var(--bad);
+  font-weight: 600;
+}
+.error-frog { width: 4rem; height: auto; flex: none; }
+.form-error p { margin: 0; }
+
+/* --------------------------------------------------------------------------
+   Chips: examples, keywords, alternatives. Light and tappable.
+   -------------------------------------------------------------------------- */
+
+.examples { display: flex; flex-wrap: wrap; align-items: center; gap: 0.5rem 0.6rem; margin-top: 1.25rem; }
+.chips-label { color: var(--muted); font-size: 1rem; white-space: nowrap; flex: none; }
+.chips { list-style: none; margin: 0; padding: 0; display: flex; flex-wrap: wrap; gap: 0.5rem; }
+.chip {
+  font: inherit;
+  font-size: 0.95rem;
+  font-weight: 500;
+  line-height: 1.35;
+  display: inline-block;
+  min-height: 2.75rem;
+  padding: 0.4rem 0.95rem;
+  border: 1.5px solid var(--ink);
+  border-radius: 999px;
+  background: var(--surface);
+  color: var(--ink);
+  text-decoration: none;
+  cursor: pointer;
+  text-align: left;
+  transition: transform 0.12s ease, border-color 0.12s ease, background-color 0.12s ease, box-shadow 0.12s ease;
+}
+@media (hover: hover) {
+  .chip:hover, .row:hover {
+    background: var(--lime-tint);
+    transform: translateY(-2px);
+    box-shadow: 0 2px 0 var(--shadow);
+  }
+}
+.chip:active, .row:active { background: var(--lime-tint); transform: translateY(1px); box-shadow: none; }
+
+/* --------------------------------------------------------------------------
+   Loading
+   -------------------------------------------------------------------------- */
+
+.status { margin: 1.4rem 0 0; display: flex; align-items: center; gap: 0.75rem; color: var(--muted); font-weight: 600; }
+
+.status p { margin: 0; }
+
+/* --------------------------------------------------------------------------
+   The answer card
+   -------------------------------------------------------------------------- */
+
+.result {
+  margin-top: 1.75rem;
+  background: var(--surface);
+  border: 2px solid var(--ink);
+  border-radius: var(--radius);
+  box-shadow: 6px 6px 0 var(--line);
+  padding: clamp(1rem, 3vw, 1.6rem) clamp(1.25rem, 3.5vw, 2rem) clamp(1.25rem, 3.5vw, 2rem);
+}
+@media (prefers-color-scheme: dark) {
+  .result { border-color: var(--line); box-shadow: 6px 6px 0 var(--shadow); }
+}
+
+/* Phones first (most visitors): the frog sits on top of the verdict at the
+   right, glancing down-left at it; the verdict gets the full width.
+   From 600px he moves beside the verdict, still looking at it. */
+.card-head {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  grid-template-areas:
+    "re      frog"
+    "verdict verdict"
+    "reason  reason";
+  align-items: end;
+  column-gap: 0.75rem;
+}
+.you-wrote { grid-area: re; align-self: start; }
+.verdict { grid-area: verdict; }
+.reason { grid-area: reason; }
+@media (min-width: 600px) {
+  .card-head {
+    grid-template-areas:
+      "re      frog"
+      "verdict frog"
+      "reason  frog";
+    align-items: start;
+    column-gap: clamp(1rem, 3vw, 1.75rem);
+  }
+}
+.you-wrote {
+  margin: 0 0 0.25rem;
+  padding-bottom: 0.4rem;
+  border-bottom: 1px solid var(--rule);
+  color: var(--muted);
+  font-size: 1rem;
+  overflow-wrap: anywhere;
+}
+.you-wrote .re { font-family: var(--font); font-weight: 800; letter-spacing: 0.08em; color: var(--accent-text); }   /* memo subject line */
+.reason { margin: 0.6rem 0 0; font-size: 1.2rem; line-height: 1.45; max-width: var(--measure); }
+
+/* The frog: the character delivering the verdict, not the headline */
+.sticker {
+  grid-area: frog;
+  width: 5.75rem;
+  margin-bottom: 0.1rem;           /* sit right on the verdict line */
+}
+.sticker-frog.look-left .pupil { transform: translate(-12px, 8px); }   /* down-left, at the verdict */
+@media (min-width: 600px) {
+  .sticker { width: clamp(7.5rem, 20vw, 10.5rem); align-self: center; margin: 0; }
+  .sticker-frog.look-left .pupil { transform: translateX(-12px); }
+}
+.sticker { position: relative; isolation: isolate; }
+.sticker-frog { width: 100%; height: auto; }
+
+/* The verdict: the star of the card */
+.verdict {
+  font-weight: 800;
+  font-size: 2.5rem;                /* the largest it may be; app.js shrinks it to fit one line */
+  line-height: 1;
+  letter-spacing: -0.035em;
+  text-transform: uppercase;
+  color: var(--ink);
+  margin: 0.15rem 0 0;
+  white-space: nowrap;              /* never breaks across lines */
+  min-width: 0;
+}
+.verdict-text { display: inline-block; }
+@media (min-width: 600px) { .verdict { font-size: 3.9rem; } }
+.verdict:focus { outline: none; }
+
+/* The example answer shown on page load, replaced by a real one after a check */
+.example-tag {
+  display: inline-block;
+  margin-left: 0.35rem;
+  padding: 0.05rem 0.45rem;
+  border: 1.5px solid var(--ink);
+  border-radius: 5px;
+  font-size: 0.72rem;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--ink);
+  vertical-align: 0.1em;
+}
+.example-foot {
+  margin: 1rem 0 0;
+  padding-top: 0.85rem;
+  border-top: 1px solid var(--rule);
+  color: var(--muted);
+  font-size: 0.95rem;
+}
+
+.facts {
+  margin: 1.4rem 0 0;
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 220px), 1fr));
+  gap: 0.9rem 1.75rem;
+  padding-top: 1.2rem;
+  border-top: 1px solid var(--rule);
+}
+.facts:empty { display: none; }
+.facts dt { margin-bottom: 0.2rem; }
+.facts dd { margin: 0; color: var(--ink); font-size: 1.08rem; }
+
+.part { margin-top: 1.4rem; padding-top: 1.1rem; border-top: 1px solid var(--rule); }
+.part h3 { margin: 0 0 0.7rem; }
+.note { margin: 0.65rem 0 0; color: var(--muted); font-size: 0.98rem; }
+.note:empty { display: none; }
+
+/* The name the person picked */
+.yours { display: flex; flex-wrap: wrap; align-items: baseline; gap: 0.4rem 0.9rem; }
+.yours .name-word { font-size: 1.8rem; }
+.pill {
+  display: inline-block;
+  padding: 0.15rem 0.6rem;
+  border-radius: 6px;
+  font-size: 0.85rem;
+  font-weight: 700;
+  border: 1.5px solid transparent;
+}
+.pill[data-status="likely_available"] { background: var(--ok-soft); color: var(--ok); border-color: var(--ok); }
+.pill[data-status="taken"] { background: var(--bad-soft); color: var(--bad); }
+.pill[data-status="unknown"] { background: var(--warn-soft); color: var(--warn); border-color: var(--warn); border-style: dashed; }
+.yours a { font-weight: 600; display: inline-flex; align-items: center; min-height: 2.75rem; }   /* 44px tap target */
+
+/* Rows: one component for every list of actions in the answer (names,
+   searches, alternative ideas). Full width, text left, cue right, so long
+   text wraps cleanly and every row is an easy 44px+ target. */
+.rows { list-style: none; margin: 0; padding: 0; display: grid; gap: 0.5rem; }
+.rows > li { display: flex; }          /* rows side by side share a height */
+.rows > li > .row { flex: 1; }
+@media (min-width: 700px) {
+  .rows-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+}
+.row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.75rem;
+  width: 100%;
+  min-height: 2.9rem;
+  padding: 0.6rem 0.9rem;
+  border: 1.5px solid var(--ink);
+  border-radius: 12px;
+  background: var(--surface);
+  color: var(--ink);
+  font: inherit;
+  font-weight: 500;
+  font-size: 1rem;
+  line-height: 1.35;
+  text-align: left;
+  text-decoration: none;
+  cursor: pointer;
+  transition: transform 0.12s ease, background-color 0.12s ease, box-shadow 0.12s ease;
+}
+.row:hover { color: var(--ink); }
+.row-main { min-width: 0; display: flex; flex-wrap: wrap; align-items: baseline; gap: 0.15rem 0.55rem; overflow-wrap: anywhere; }
+.row-cue { flex: none; font-weight: 700; font-size: 0.92rem; color: var(--blue); white-space: nowrap; }
+button.row .row-cue { color: var(--deep); }
+.name-word { font-weight: 700; font-size: 1.2rem; letter-spacing: -0.02em; }
+.name-domain { color: var(--muted); font-size: 0.9rem; }
+.rows li[data-status="unknown"] .name-domain::after { content: " (couldn't check)"; }
+
+.again-btn { margin-top: 1.6rem; }
+
+.nowrap { white-space: nowrap; }
+
+.sr-only {
+  position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px;
+  overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; border: 0;
+}
+
+/* --------------------------------------------------------------------------
+   Footer
+   -------------------------------------------------------------------------- */
+
+.site-footer { padding-top: 1.25rem; padding-bottom: 2.5rem; color: var(--muted); font-size: 0.9rem; font-weight: 450; }
+.site-footer p { margin: 0; max-width: var(--measure); }
+.site-footer .footer-tag { font-family: var(--font); font-weight: 700; color: var(--ink); font-size: 1.05rem; margin-bottom: 0.4rem; }
+
+@media (max-width: 560px) {
+  /* Tighter hero so the example answer shows up on the first screen */
+  .site-header { padding-top: 0.8rem; flex-wrap: nowrap; }
+  .site-header::after { display: none; }
+  .site-header { border-bottom: 1.5px solid var(--ink); padding-bottom: 0.7rem; }
+  .wordmark { font-size: 1.2rem; gap: 0.35rem; }
+  .wordmark-frog { width: 2.3rem; }
+  .price-box { font-size: 0.72rem; padding: 0.25rem 0.45rem 0.3rem; max-width: 10.5rem; }
+  .price-box strong { font-size: 0.7rem; }
+  main { padding-top: 1.25rem; }
+  h1 { margin-bottom: 0.55rem; }
+  .lede { margin-bottom: 1.1rem; }
+  .plate-foot { margin-top: 0.8rem; }
+  .examples { margin-top: 0.9rem; }
+  .result { margin-top: 1.25rem; }
+  .examples { flex-wrap: nowrap; }
+  .examples .chips {
+    flex-wrap: nowrap;
+    overflow-x: auto;
+    scrollbar-width: none;
+    margin-right: calc(-1 * var(--gutter));   /* let the row run to the screen edge */
+    padding: 0.2rem var(--gutter) 0.35rem 0.1rem;
+    scroll-snap-type: x proximity;
+  }
+  .examples .chips::-webkit-scrollbar { display: none; }
+  .examples .chip { white-space: nowrap; scroll-snap-align: start; }
+  /* Phones: "Check it" fills the row, "Clear" sits beside it, the hint goes underneath */
+  .plate-btn { flex: 1 1 auto; }
+  .plate-hint { flex-basis: 100%; }
+}
+
+/* Desktop: headline and input on the left, the example answer beside them */
+@media (min-width: 1000px) {
+  body:not(.page) .site-header, body:not(.page) main, body:not(.page) .site-footer { max-width: 72rem; }
+  body:not(.page) main {   /* the tool page only; guides keep one reading column */
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) minmax(0, 26rem);
+    grid-template-areas:
+      "h1     ."
+      "lede   ."
+      "form   example"
+      "chips  example"
+      "status status"
+      "result result"
+      "guides guides";
+    column-gap: 3.5rem;
+    align-items: start;
+  }
+  main > h1 { grid-area: h1; }
+  main > .lede { grid-area: lede; }
+  main > #idea-form { grid-area: form; }
+  main > .examples { grid-area: chips; }
+  main > .status { grid-area: status; }
+  main > #example { grid-area: example; align-self: start; margin-top: 0; }   /* top edge on the idea box's line */
+  main > #result { grid-area: result; max-width: 50rem; }
+  main > .guides { grid-area: guides; max-width: 50rem; }
+  /* In the narrow column the example uses the stacked layout: frog over the verdict */
+  #example .card-head {
+    grid-template-areas:
+      "re      frog"
+      "verdict verdict"
+      "reason  reason";
+    align-items: end;
+    column-gap: 0.75rem;
+  }
+  #example .sticker { width: 6.5rem; align-self: end; margin: 0 0 0.1rem; }
+  #example .sticker-frog.look-left .pupil { transform: translate(-12px, 8px); }
+  #example .verdict { font-size: 2.6rem; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .frog .face-sip { display: none !important; }
+  .frog .face { opacity: 1 !important; }
+  .frog .mug { transform: none !important; }
+  .frog .arm { display: none !important; }
+  *, *::before, *::after { animation: none !important; transition: none !important; scroll-behavior: auto !important; }
+  .plate:focus-within, .chip:hover, .row:hover, .plate-btn:hover, .again-btn:hover { transform: none; }
+}
+
+/* ==========================================================================
+   Take it further: the prompt kit inside the answer
+   ========================================================================== */
+
+.kit-lede { margin: -0.3rem 0 0.75rem; }
+.rows > li > details { flex: 1; min-width: 0; }   /* kit rows fill the width like every other row */
+.kit-item > summary { list-style: none; cursor: pointer; }
+.kit-item > summary::-webkit-details-marker { display: none; }
+.kit-item[open] > summary { border-bottom-left-radius: 0; border-bottom-right-radius: 0; }
+.kit-item[open] > summary .row-cue { visibility: hidden; }
+.kit-text {
+  margin: 0;
+  padding: 0.85rem 0.9rem;
+  border: 1.5px solid var(--ink);
+  border-top: 0;
+  background: var(--paper);
+  font: 0.86rem/1.5 ui-monospace, "SF Mono", Menlo, Consolas, monospace;
+  white-space: pre-wrap;
+  overflow-wrap: anywhere;
+  max-height: 22rem;
+  overflow: auto;
+}
+.kit-copy {
+  margin: 0.6rem 0 0.4rem;
+  min-height: 2.75rem;
+  padding: 0.5rem 1.1rem;
+  font: inherit;
+  font-weight: 700;
+  border: 2px solid var(--ink);
+  border-radius: var(--radius-sm);
+  background: var(--surface);
+  color: var(--ink);
+  cursor: pointer;
+}
+@media (hover: hover) { .kit-copy:hover { background: var(--lime-tint); } }
+.read-next { margin-top: 0.9rem; }
+.read-next a { font-weight: 600; }
+
+/* Home: the guides list under the tool */
+.guides { margin-top: 2.5rem; }
+.guides h2 { font-size: 1.35rem; font-weight: 800; letter-spacing: -0.02em; margin: 0 0 0.8rem; }
+.guides-more { margin: 0.9rem 0 0; font-weight: 600; }
+
+/* Footer links */
+.footer-nav { display: flex; flex-wrap: wrap; gap: 0.4rem 1.25rem; margin: 0 0 0.9rem; }
+.footer-nav a { font-weight: 600; display: inline-flex; align-items: center; min-height: 2.75rem; }
+
+/* ==========================================================================
+   Article pages: the Break Room guides, About, What it costs
+   ========================================================================== */
+
+.page main { max-width: 46rem; }
+.crumbs { margin: 0 0 1rem; font-size: 0.92rem; color: var(--muted); }
+.crumbs a { color: var(--muted); }
+.page h1 { font-size: clamp(2.1rem, 6.5vw, 3.2rem); max-width: 20ch; margin-bottom: 1.1rem; }
+
+/* The frog's take: the answer first, in the frog's voice */
+.take {
+  display: flex;
+  gap: 0.9rem;
+  align-items: flex-start;
+  margin: 0 0 2rem;
+  padding: 1rem 1.1rem;
+  background: var(--surface);
+  border: 2px solid var(--ink);
+  border-radius: var(--radius);
+  box-shadow: 4px 4px 0 var(--shadow);
+}
+.take img { width: 4.25rem; height: auto; flex: none; margin-top: 0.15rem; }
+.take-label { margin: 0 0 0.2rem; font-size: 0.78rem; font-weight: 700; letter-spacing: 0.1em; text-transform: uppercase; color: var(--deep); }
+.take blockquote { margin: 0; font-size: 1.12rem; line-height: 1.5; }
+
+.prose { font-size: 1.08rem; line-height: 1.65; }
+.prose h2 { font-size: 1.45rem; font-weight: 800; letter-spacing: -0.02em; line-height: 1.2; margin: 2.2rem 0 0.6rem; }
+.prose h3 { font-size: 1.12rem; font-weight: 700; margin: 1.4rem 0 0.35rem; }
+.prose p, .prose ul, .prose ol { margin: 0 0 1rem; max-width: var(--measure); }
+.prose li { margin-bottom: 0.4rem; }
+.prose .aside { color: var(--muted); font-style: normal; border-left: 3px solid var(--rule); padding-left: 0.8rem; }
+.table-wrap { overflow-x: auto; margin: 0 0 1.25rem; }
+.prose table { border-collapse: collapse; width: 100%; font-size: 0.98rem; }
+.prose th, .prose td { text-align: left; vertical-align: top; padding: 0.55rem 0.7rem; border-bottom: 1px solid var(--rule); }
+.prose th { font-size: 0.78rem; letter-spacing: 0.08em; text-transform: uppercase; color: var(--deep); border-bottom: 1.5px solid var(--ink); }
+
+.cta-box {
+  margin: 2.2rem 0;
+  padding: 1.1rem 1.2rem;
+  border: 2px solid var(--ink);
+  border-radius: var(--radius);
+  background: var(--surface);
+}
+.cta-box p { margin: 0 0 0.8rem; }
+.cta-box .plate-btn { display: inline-flex; align-items: center; text-decoration: none; }
+
+.faq h3 { margin-top: 1.2rem; }
+.sources { margin-top: 2.5rem; padding-top: 1rem; border-top: 1px solid var(--rule); font-size: 0.95rem; color: var(--muted); }
+.sources h2 { font-size: 1rem; margin: 0 0 0.5rem; }
+.sources ul { padding-left: 1.1rem; }
+.related { margin-top: 2rem; }
+.related h2 { font-size: 1.15rem; margin: 0 0 0.7rem; }
+
+.hub-group { margin-top: 2rem; }
+.hub-group h2 { font-size: 0.8rem; letter-spacing: 0.1em; text-transform: uppercase; color: var(--deep); margin: 0 0 0.6rem; }
+
+.who-photo { float: right; width: 7.5rem; height: 7.5rem; border-radius: 50%; object-fit: cover; margin: 0 0 1rem 1.25rem; shape-outside: circle(); border: 2px solid var(--ink); }
+@media (max-width: 560px) { .who-photo { width: 5.5rem; height: 5.5rem; } }
+
+/* The help offer: quiet, plain links (one filled button per screen) */
+.help-note { margin-top: 1.1rem; padding-top: 0.9rem; border-top: 1px solid var(--rule); }
+.help-note p, .help-line { margin: 0; font-size: 0.98rem; color: var(--muted); }
+.help-line { margin-top: 0.9rem; }
+.help-note a, .help-line a { font-weight: 600; }
+.prose .plate-btn { text-decoration: none; display: inline-flex; align-items: center; color: var(--on-lime); }
+.text-btn { display: inline-flex; align-items: center; min-height: 2.75rem; font-weight: 600; }   /* a standalone link gets a full 44px target */
+
+/* Article pages: header, content and footer share one left edge */
+.page .site-header, .page main, .page .site-footer { max-width: 46rem; }
+.memo-row { display: block; }   /* FROM: Gary / RE: your idea */
+
+/* ---- Frank's idle sip (frank.js picks one on-screen Frank now and then) ------- */
+.frog.is-idle-sip .mug { animation: mug-idle-sip 2.6s ease-in-out; }
+.frog.is-idle-sip .arm { animation: arm-idle-sip 2.6s ease-in-out; }
+.frog.is-idle-sip .face:not(.face-sip) { animation: idle-face-away 2.6s step-end; }
+.frog.is-idle-sip .face-sip { display: inline; opacity: 0; animation: idle-face-in 2.6s step-end; }
+
+   /* eyes open once the mug is on its way down */
+
+@media (prefers-reduced-motion: reduce) {
+  .frog.is-idle-sip .mug, .frog.is-idle-sip .arm, .frog.is-idle-sip .face { animation: none !important; }
+  .frog.is-idle-sip .face-sip { display: none !important; }
+}
+/* An inline Frank in an article header or note card sizes like the old image did */
+.take .frog { width: 4.25rem; height: auto; flex: none; margin-top: 0.15rem; }
+
+/* The tilted mug: rim and coffee flatten, the underside peeks out. It swaps in
+   on the same beats as the sip face, so the two mugs are never shown together. */
+.frog .mug-tilt { opacity: 0; }   /* loaded but invisible between sips, so it never pops in late */
+
+.frog.is-idle-sip .mug-tilt { display: inline; opacity: 0; animation: idle-face-in 2.6s step-end; }
+@media (prefers-reduced-motion: reduce) {
+  .frog .mug-tilt { display: none !important; }
+  .frog .mug-flat { opacity: 1 !important; animation: none !important; }
+}
+
+/* ==========================================================================
+   Frank's sip, animated the way a cartoonist would (overrides the earlier
+   keyframes of the same names; later @keyframes win):
+   - anticipation: a small dip before the lift
+   - the tilt deepens a little while he drinks
+   - follow-through: a soft settle as the mug comes down
+   - the flat and tilted mugs crossfade during the fast part of the lift,
+     where motion hides the change, instead of cutting at the top
+   - the front forearm rides with the mug, clipped at his bottom edge, and
+     only shows while the mug is off the table
+   ========================================================================== */
+
+/* Loading loop, 3.2s */
+@keyframes mug-sip-loop {
+  0%, 12%   { transform: none; }
+  16%       { transform: translate(0, 6px); }
+  32%       { transform: translate(84px, -156px) rotate(16deg); }
+  40%, 56%  { transform: translate(86px, -160px) rotate(19deg); }
+  62%       { transform: translate(84px, -156px) rotate(16deg); }
+  76%       { transform: translate(0, 4px); }
+  80%, 100% { transform: none; }
+}
+@keyframes face-away-mid { 0% { opacity: 1; } 27% { opacity: 0; } 64%, 100% { opacity: 1; } }
+@keyframes face-in-mid   { 0% { opacity: 0; } 27% { opacity: 1; } 64%, 100% { opacity: 0; } }
+
+@keyframes tilt-loop { 0%, 21% { opacity: 0; } 26%, 64% { opacity: 1; } 70%, 100% { opacity: 0; } }
+@keyframes arm-loop  { 0% { opacity: 0; } 13% { opacity: 1; } 79%, 100% { opacity: 0; } }
+
+/* Landing, 1.5s: starts mid-sip, lowers, settles */
+@keyframes mug-sip-once {
+  0%, 30%   { transform: translate(86px, -160px) rotate(19deg); }
+  38%       { transform: translate(84px, -156px) rotate(16deg); }
+  80%       { transform: translate(0, 4px); }
+  90%, 100% { transform: none; }
+}
+
+@keyframes tilt-once { 0%, 50% { opacity: 1; } 60%, 100% { opacity: 0; } }
+@keyframes arm-once  { 0% { opacity: 1; } 88%, 100% { opacity: 0; } }
+
+.sticker.is-sipping .mug-tilt { display: inline; animation: tilt-once 1.5s linear both; }
+
+/* Idle sip, 2.6s */
+@keyframes mug-idle-sip {
+  0%        { transform: none; }
+  8%        { transform: translate(0, 6px); }
+  28%       { transform: translate(84px, -156px) rotate(16deg); }
+  36%, 60%  { transform: translate(86px, -160px) rotate(19deg); }
+  66%       { transform: translate(84px, -156px) rotate(16deg); }
+  88%       { transform: translate(0, 4px); }
+  96%, 100% { transform: none; }
+}
+@keyframes idle-face-away { 0% { opacity: 1; } 26% { opacity: 0; } 72%, 100% { opacity: 1; } }
+@keyframes idle-face-in   { 0% { opacity: 0; } 26% { opacity: 1; } 72%, 100% { opacity: 0; } }
+
+@keyframes tilt-idle { 0%, 16% { opacity: 0; } 23%, 70% { opacity: 1; } 78%, 100% { opacity: 0; } }
+@keyframes arm-idle  { 0% { opacity: 0; } 4% { opacity: 1; } 96%, 100% { opacity: 0; } }
+
+.frog.is-idle-sip .mug-tilt { display: inline; animation: tilt-idle 2.6s linear; }
+
+@media (prefers-reduced-motion: reduce) {
+}
+
+/* No see-through mid-swap: the tilted mug fades in ON TOP while the flat mug
+   stays solid underneath, and the flat mug only drops out once it's covered
+   (and comes back underneath before the tilted one fades away). */
+@keyframes flat-loop { 0% { opacity: 1; } 26% { opacity: 0; } 64%, 100% { opacity: 1; } }
+@keyframes flat-once { 0% { opacity: 0; } 50%, 100% { opacity: 1; } }
+@keyframes flat-idle { 0% { opacity: 1; } 23% { opacity: 0; } 70%, 100% { opacity: 1; } }
+
+.sticker.is-sipping .mug-flat { animation: flat-once 1.5s step-end both; }
+.frog.is-idle-sip .mug-flat { animation: flat-idle 2.6s step-end; }
+
+/* The earlier arm is back (behind the body, elbow out to the side), retimed to
+   the new lift: it grows out from the shoulder as the mug rises, holds while he
+   drinks, and folds away as the mug comes down. The front forearm is retired. */
+@keyframes arm-sip-loop {
+  0%, 14%   { opacity: 0; transform: scale(0.4); }
+  32%, 62%  { opacity: 1; transform: none; }
+  80%, 100% { opacity: 0; transform: scale(0.4); }
+}
+@keyframes arm-sip-once {
+  0%, 38%   { opacity: 1; transform: none; }
+  85%, 100% { opacity: 0; transform: scale(0.4); }
+}
+@keyframes arm-idle-sip {
+  0%, 6%    { opacity: 0; transform: scale(0.4); }
+  28%, 66%  { opacity: 1; transform: none; }
+  92%, 100% { opacity: 0; transform: scale(0.4); }
+}
+
+/* About: Frank's one-line introduction, with a small sipping Frank beside it */
+.frank-intro { display: flex; align-items: center; gap: 1rem; }
+.frank-intro .frog { width: 5.5rem; height: auto; flex: none; }
+.take .take-photo { width: 4.25rem; height: 4.25rem; border-radius: 50%; object-fit: cover; border: 2px solid var(--ink); flex: none; }
+
+/* ---- Frank thinks in the answer card (replaces the separate loading Frank) ----- */
+.loading-verdict, .loading-note { display: none; }
+.result.is-loading .loading-verdict { display: block; }
+.result.is-loading .loading-note { display: block; grid-area: reason; margin: 0.6rem 0 0; color: var(--muted); font-size: 1.05rem; }
+.result.is-loading .loading-note:empty { display: none; }
+.result.is-loading .verdict:not(.loading-verdict),
+.result.is-loading .reason,
+.result.is-loading .facts,
+.result.is-loading .part,
+.result.is-loading .again-btn,
+.result.is-loading .example-foot { display: none; }
+.result.is-loading .sticker-frog .mug { animation: mug-sip-loop 3.2s ease-in-out infinite; }
+.result.is-loading .sticker-frog .mug-flat { animation: flat-loop 3.2s step-end infinite; }
+.result.is-loading .sticker-frog .mug-tilt { display: inline; animation: tilt-loop 3.2s linear infinite; }
+.result.is-loading .sticker-frog .arm { animation: arm-sip-loop 3.2s ease-in-out infinite; }
+.result.is-loading .sticker-frog .face:not(.face-sip) { animation: face-away-mid 3.2s step-end infinite; }
+.result.is-loading .sticker-frog .face-sip { display: inline; opacity: 0; animation: face-in-mid 3.2s step-end infinite; }
+
+/* Office-manual step numbers in sequential guides */
+.prose h2 .step { color: var(--accent-text); margin-right: 0.15em; }
+/* Colophon: who made it, the typeface, the date, like the back page of a manual */
+.colophon { margin-top: 1.1rem; padding-top: 0.8rem; border-top: 1px solid var(--rule); font-size: 0.85rem; letter-spacing: 0.01em; }
+.colophon .label { font-weight: 700; letter-spacing: 0.1em; text-transform: uppercase; font-size: 0.72rem; color: var(--deep); margin-right: 0.5em; }
+
+/* Footer: links separated by middle dots, then the fine print and the colophon */
+.footer-nav { gap: 0 0.1rem; }
+.footer-nav { align-items: center; }
+.footer-nav .dot { color: var(--muted); margin: 0 0.6rem; }
+.fine-print { margin-top: 1.1rem; padding-top: 0.8rem; border-top: 1px solid var(--rule); font-size: 0.85rem; }
+.fine-print .label, .colophon .label { display: block; margin: 0 0 0.25rem; font-weight: 700; letter-spacing: 0.1em; text-transform: uppercase; font-size: 0.72rem; color: var(--deep); }
+.colophon { border-top: 0; padding-top: 0; margin-top: 1.1rem; }
+.site-footer .colophon { margin-top: 1.25rem; }   /* beats .site-footer p { margin: 0 } */
+
+/* A name shown for reference only (no registrar link): same row, no hover, no pointer */
+.row.row-static { cursor: default; background: var(--surface); }
+@media (hover: hover) { .row.row-static:hover { background: var(--surface); transform: none; box-shadow: none; } }
+
+/* "When to get real help" box on the Build it yourself guides */
+.help-box { margin: 2.2rem 0 0; padding: 1rem 1.2rem; border: 1.5px solid var(--ink); border-radius: var(--radius); background: var(--paper); }
+.help-box-label { margin: 0 0 0.4rem !important; font-size: 0.78rem; font-weight: 700; letter-spacing: 0.1em; text-transform: uppercase; color: var(--accent-text); }
+.help-box ul { margin: 0 0 0.8rem; }
+.help-box p:last-child { margin-bottom: 0; }
+
+/* A message people can adapt: set off like a memo pasted into the guide */
+.prose blockquote.script { margin: 0 0 1rem; padding: 0.9rem 1rem; background: var(--surface); border: 1.5px solid var(--rule); border-left: 4px solid var(--deep); border-radius: var(--radius-sm); font-size: 1.02rem; line-height: 1.55; }
+
+/* Masthead links (replaced the price box): small caps, ink, current section underlined */
+.site-nav { display: flex; align-items: center; gap: 0 1.1rem; }
+.site-nav a { display: inline-flex; align-items: center; min-height: 2.75rem; font-weight: 700; font-size: 0.8rem; letter-spacing: 0.09em; text-transform: uppercase; color: var(--ink); text-decoration: none; border-bottom: 2px solid transparent; }
+.site-nav a[aria-current="page"] { border-bottom-color: var(--accent-text); }
+@media (hover: hover) { .site-nav a:hover { border-bottom-color: var(--ink); } }
+@media (max-width: 400px) { .site-nav .nav-about { display: none; } .site-nav { gap: 0 0.9rem; } .site-nav a { font-size: 0.74rem; } }
+/* The promise, under the Check it button where people decide */
+.promise { margin: 0.35rem 0 0; font-size: 0.92rem; font-weight: 600; color: var(--deep); }
+.plate .promise { margin-top: 0.2rem; }   /* sits right under the hint, one line on phones */
+
+/* About: Mark as a magazine contributor portrait (warm duotone, no circle, no border), placed before Frank's introduction */
+.contributor { display: flex; align-items: flex-end; gap: 0.9rem; margin: 2rem 0 0.4rem; }
+.contributor img { width: 100px; height: 125px; object-fit: cover; display: block; }
+.contributor figcaption { font-size: 0.95rem; color: var(--muted); line-height: 1.35; padding-bottom: 0.1rem; }
+.contributor .label { display: block; font-weight: 700; letter-spacing: 0.1em; text-transform: uppercase; font-size: 0.74rem; color: var(--deep); }
+/* The costs card uses the same portrait: a small rectangle, no circle, no border */
+.take .take-photo { width: 4.25rem; height: auto; aspect-ratio: 4 / 5; border-radius: 0; border: 0; object-fit: cover; }
+
+/* About: a small round sepia portrait at the top; the headline and text wrap around the circle (as on QuotaBird) */
+.page .who-photo { float: left; width: 120px; height: 120px; border-radius: 50%; border: 0; object-fit: cover;
+  margin: 0.2rem 1.25rem 0.6rem 0; shape-outside: circle(50%); shape-margin: 0.6rem; }
+@media (max-width: 560px) { .page .who-photo { width: 96px; height: 96px; margin-right: 1rem; } }
+.page main h2 { clear: both; }   /* sections start below the portrait */
+/* The costs card: the same round portrait */
+.take .take-photo { width: 4.25rem; height: 4.25rem; aspect-ratio: auto; border-radius: 50%; border: 0; object-fit: cover; }

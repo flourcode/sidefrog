@@ -1,0 +1,79 @@
+# Amplify custom headers for SideFrog.
+# Pages (HTML) are always revalidated, so a deploy shows up on the next visit.
+# Stylesheets, scripts and images are linked with ?v=<fingerprint> (make_pages.py
+# stamps them), so they can be cached for a year: a changed file gets a new
+# address and is fetched fresh.
+customHeaders:
+  # Security headers on every response.
+  #  - HSTS: browsers only ever use https for sidefrog.com (add "; preload" later if you submit to the preload list)
+  #  - nosniff: files are only treated as the type the server says
+  #  - Referrer-Policy: other sites see only "sidefrog.com", never the page path
+  #  - Permissions-Policy: no camera, mic, location, payment or FLoC-style tracking
+  #  - CSP: scripts, styles and requests only from this site, Google Fonts, the
+  #    SideFrog Lambda and (if you turn it on) Google Analytics. If you add a new
+  #    outside service, add its address here or the browser will block it.
+  - pattern: '**/*'
+    headers:
+      - key: Strict-Transport-Security
+        value: 'max-age=31536000; includeSubDomains'
+      - key: X-Content-Type-Options
+        value: 'nosniff'
+      - key: Referrer-Policy
+        value: 'strict-origin-when-cross-origin'
+      - key: Permissions-Policy
+        value: 'camera=(), microphone=(), geolocation=(), payment=(), usb=(), interest-cohort=()'
+      - key: Content-Security-Policy
+        value: "default-src 'self'; script-src 'self' https://www.googletagmanager.com; style-src 'self' https://fonts.googleapis.com; font-src https://fonts.gstatic.com; img-src 'self' data: https://www.googletagmanager.com https://*.google-analytics.com; connect-src 'self' https://4s7uc7iyyeh7p4sknfpo6agllq0ahdff.lambda-url.us-east-1.on.aws https://*.google-analytics.com https://*.analytics.google.com https://www.googletagmanager.com; object-src 'none'; base-uri 'self'; form-action 'self'; frame-ancestors 'none'; upgrade-insecure-requests"
+  - pattern: '**/*.html'
+    headers:
+      - key: Cache-Control
+        value: 'no-cache'
+  - pattern: '/'
+    headers:
+      - key: Cache-Control
+        value: 'no-cache'
+  - pattern: '**/*.css'
+    headers:
+      - key: Cache-Control
+        value: 'public, max-age=31536000, immutable'
+  - pattern: '**/*.js'
+    headers:
+      - key: Cache-Control
+        value: 'public, max-age=31536000, immutable'
+  - pattern: '**/*.svg'
+    headers:
+      - key: Cache-Control
+        value: 'public, max-age=31536000, immutable'
+  - pattern: '**/*.png'
+    headers:
+      - key: Cache-Control
+        value: 'public, max-age=31536000, immutable'
+  - pattern: 'mark-mono.jpg'
+    headers:
+      - key: Cache-Control
+        value: 'public, max-age=31536000, immutable'
+  - pattern: 'mark.jpg'
+    headers:
+      - key: Cache-Control
+        value: 'public, max-age=31536000, immutable'
+  # Share cards and the files apps look up by fixed name: a day, not a year
+  - pattern: 'og/*'
+    headers:
+      - key: Cache-Control
+        value: 'public, max-age=86400'
+  - pattern: '**/*.ico'
+    headers:
+      - key: Cache-Control
+        value: 'public, max-age=86400'
+  - pattern: '**/*.webmanifest'
+    headers:
+      - key: Cache-Control
+        value: 'public, max-age=86400'
+  - pattern: '**/*.txt'
+    headers:
+      - key: Cache-Control
+        value: 'public, max-age=3600'
+  - pattern: '**/*.xml'
+    headers:
+      - key: Cache-Control
+        value: 'public, max-age=3600'

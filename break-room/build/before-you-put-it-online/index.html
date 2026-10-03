@@ -1,0 +1,106 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <title>Before You Put It on the Internet: Security for First-Time Builders | SideFrog</title>
+  <meta name="description" content="The security and cost basics to check before you share a vibe-coded site: secret keys, spending limits, rate limits, user input, privacy and backups.">
+  <link rel="canonical" href="https://sidefrog.com/break-room/build/before-you-put-it-online/">
+  <meta property="og:site_name" content="SideFrog">
+  <meta property="og:image" content="https://sidefrog.com/og/before-you-put-it-online.jpg">
+  <meta property="og:image:width" content="1200">
+  <meta property="og:image:height" content="630">
+  <meta property="og:image:alt" content="SideFrog: Before You Put It on the Internet: Security for First-Time Builders | SideFrog">
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:image" content="https://sidefrog.com/og/before-you-put-it-online.jpg">
+  <meta property="og:title" content="Before You Put It on the Internet: Security for First-Time Builders | SideFrog">
+  <meta property="og:description" content="The security and cost basics to check before you share a vibe-coded site: secret keys, spending limits, rate limits, user input, privacy and backups.">
+  <meta property="og:type" content="article">
+  <meta property="og:url" content="https://sidefrog.com/break-room/build/before-you-put-it-online/">
+  <meta name="theme-color" content="#FBF7EF">
+  <link rel="icon" type="image/svg+xml" href="../../../frogs/favicon.svg?v=e31ddc16">
+  <link rel="icon" type="image/png" sizes="32x32" href="../../../favicon-32.png?v=cd3c4402">
+  <link rel="icon" href="../../../favicon.ico?v=30c21763" sizes="any">
+  <link rel="apple-touch-icon" href="../../../apple-touch-icon.png?v=fa6ec965">
+  <link rel="manifest" href="../../../site.webmanifest?v=9ac89d47">
+  <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin><link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,400..800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="../../../styles.css?v=2879e390">
+  <script type="application/ld+json">{"@context": "https://schema.org", "@type": "FAQPage", "mainEntity": [{"@type": "Question", "name": "My site is tiny. Does any of this matter?", "acceptedAnswer": {"@type": "Answer", "text": "The bill doesn't care how small the site is. A leaked AI key or an unlimited endpoint can run up charges in an afternoon, and bots find new sites within days."}}, {"@type": "Question", "name": "How do I know if my key is in my page?", "acceptedAnswer": {"@type": "Answer", "text": "Open your site, right-click and choose View Page Source, then search for the first few characters of your key. If it's there, everyone can see it. Ask your AI tool to move the call into a server function."}}, {"@type": "Question", "name": "Do I need a privacy policy?", "acceptedAnswer": {"@type": "Answer", "text": "If you collect anything about people, including analytics, a short plain-English page saying what you collect and why is the honest minimum. Some laws require more; that's a question for a lawyer if you collect much."}}, {"@type": "Question", "name": "Can I just ask the AI to make it secure?", "acceptedAnswer": {"@type": "Answer", "text": "Ask, but check. Have it walk you through this list item by item for your actual site, and test each change yourself."}}]}</script><script type="application/ld+json">{"@context": "https://schema.org", "@type": "Article", "headline": "Before you put it on the internet", "description": "The security and cost basics to check before you share a vibe-coded site: secret keys, spending limits, rate limits, user input, privacy and backups.", "dateModified": "2026-10-03", "url": "https://sidefrog.com/break-room/build/before-you-put-it-online/", "author": {"@type": "Person", "name": "Mark Flournoy", "url": "https://sidefrog.com/about/"}, "publisher": {"@type": "Organization", "name": "SideFrog", "url": "https://sidefrog.com/"}}</script><script type="application/ld+json">{"@context": "https://schema.org", "@type": "BreadcrumbList", "itemListElement": [{"@type": "ListItem", "position": 1, "name": "SideFrog", "item": "https://sidefrog.com/"}, {"@type": "ListItem", "position": 2, "name": "Break Room", "item": "https://sidefrog.com/break-room/"}, {"@type": "ListItem", "position": 3, "name": "Before you put it on the internet", "item": "https://sidefrog.com/break-room/build/before-you-put-it-online/"}]}</script>
+</head>
+<body class="page">
+  <header class="site-header">
+    <a class="wordmark" href="../../../"><svg class="frog wordmark-frog can-sip look-right" data-mood="smirk" viewBox="19 21 576 524" aria-hidden="true" focusable="false"><g class="arm"><path d="M150 292 Q 98 330 82 368 Q 72 404 150 426" fill="none" stroke="#111" stroke-width="100" stroke-linecap="round" stroke-linejoin="round"/><path d="M150 292 Q 98 330 82 368 Q 72 404 150 426" fill="none" stroke="#8DAA3F" stroke-width="80" stroke-linecap="round" stroke-linejoin="round"/><path d="M152 290 L112 322 L96 356 L94 392 L112 414 L152 424 Z" fill="#8DAA3F"/></g><image href="../../../frogs/coffee-body.svg?v=f704ffe4" width="640" height="550"/><g class="face face-smirk"><circle cx="202" cy="158" r="48" fill="#fff" stroke="#111" stroke-width="10" stroke-linecap="round" stroke-linejoin="round"/><ellipse class="pupil" cx="202" cy="162" rx="13" ry="19" fill="#111"/><circle cx="394" cy="161" r="48" fill="#fff" stroke="#111" stroke-width="10" stroke-linecap="round" stroke-linejoin="round"/><ellipse class="pupil" cx="394" cy="165" rx="13" ry="19" fill="#111"/><path d="M180 258 Q275 302 372 256" fill="none" stroke="#111" stroke-width="10" stroke-linecap="round" stroke-linejoin="round"/><path d="M168 250 Q174 258 182 258" fill="none" stroke="#111" stroke-width="8" stroke-linecap="round" stroke-linejoin="round"/><ellipse cx="249" cy="206" rx="5" ry="6.5" fill="#111"/><ellipse cx="282" cy="206" rx="5" ry="6.5" fill="#111"/></g><g class="face face-sip"><path d="M164 160 Q202 186 240 160" fill="none" stroke="#111" stroke-width="10" stroke-linecap="round" stroke-linejoin="round"/><path d="M356 163 Q394 189 432 163" fill="none" stroke="#111" stroke-width="10" stroke-linecap="round" stroke-linejoin="round"/><ellipse cx="262" cy="268" rx="15" ry="11" fill="#7A2420" stroke="#111" stroke-width="8" stroke-linecap="round" stroke-linejoin="round"/><ellipse cx="249" cy="206" rx="5" ry="6.5" fill="#111"/><ellipse cx="282" cy="206" rx="5" ry="6.5" fill="#111"/></g><g class="mug"><g class="mug-flat"><image href="../../../frogs/coffee-mug.svg?v=08e7a455" width="640" height="550"/></g><g class="mug-tilt"><image href="../../../frogs/coffee-mug-tilt.svg?v=e2a25595" width="640" height="550"/></g></g></svg>SideFrog</a>
+    <nav class="site-nav" aria-label="Sections"><a href="../../../break-room/">Break Room</a><a href="../../../break-room/build/vibe-coding-101/" aria-current="page">Build it</a><a class="nav-about" href="../../../about/">About</a></nav>
+  </header>
+
+  <main>
+    <p class="crumbs"><a href="../../../break-room/">Break Room</a> / Build it yourself</p>
+    
+    <h1>Before you put it on the internet</h1>
+    <div class="take">
+      <svg class="frog take-frog can-sip look-right" data-mood="smirk" viewBox="19 21 576 524" aria-hidden="true" focusable="false"><g class="arm"><path d="M150 292 Q 98 330 82 368 Q 72 404 150 426" fill="none" stroke="#111" stroke-width="100" stroke-linecap="round" stroke-linejoin="round"/><path d="M150 292 Q 98 330 82 368 Q 72 404 150 426" fill="none" stroke="#8DAA3F" stroke-width="80" stroke-linecap="round" stroke-linejoin="round"/><path d="M152 290 L112 322 L96 356 L94 392 L112 414 L152 424 Z" fill="#8DAA3F"/></g><image href="../../../frogs/coffee-body.svg?v=f704ffe4" width="640" height="550"/><g class="face face-smirk"><circle cx="202" cy="158" r="48" fill="#fff" stroke="#111" stroke-width="10" stroke-linecap="round" stroke-linejoin="round"/><ellipse class="pupil" cx="202" cy="162" rx="13" ry="19" fill="#111"/><circle cx="394" cy="161" r="48" fill="#fff" stroke="#111" stroke-width="10" stroke-linecap="round" stroke-linejoin="round"/><ellipse class="pupil" cx="394" cy="165" rx="13" ry="19" fill="#111"/><path d="M180 258 Q275 302 372 256" fill="none" stroke="#111" stroke-width="10" stroke-linecap="round" stroke-linejoin="round"/><path d="M168 250 Q174 258 182 258" fill="none" stroke="#111" stroke-width="8" stroke-linecap="round" stroke-linejoin="round"/><ellipse cx="249" cy="206" rx="5" ry="6.5" fill="#111"/><ellipse cx="282" cy="206" rx="5" ry="6.5" fill="#111"/></g><g class="face face-sip"><path d="M164 160 Q202 186 240 160" fill="none" stroke="#111" stroke-width="10" stroke-linecap="round" stroke-linejoin="round"/><path d="M356 163 Q394 189 432 163" fill="none" stroke="#111" stroke-width="10" stroke-linecap="round" stroke-linejoin="round"/><ellipse cx="262" cy="268" rx="15" ry="11" fill="#7A2420" stroke="#111" stroke-width="8" stroke-linecap="round" stroke-linejoin="round"/><ellipse cx="249" cy="206" rx="5" ry="6.5" fill="#111"/><ellipse cx="282" cy="206" rx="5" ry="6.5" fill="#111"/></g><g class="mug"><g class="mug-flat"><image href="../../../frogs/coffee-mug.svg?v=08e7a455" width="640" height="550"/></g><g class="mug-tilt"><image href="../../../frogs/coffee-mug-tilt.svg?v=e2a25595" width="640" height="550"/></g></g></svg>
+      <div><p class="take-label">Frank would like a word</p><blockquote>Claude can write the code. It can also leave the front door unlocked and not mention it. Before you share the link, spend an hour on the boring stuff below.</blockquote></div>
+    </div>
+    <div class="prose">
+      
+      <p>Most of this takes minutes once you know to look. We'll use SideFrog itself as the example, since everything here was checked on this site.</p>
+      <p class="aside">You are now the IT department. Unfortunately, nobody approved the headcount.</p>
+
+      <h2>Keep secret keys off the page</h2>
+      <p>If your site uses an AI model, a map or a payment service, it has a secret key. Anything in your page's code can be read by anyone who visits, so a key in the page is a public key. Put the call behind a small server function instead, like an AWS Lambda, a Netlify Function or a Cloudflare Worker, and keep the key in that function's settings. SideFrog's Gemini key lives in its Lambda's settings and never reaches the browser.</p>
+      <p>Keep keys out of GitHub too. GitHub blocks pushes that contain recognized keys to public repositories by default, and it found over a million leaked secrets on public repositories in the first eight weeks of 2024 alone. If a key ever leaks, delete it and make a new one. Hiding the file afterwards doesn't help.</p>
+
+      <h2>Put a lid on the bill</h2>
+      <p>Set a budget alert the day you open a cloud or AI account, so you get an email before a mistake becomes expensive. If your provider lets you set a hard spending limit, set one. Then limit how often one visitor can use the expensive part: SideFrog allows six checks a minute and forty an hour from the same visitor, which is plenty for people and useless for a script.</p>
+
+      <h2>Don't trust what people type</h2>
+      <p>Check the length and shape of anything someone types before you use it. If it goes to an AI model, assume someone will try to talk the model into misbehaving. The security group OWASP lists this, called prompt injection, as the top risk for AI apps, and it warns that the hidden instructions you give the model can leak too. Don't put anything in those instructions you'd mind seeing on Reddit, and don't give the model the power to do anything you couldn't undo.</p>
+
+      <h2>Collect less</h2>
+      <p>Data you never store can't leak, and you never have to protect it. Skip accounts until you need them, don't log what people type, and make sure your privacy promise matches what the code actually does. SideFrog sends ideas to Gemini to write the answer and stores nothing, so that's what the fine print says.</p>
+
+      <h2>Turn on the free protections</h2>
+      <ul>
+        <li>Two-factor login on GitHub, your host, your registrar and your AI account.</li>
+        <li>HTTPS, which most hosts now turn on for you.</li>
+        <li>Security headers, a few lines of host settings that tell browsers to refuse common tricks. Ask your AI tool to write them for your host, then test that the site still works.</li>
+        <li>Automatic update alerts for the libraries you use, like GitHub's Dependabot.</li>
+      </ul>
+
+      <h2>Keep a way back</h2>
+      <p>Your GitHub history is your backup for the code. If the site stores anything people give you, back that up separately and try restoring it once. Turn on auto-renew for your domain, because losing it is the most common way a small site disappears.</p>
+
+      <div class="help-box">
+      <p class="help-box-label">When to get real help</p>
+      <p>Some things are worth paying a professional for, even on a side project:</p>
+      <ul>
+        <li>Taking payments. Use a hosted checkout like Stripe's so card numbers never touch your code.</li>
+        <li>Health, financial or other sensitive personal information.</li>
+        <li>Logins and passwords. Use a sign-in service instead of building your own.</li>
+        <li>Anything aimed at kids.</li>
+        <li>Real customers depending on it every day.</li>
+      </ul>
+      <p>That's where you stop being cheap. If you want a second pair of eyes before you get there, <a href="https://calendly.com/markflournoy/vibe-code?utm_source=sidefrog&amp;utm_medium=before-you-put-it-online" target="_blank" rel="noopener">pick a time with Mark</a> or <a href="https://www.linkedin.com/in/markflournoy/" target="_blank" rel="noopener">message him on LinkedIn</a>.</p>
+    </div>
+      <div class="cta-box">
+      <p><strong>Got an idea?</strong> SideFrog gives you a straight verdict, who'd pay, a first test to run and names with an open .com, in about ten seconds.</p>
+      <a class="plate-btn" href="../../../">Check your idea</a>
+      <p class="help-line">Want help building it? Mark helps people vibe code their first site with AI. <a href="https://calendly.com/markflournoy/vibe-code?utm_source=sidefrog&amp;utm_medium=before-you-put-it-online" target="_blank" rel="noopener">Pick a time with Mark</a> or <a href="https://www.linkedin.com/in/markflournoy/" target="_blank" rel="noopener">message him on LinkedIn</a>.</p>
+    </div>
+      <section class="faq"><h2>Questions people ask</h2><h3>My site is tiny. Does any of this matter?</h3><p>The bill doesn't care how small the site is. A leaked AI key or an unlimited endpoint can run up charges in an afternoon, and bots find new sites within days.</p><h3>How do I know if my key is in my page?</h3><p>Open your site, right-click and choose View Page Source, then search for the first few characters of your key. If it's there, everyone can see it. Ask your AI tool to move the call into a server function.</p><h3>Do I need a privacy policy?</h3><p>If you collect anything about people, including analytics, a short plain-English page saying what you collect and why is the honest minimum. Some laws require more; that's a question for a lawyer if you collect much.</p><h3>Can I just ask the AI to make it secure?</h3><p>Ask, but check. Have it walk you through this list item by item for your actual site, and test each change yourself.</p></section>
+      <section class="related"><h2>Read next</h2><ul class="rows"><li><a class="row" href="../../../break-room/build/six-users-now-what/"><span class="row-main">Six people use it. Now what?</span><span class="row-cue" aria-hidden="true">Read</span></a></li><li><a class="row" href="../../../break-room/build/vibe-coding-101/"><span class="row-main">Vibe coding 101: build the ugly first version</span><span class="row-cue" aria-hidden="true">Read</span></a></li><li><a class="row" href="../../../what-it-costs/"><span class="row-main">What it costs me to test an idea</span><span class="row-cue" aria-hidden="true">Read</span></a></li></ul></section>
+      <section class="sources"><h2>Sources</h2><p>Last checked October 3, 2026.</p><ul><li><a href="https://github.blog/news-insights/product-news/keeping-secrets-out-of-public-repositories/" rel="noopener">GitHub: Keeping secrets out of public repositories</a></li><li><a href="https://coralogix.com/ai-blog/owasp-top-10-for-llm-applications/" rel="noopener">Coralogix: OWASP Top 10 for LLM Applications (2025)</a></li></ul></section>
+    </div>
+  </main>
+
+  <footer class="site-footer">
+    <p class="footer-tag">Made for coffee breaks. Your manager remains uninformed.</p>
+    <nav class="footer-nav" aria-label="More from SideFrog"><a href="../../../break-room/">Break Room</a><span class="dot" aria-hidden="true">·</span><a href="../../../what-it-costs/">What it costs</a><span class="dot" aria-hidden="true">·</span><a href="../../../about/">About</a><span class="dot" aria-hidden="true">·</span><a href="../../../about/#help">Get help</a></nav>
+    <p class="fine-print"><span class="label">The fine print</span>Frank’s verdict is a quick AI read using Gemini 3.5 Flash-Lite, not market research. .com names are checked live at the registry. “Open” means no registry record was found, but premium or reserved names can still be unavailable, so confirm before you buy. Not legal, financial, or trademark advice. Your idea goes to Google’s Gemini to write the verdict; SideFrog itself doesn’t store what you type.</p>
+    <p class="colophon"><span class="label">Colophon</span>SideFrog is made by <a href="../../../about/">Mark Flournoy</a> in California. Vibe coded with Claude over a weekend for about $20. So yeah, <a href="../../../break-room/build/vibe-coding-101/">you can probably build your thing too</a>. Set in Bricolage Grotesque. Printed on the internet. Updated October 2026.</p>
+  </footer>
+  <script src="../../../analytics.js?v=ef6e6b98" defer></script>
+  <script src="../../../frank.js?v=fd02fdfa" defer></script>
+  <script src="../../../local-links.js?v=a3f9a95e" defer></script>
+</body>
+</html>
