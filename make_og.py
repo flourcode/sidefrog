@@ -40,8 +40,7 @@ body {{ background: {PAPER}; color: {INK}; font-family: "Bricolage Grotesque", s
 .frame {{ position: absolute; inset: 36px; border-top: 3px solid {INK}; }}
 .brand {{ position: absolute; left: 64px; top: 62px; display: flex; align-items: center; gap: 12px; font-weight: 800; font-size: 34px; letter-spacing: -0.03em; }}
 .brand svg {{ width: 62px; }}
-.price {{ position: absolute; right: 64px; top: 64px; border: 2px solid {INK}; background: {CARD}; padding: 8px 14px; font-size: 18px; line-height: 1.3; }}
-.price b {{ display: block; letter-spacing: 0.06em; font-size: 16px; }}
+.tagline {{ position: absolute; right: 64px; top: 66px; text-align: right; font-size: 20px; line-height: 1.3; color: #5A5A4A; }}
 .url {{ position: absolute; left: 64px; bottom: 54px; font-size: 24px; font-weight: 700; color: {INK}; }}
 """
 
@@ -59,7 +58,7 @@ h1 {{ position: absolute; left: 64px; top: 150px; width: 560px; font-size: 64px;
 </style></head><body>
 <div class="frame"></div>
 <div class="brand">{frank()}SideFrog</div>
-<div class="price"><b>PRICE: FREE.</b>No sign-up. We don’t save your idea.</div>
+<div class="tagline">Free advice from a frog<br>with no stake in your idea.</div>
 <h1>Thinking about making the leap from your 9-to-5?</h1>
 <p class="lede">Type a side hustle idea. Get a straight verdict in about ten seconds.</p>
 <div class="card">{frank("nah", "left")}
@@ -72,7 +71,21 @@ h1 {{ position: absolute; left: 64px; top: 150px; width: 560px; font-size: 64px;
 
 
 def page_card(p):
-    label = p.get("take_label", "A note from Frank") if p.get("take") else ("The Break Room" if p["path"] != "/about/" else "Made by Mark")
+    path = p["path"]
+    if p.get("take"):
+        label = p.get("take_label", "A note from Frank")
+    elif path.startswith("/side-kit/"):
+        label = "The Side Kit"
+    elif path == "/about/":
+        label = "Made by Mark"
+    else:
+        label = "The Break Room"
+    if path.startswith("/break-room/"):
+        where = "From the Break Room. Short guides for coffee breaks."
+    elif path.startswith("/side-kit/"):
+        where = "From the Side Kit. Prompts and a printable worksheet."
+    else:
+        where = "Made by Mark Flournoy. Free, no sign-up."
     title = html.escape(p["h1"])
     size = 74 if len(p["h1"]) <= 28 else 62 if len(p["h1"]) <= 44 else 54
     return f"""<!doctype html><html><head><link href="{FONT_URL}" rel="stylesheet"><style>{BASE_CSS}
@@ -83,10 +96,10 @@ h1 {{ position: absolute; left: 64px; top: 210px; width: 720px; font-size: {size
 </style></head><body>
 <div class="frame"></div>
 <div class="brand">{frank()}SideFrog</div>
-<div class="price"><b>PRICE: FREE.</b>No sign-up. We don’t save your idea.</div>
+<div class="tagline">Free advice from a frog<br>with no stake in your idea.</div>
 <p class="label">{html.escape(label)}</p>
 <h1>{title}</h1>
-<p class="where">From the Break Room. Short guides for testing a side hustle idea.</p>
+<p class="where">{html.escape(where)}</p>
 <div class="big">{frank("smirk", "left")}</div>
 <div class="url">sidefrog.com</div>
 </body></html>"""
