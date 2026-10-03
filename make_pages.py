@@ -158,6 +158,7 @@ def page_html(p):
   <link rel="icon" href="/favicon.ico" sizes="any">
   <link rel="apple-touch-icon" href="/apple-touch-icon.png">
   <link rel="manifest" href="/site.webmanifest">
+  <link rel="ard" type="application/json" href="/ard.json">
   {FONT}
   <link rel="stylesheet" href="/styles.css">
   {ld_html}
@@ -1150,9 +1151,53 @@ def main():
              {"source": f"https://www.{host}/<*>", "target": f"https://{host}/<*>", "status": "301", "condition": None}]
     rules += [{"source": p["path"].rstrip("/"), "target": p["path"], "status": "301", "condition": None}
               for p in PAGES.values()]
+    # /.well-known/ is skipped by zip deploys, so serve the AI-discovery manifest from the root there
+    rules += [{"source": f"/.well-known/{n}", "target": f"/{n}", "status": "200", "condition": None}
+              for n in ("ard.json", "ai-catalog.json")]
     rules.append({"source": "/<*>", "target": "/404.html", "status": "404", "condition": None})
     (ROOT / "amplify-redirects.json").write_text(json.dumps(rules, indent=2) + "\n", encoding="utf-8")
     print(f"built 404.html and amplify-redirects.json ({len(rules)} rules)")
+
+    # Agentic Resource Discovery (ARD v0.91) manifest, so AI agents and registries can
+    # find what SideFrog offers. Published at the spec's path (ard.json) and at its
+    # predecessor's (ai-catalog.json, which PageSpeed checks). Lists the website's
+    # resources only; the idea-check API is deliberately not advertised to agents.
+    host = BASE_URL.split("://", 1)[1]
+    updated = CHECKED_ISO + "T00:00:00Z"
+    def entry(ns, name, display, url, desc, queries, tags, caps=None):
+        e = {"@context": "https://agenticresourcediscovery.org/context/v1",
+             "identifier": f"urn:air:{host}:{ns}:{name}", "displayName": display,
+             "type": "text/markdown" if url.endswith(".txt") else "text/html",
+             "url": BASE_URL + url, "description": desc, "representativeQueries": queries,
+             "tags": tags, "version": "1.0", "updatedAt": updated}
+        if caps: e["capabilities"] = caps
+        return e
+    manifest = {"entries": [
+        entry("app", "idea-checker", "SideFrog idea checker", "/",
+              "Free side hustle idea checker. Type an idea and get a straight verdict, who would pay, a first test to run, a good sign to look for, what to watch out for, related searches, and business names whose .com is open. No sign-up; ideas aren't stored.",
+              ["is my side hustle idea any good", "check my business idea before I quit my job", "should I start a taco truck",
+               "find a business name with an available .com", "who would pay for my side business idea"],
+              ["side hustle", "small business", "idea validation", "business names"], ["SideHustleIdeaCheck", "DotComNameCheck"]),
+        entry("guides", "break-room", "The Break Room", "/break-room/",
+              "Short, plain guides for testing a side hustle idea, pricing it, finding first customers, building a simple site with AI, and leaving a steady job safely. General information, not legal, tax or financial advice.",
+              ["how do I test a business idea cheaply", "how much should I charge for my side hustle", "how do I get my first customers",
+               "how do I build a website with AI if I can't code", "what should I do before I quit my job to start a business"],
+              ["side hustle", "guides", "pricing", "first customers", "vibe coding"]),
+        entry("prompts", "side-kit", "The Side Kit", "/side-kit/",
+              "Ten copyable AI prompts for starting a side hustle, in the order you need them, plus a printable Leap Worksheet.",
+              ["AI prompts for starting a side hustle", "prompt to plan a pop-up test for my food business",
+               "help me talk to my partner about quitting my job", "printable worksheet for leaving my job"],
+              ["prompts", "side hustle", "worksheet"]),
+        entry("docs", "llms-txt", "SideFrog llms.txt", "/llms.txt",
+              "A plain-text map of SideFrog's pages for AI tools.",
+              ["what pages does SideFrog have", "SideFrog guides list"], ["llms.txt", "site map"]),
+    ]}
+    # Written to the site root: Amplify's zip deploys skip dot-folders like .well-known.
+    # amplify-redirects.json rewrites /.well-known/ard.json and /.well-known/ai-catalog.json
+    # to these files (status 200), so tools that only look there still find them.
+    for name in ("ard.json", "ai-catalog.json"):
+        (ROOT / name).write_text(json.dumps(manifest, indent=2) + "\n", encoding="utf-8")
+    print("built ard.json and ai-catalog.json (served at /.well-known/ too, via rewrites)")
 
     # The tool page (index.html) is hand-written, but its footer comes from the
     # same template, and its asset links get the same fingerprints.

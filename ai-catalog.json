@@ -1,0 +1,94 @@
+{
+  "entries": [
+    {
+      "@context": "https://agenticresourcediscovery.org/context/v1",
+      "identifier": "urn:air:sidefrog.com:app:idea-checker",
+      "displayName": "SideFrog idea checker",
+      "type": "text/html",
+      "url": "https://sidefrog.com/",
+      "description": "Free side hustle idea checker. Type an idea and get a straight verdict, who would pay, a first test to run, a good sign to look for, what to watch out for, related searches, and business names whose .com is open. No sign-up; ideas aren't stored.",
+      "representativeQueries": [
+        "is my side hustle idea any good",
+        "check my business idea before I quit my job",
+        "should I start a taco truck",
+        "find a business name with an available .com",
+        "who would pay for my side business idea"
+      ],
+      "tags": [
+        "side hustle",
+        "small business",
+        "idea validation",
+        "business names"
+      ],
+      "version": "1.0",
+      "updatedAt": "2026-10-03T00:00:00Z",
+      "capabilities": [
+        "SideHustleIdeaCheck",
+        "DotComNameCheck"
+      ]
+    },
+    {
+      "@context": "https://agenticresourcediscovery.org/context/v1",
+      "identifier": "urn:air:sidefrog.com:guides:break-room",
+      "displayName": "The Break Room",
+      "type": "text/html",
+      "url": "https://sidefrog.com/break-room/",
+      "description": "Short, plain guides for testing a side hustle idea, pricing it, finding first customers, building a simple site with AI, and leaving a steady job safely. General information, not legal, tax or financial advice.",
+      "representativeQueries": [
+        "how do I test a business idea cheaply",
+        "how much should I charge for my side hustle",
+        "how do I get my first customers",
+        "how do I build a website with AI if I can't code",
+        "what should I do before I quit my job to start a business"
+      ],
+      "tags": [
+        "side hustle",
+        "guides",
+        "pricing",
+        "first customers",
+        "vibe coding"
+      ],
+      "version": "1.0",
+      "updatedAt": "2026-10-03T00:00:00Z"
+    },
+    {
+      "@context": "https://agenticresourcediscovery.org/context/v1",
+      "identifier": "urn:air:sidefrog.com:prompts:side-kit",
+      "displayName": "The Side Kit",
+      "type": "text/html",
+      "url": "https://sidefrog.com/side-kit/",
+      "description": "Ten copyable AI prompts for starting a side hustle, in the order you need them, plus a printable Leap Worksheet.",
+      "representativeQueries": [
+        "AI prompts for starting a side hustle",
+        "prompt to plan a pop-up test for my food business",
+        "help me talk to my partner about quitting my job",
+        "printable worksheet for leaving my job"
+      ],
+      "tags": [
+        "prompts",
+        "side hustle",
+        "worksheet"
+      ],
+      "version": "1.0",
+      "updatedAt": "2026-10-03T00:00:00Z"
+    },
+    {
+      "@context": "https://agenticresourcediscovery.org/context/v1",
+      "identifier": "urn:air:sidefrog.com:docs:llms-txt",
+      "displayName": "SideFrog llms.txt",
+      "type": "text/markdown",
+      "url": "https://sidefrog.com/llms.txt",
+      "description": "A plain-text map of SideFrog's pages for AI tools.",
+      "representativeQueries": [
+        "what pages does SideFrog have",
+        "SideFrog guides list"
+      ],
+      "tags": [
+        "llms.txt",
+        "site map"
+      ],
+      "version": "1.0",
+      "updatedAt": "2026-10-03T00:00:00Z"
+    }
+  ]
+}

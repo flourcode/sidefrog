@@ -120,6 +120,18 @@
     "condition": null
   },
   {
+    "source": "/.well-known/ard.json",
+    "target": "/ard.json",
+    "status": "200",
+    "condition": null
+  },
+  {
+    "source": "/.well-known/ai-catalog.json",
+    "target": "/ai-catalog.json",
+    "status": "200",
+    "condition": null
+  },
+  {
     "source": "/<*>",
     "target": "/404.html",
     "status": "404",

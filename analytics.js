@@ -10,7 +10,7 @@
 // "Outbound clicks": those record full link addresses, and the Google search
 // links contain search phrases. This file counts those clicks without the text.
 (function () {
-  var GA_ID = "";                                        // <- your GA4 ID goes here
+  var GA_ID = "G-MZ6BMZ84Y2";                                        // <- your GA4 ID goes here
   var LIVE_HOSTS = ["sidefrog.com", "www.sidefrog.com"]; // only count real visits
 
   window.sfTrack = function () {};                       // safe no-op until GA is on
