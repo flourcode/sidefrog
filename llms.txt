@@ -1,6 +1,6 @@
 # SideFrog
 
-> SideFrog is a free side hustle idea checker: type an idea and get a straight verdict, who would pay, a first test to run, related searches and business names with an open .com, checked live. Built by Mark Flournoy. SideFrog doesn't store the ideas people type.
+> SideFrog: free advice from a frog with no stake in your idea. A free side hustle idea checker: type an idea and get a straight verdict, who would pay, a first test to run, related searches and business names with an open .com, checked live. Built by Mark Flournoy. SideFrog doesn't store the ideas people type.
 
 ## Tool
 - [Check an idea](https://sidefrog.com/): the idea checker

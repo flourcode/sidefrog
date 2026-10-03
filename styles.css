@@ -1027,3 +1027,6 @@ button.row .row-cue { color: var(--deep); }
   .ws-names-list { columns: 1; }
   .ws-sign { grid-template-columns: 1fr; }
 }
+
+/* Masthead: two links that never wrap or shrink */
+.site-nav a { white-space: nowrap; flex-shrink: 0; }

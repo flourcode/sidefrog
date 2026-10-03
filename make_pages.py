@@ -41,14 +41,14 @@ def frank_svg(cls, mood="smirk", look="right"):
 
 FONT = '<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin><link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,400..800&display=swap" rel="stylesheet">'
 
-NAV_TEMPLATE = '''<nav class="site-nav" aria-label="Sections"><a href="/break-room/"{br}>Break Room</a><a href="/side-kit/"{sk}>Side Kit</a><a class="nav-build" href="/break-room/build/vibe-coding-101/"{bi}>Build it</a><a class="nav-about" href="/about/"{ab}>About</a></nav>'''
+NAV_TEMPLATE = '''<nav class="site-nav" aria-label="Sections"><a href="/break-room/"{br}>Break Room</a><a href="/side-kit/"{sk}>Side Kit</a></nav>'''
 
 
 def site_nav(path):
     """Masthead links; the current section gets aria-current so it's marked."""
     cur = ' aria-current="page"'
     return NAV_TEMPLATE.format(
-        br=cur if path.startswith('/break-room/') and not path.startswith('/break-room/build/') else '',
+        br=cur if path.startswith('/break-room/') else '',
         bi=cur if path.startswith('/break-room/build/') else '',
         ab=cur if path.startswith('/about/') else '',
         sk=cur if path.startswith('/side-kit/') else '')
@@ -61,7 +61,7 @@ HEADER = '''<header class="site-header">
 
 FOOTER = '''<footer class="site-footer">
     <p class="footer-tag">Made for coffee breaks. Your manager remains uninformed.</p>
-    <nav class="footer-nav" aria-label="More from SideFrog"><a href="/break-room/">Break Room</a><span class="dot" aria-hidden="true">·</span><a href="/side-kit/">Side Kit</a><span class="dot" aria-hidden="true">·</span><a href="/what-it-costs/">What it costs</a><span class="dot" aria-hidden="true">·</span><a href="/about/">About</a><span class="dot" aria-hidden="true">·</span><a href="/about/#help">Get help</a></nav>
+    <nav class="footer-nav" aria-label="More from SideFrog"><a href="/break-room/">Break Room</a><span class="dot" aria-hidden="true">·</span><a href="/side-kit/">Side Kit</a><span class="dot" aria-hidden="true">·</span><a href="/break-room/build/vibe-coding-101/">Build it</a><span class="dot" aria-hidden="true">·</span><a href="/what-it-costs/">What it costs</a><span class="dot" aria-hidden="true">·</span><a href="/about/">About</a><span class="dot" aria-hidden="true">·</span><a href="/about/#help">Get help</a></nav>
     <p class="fine-print"><span class="label">The fine print</span>Frank’s verdict is a quick AI read using Gemini 3.5 Flash-Lite, not market research. .com names are checked live at the registry. “Open” means no registry record was found, but premium or reserved names can still be unavailable, so confirm before you buy. Not legal, financial, or trademark advice. Your idea goes to Google’s Gemini to write the verdict; SideFrog itself doesn’t store what you type.</p>
     <p class="colophon"><span class="label">Colophon</span>SideFrog is made by <a href="/about/">Mark Flournoy</a> in California. Vibe coded with Claude over a weekend for about $20. So yeah, <a href="/break-room/build/vibe-coding-101/">you can probably build your thing too</a>. Set in Bricolage Grotesque. Printed on the internet. Updated ''' + UPDATED + '''.</p>
   </footer>'''
@@ -1125,7 +1125,7 @@ def main():
     (ROOT / "robots.txt").write_text(f"User-agent: *\nAllow: /\n\nSitemap: {BASE_URL}/sitemap.xml\n", encoding="utf-8")
 
     lines = ["# SideFrog", "",
-             "> SideFrog is a free side hustle idea checker: type an idea and get a straight verdict, who would pay, a first test to run, related searches and business names with an open .com, checked live. Built by Mark Flournoy. SideFrog doesn't store the ideas people type.", "",
+             "> SideFrog: free advice from a frog with no stake in your idea. A free side hustle idea checker: type an idea and get a straight verdict, who would pay, a first test to run, related searches and business names with an open .com, checked live. Built by Mark Flournoy. SideFrog doesn't store the ideas people type.", "",
              "## Tool", f"- [Check an idea]({BASE_URL}/): the idea checker", "",
              "## Guides"]
     for label, keys in GROUPS:

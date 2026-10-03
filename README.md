@@ -1,5 +1,7 @@
 # SideFrog
 
+**Tagline:** "Free advice from a frog with no stake in your idea." (home page title, its search and share descriptions, `llms.txt`; not under the logo).
+
 **Start here: [`HOUSE_RULES.md`](HOUSE_RULES.md).** It's SideFrog's point of view and standards on one page (voice, Frank, look, trust, UX, definition of done). Paste it at the start of any AI session working on the site, so the AI builds to SideFrog's standards instead of its own defaults. This README is the technical reference behind it.
 
 
@@ -167,7 +169,7 @@ To install: Amplify console, your app, **Hosting > Rewrites and redirects > Mana
 
 ## For the non-technical dreamer
 
-The taco-truck reader is served by: "taco truck empire" leading the rotating examples; a rule in Frank's prompt that physical and local businesses get a small real-world first test (pop-up, market stall, catering one lunch, pre-orders, renting kitchen time) instead of a website, and that empires get sharpened to the first truck or stall; the "Test a big idea small" guide; the Side Kit (linked in the masthead, the footer and under the answer's prompt kit); and the Leap Worksheet (linked from the kit and from Before you leap). The masthead is BREAK ROOM · SIDE KIT · BUILD IT · ABOUT (Build it hides under 360px and About under 400px; both are a tap away). Deliberately not built: accounts, saved progress, a course or a community.
+The taco-truck reader is served by: "taco truck empire" leading the rotating examples; a rule in Frank's prompt that physical and local businesses get a small real-world first test (pop-up, market stall, catering one lunch, pre-orders, renting kitchen time) instead of a website, and that empires get sharpened to the first truck or stall; the "Test a big idea small" guide; the Side Kit (linked in the masthead, the footer and under the answer's prompt kit); and the Leap Worksheet (linked from the kit and from Before you leap). The masthead is just BREAK ROOM · SIDE KIT at every size, and its links never wrap; Build it, What it costs, About and Get help are in the footer. Deliberately not built: accounts, saved progress, a course or a community.
 
 ## Sharing, icons and analytics
 
@@ -249,7 +251,7 @@ Verdict captions are 800 uppercase.
 - **Chips:** off-white pills that turn lime-tinted, ink-outlined and lift on hover. They read as "tap me, try something random".
 - **Mobile first** (most visitors): on phones the frog sits on top of the verdict at the right, glancing down-left at it, and the verdict gets the full width. From 600px wide he moves beside it. The verdict is always one line, the frog's one-liner. CSS sets the largest size, and `fitVerdict()` in `app.js` shrinks it only when the line would overflow, re-fitting on rotation and once the web font loads. Checked in real Chromium at 360px, 390px and 1280px for every verdict: "CAN'T HELP WITH THAT ONE", the longest, lands at about 22px on a 360px phone. "9-to-5?" never splits across lines. On phones "Clear" sits beside the full-width "Check it".
 - **Answer card:** the verdict is the star. "KEEP YOUR DAY JOB" is the card's headline (Bricolage 800, uppercase), with the reason right under it and a memo-style "RE: your idea" line above. The frog sits beside it at character size, looking left at the verdict and delivering it. Build personality through the verdicts, not extra decoration.
-- **Masthead links:** BREAK ROOM · BUILD IT · ABOUT in small caps where the price box used to be (About hides under 400px; it's in the footer). The current section is underlined in burnt orange.
+- **Masthead links:** BREAK ROOM · SIDE KIT in small caps where the price box used to be, at every screen size, set never to wrap. The current section is underlined in burnt orange. Everything else (Build it, What it costs, About, Get help) is in the footer.
 - **The promise:** "Free. No sign-up. Your idea isn't saved." in deep green under the Check it button, where people decide.
 - **Motion:** small and physical: lifts, presses, the frog's hop, and the loading bob. All of it turns off for people who prefer reduced motion. Focus rings are a 3px blue outline.
 
@@ -259,7 +261,7 @@ Verdict captions are 800 uppercase.
 
 | Spot | Copy |
 |---|---|
-| Masthead | BREAK ROOM · BUILD IT · ABOUT (small caps links; replaced the price box) |
+| Masthead | BREAK ROOM · SIDE KIT (small caps links that never wrap; replaced the price box) |
 | Promise | "Free. No sign-up. Your idea isn't saved." under the Check it button |
 | Hero | "Thinking about making the leap from your 9-to-5?" |
 | Lede | "Type an idea. Get a straight verdict in about ten seconds." |

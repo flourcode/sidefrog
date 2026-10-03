@@ -8,6 +8,8 @@ A free side hustle idea checker for burned-out office workers, plus the Break Ro
 
 The point of view, in one line: Frank is comfortable telling you not to spend money.
 
+The tagline: "Free advice from a frog with no stake in your idea." It leads the home page title, its search and share descriptions, and `llms.txt`; use it in social bios too. It lives in those places, not under the logo.
+
 ## Voice
 
 - Useful first, mildly disgruntled employee second, frog third. About one dry office aside per page, never explained.
@@ -31,7 +33,7 @@ The point of view, in one line: Frank is comfortable telling you not to spend mo
 
 - Warm mid-century editorial brutalism: toasted paper, ink, avocado, burnt orange. Black type does the heavy lifting; colour is punctuation.
 - Tokens: page `#FBF7EF`, cards `#FFFDF9`, ink `#1F241F`, muted `#5A5A4A`, rules `#A89B84`, Frank `#8DAA3F`, button `#97AE43`, deep green labels `#4A5C34`, burnt orange accents `#A4501F`, links teal `#2F6F73`. All verdict headlines are ink.
-- One typeface: Bricolage Grotesque. Small caps labels, hairline rules, ink outlines, hard offset shadows. The masthead has small caps section links (Break Room, Build it, About); the "Price: free" box was retired to give that space to navigation, and its promise moved under the Check it button.
+- One typeface: Bricolage Grotesque. Small caps labels, hairline rules, ink outlines, hard offset shadows. The masthead has two small caps section links (Break Room, Side Kit), never more, so they fit on one line on any phone; the "Price: free" box was retired to give that space to navigation, and its promise moved under the Check it button.
 - One filled button per screen. Rows over boxes. One left edge.
 - Tips, asides, prompts and example messages in the guides all use the same plain 3px vertical rule in the rule colour (`#A89B84`), no box, no rounded corners, no coloured edge. Asides are muted grey; prompts and messages people copy stay full ink.
 - Mark's photo: `mark-mono.jpg`, a small round portrait in warm sepia (the site's ink colour for shadows, a warm paper a shade deeper than the page for highlights, so the circle reads without a border). On About it sits at the top beside the headline with the text wrapping around the circle, as on QuotaBird; the What it costs card uses the same image. Never full colour, never a rectangle, never a heavy border.
