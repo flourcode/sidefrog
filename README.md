@@ -160,6 +160,8 @@ To install: Amplify console, your app, **Hosting > Rewrites and redirects > Mana
 
 `404.html` ("Frank can't find that page") is built from the same template, with root links (`/styles.css`) because it's served at whatever address was mistyped, `noindex` so search engines skip it, and links back to the tool and the Break Room. It's not in the sitemap.
 
+**Text flows around Frank:** the guide note cards ("Frank has notes" and the rest), the What it costs card and Frank's introduction on About float Frank (or Mark's round portrait) top left with `shape-outside`, so the text wraps beside him and returns to full width underneath, like the About portrait. The answer card keeps its own layout so the verdict stays on one line.
+
 ## Sharing, icons and analytics
 
 **Share cards (`og/`):** 1200x630 JPGs (50 to 76KB each), one for the home page and one per Break Room page, wired with Open Graph and `twitter:card` tags (absolute URLs on `https://sidefrog.com`, which social sites require). The home card shows the question and a real answer card (FROM: Frank, RE: meal prep for pet turtles, KEEP YOUR DAY JOB); each guide card shows its title under that guide's Frank line. They're rendered from HTML with the site's own font, colours and Frank by `make_og.py`. Rerun it after changing a page title (`pip install playwright`, `python3 -m playwright install chromium`, `python3 make_og.py`), then `python3 make_pages.py`. After launch, check a link in LinkedIn's Post Inspector and Facebook's Sharing Debugger; both cache cards, and those tools refresh them.

@@ -952,3 +952,14 @@ button.row .row-cue { color: var(--deep); }
 .page main h2 { clear: both; }   /* sections start below the portrait */
 /* The costs card: the same round portrait */
 .take .take-photo { width: 4.25rem; height: 4.25rem; aspect-ratio: auto; border-radius: 50%; border: 0; object-fit: cover; }
+
+/* Frank's notes: text flows around Frank (like the About portrait) instead of
+   sitting in a column beside him. The card stays a box (flow-root contains the float). */
+.take { display: flow-root; }
+.take .frog { float: left; width: 4.25rem; height: auto; margin: 0.15rem 1rem 0.25rem 0;
+  shape-outside: ellipse(50% 50%); shape-margin: 0.35rem; }
+.take .take-photo { float: left; margin: 0.15rem 1rem 0.35rem 0; shape-outside: circle(50%); shape-margin: 0.4rem; }
+/* About: Frank's one-line introduction flows the same way */
+.frank-intro { display: flow-root; }
+.frank-intro .frog { float: left; width: 5.5rem; height: auto; margin: 0 1rem 0.25rem 0;
+  shape-outside: ellipse(50% 50%); shape-margin: 0.35rem; }
