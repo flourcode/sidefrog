@@ -41,7 +41,7 @@ def frank_svg(cls, mood="smirk", look="right"):
 
 FONT = '<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin><link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,400..800&display=swap" rel="stylesheet">'
 
-NAV_TEMPLATE = '''<nav class="site-nav" aria-label="Sections"><a href="/break-room/"{br}>Break Room</a><a href="/break-room/build/vibe-coding-101/"{bi}>Build it</a><a class="nav-about" href="/about/"{ab}>About</a></nav>'''
+NAV_TEMPLATE = '''<nav class="site-nav" aria-label="Sections"><a href="/break-room/"{br}>Break Room</a><a href="/side-kit/"{sk}>Side Kit</a><a class="nav-build" href="/break-room/build/vibe-coding-101/"{bi}>Build it</a><a class="nav-about" href="/about/"{ab}>About</a></nav>'''
 
 
 def site_nav(path):
@@ -50,7 +50,8 @@ def site_nav(path):
     return NAV_TEMPLATE.format(
         br=cur if path.startswith('/break-room/') and not path.startswith('/break-room/build/') else '',
         bi=cur if path.startswith('/break-room/build/') else '',
-        ab=cur if path.startswith('/about/') else '')
+        ab=cur if path.startswith('/about/') else '',
+        sk=cur if path.startswith('/side-kit/') else '')
 
 
 HEADER = '''<header class="site-header">
@@ -60,7 +61,7 @@ HEADER = '''<header class="site-header">
 
 FOOTER = '''<footer class="site-footer">
     <p class="footer-tag">Made for coffee breaks. Your manager remains uninformed.</p>
-    <nav class="footer-nav" aria-label="More from SideFrog"><a href="/break-room/">Break Room</a><span class="dot" aria-hidden="true">·</span><a href="/what-it-costs/">What it costs</a><span class="dot" aria-hidden="true">·</span><a href="/about/">About</a><span class="dot" aria-hidden="true">·</span><a href="/about/#help">Get help</a></nav>
+    <nav class="footer-nav" aria-label="More from SideFrog"><a href="/break-room/">Break Room</a><span class="dot" aria-hidden="true">·</span><a href="/side-kit/">Side Kit</a><span class="dot" aria-hidden="true">·</span><a href="/what-it-costs/">What it costs</a><span class="dot" aria-hidden="true">·</span><a href="/about/">About</a><span class="dot" aria-hidden="true">·</span><a href="/about/#help">Get help</a></nav>
     <p class="fine-print"><span class="label">The fine print</span>Frank’s verdict is a quick AI read using Gemini 3.5 Flash-Lite, not market research. .com names are checked live at the registry. “Open” means no registry record was found, but premium or reserved names can still be unavailable, so confirm before you buy. Not legal, financial, or trademark advice. Your idea goes to Google’s Gemini to write the verdict; SideFrog itself doesn’t store what you type.</p>
     <p class="colophon"><span class="label">Colophon</span>SideFrog is made by <a href="/about/">Mark Flournoy</a> in California. Vibe coded with Claude over a weekend for about $20. So yeah, <a href="/break-room/build/vibe-coding-101/">you can probably build your thing too</a>. Set in Bricolage Grotesque. Printed on the internet. Updated ''' + UPDATED + '''.</p>
   </footer>'''
@@ -181,6 +182,7 @@ def page_html(p):
   {FOOTER}
   <script src="/analytics.js" defer></script>
   <script src="/frank.js" defer></script>
+  {"".join(f'<script src="{s}" defer></script>' for s in p.get("scripts", []))}{'<p class="sr-only" id="kit-announce" aria-live="polite"></p>' if p.get("scripts") else ""}
   {LOCAL_LINKS}
 </body>
 </html>
@@ -213,7 +215,7 @@ def number_steps(body):
 
 import hashlib
 
-ASSET_RE = re.compile(r'(href|src)="(/|(?:\.\./)*)((?:styles\.css|app\.js|frank\.js|analytics\.js|local-links\.js|site\.webmanifest|favicon[^"?]*|apple-touch-icon\.png|mark(?:-mono)?\.jpg|frogs/[^"?]+))(?:\?v=[0-9a-f]+)?"')
+ASSET_RE = re.compile(r'(href|src)="(/|(?:\.\./)*)((?:styles\.css|app\.js|frank\.js|analytics\.js|local-links\.js|side-kit\.js|site\.webmanifest|favicon[^"?]*|apple-touch-icon\.png|mark(?:-mono)?\.jpg|frogs/[^"?]+))(?:\?v=[0-9a-f]+)?"')
 _fingerprints = {}
 
 
@@ -889,6 +891,7 @@ PAGES["leap"] = dict(
       <p>Give the notice your role expects, write a real handoff, thank the people who helped you, and keep your references and contacts warm. Plenty of people go back to a job after running their own thing, sometimes to the same company, and you want that door open.</p>
       <p class="aside">Your exit interview is not the moment to finally share your thoughts on the reorg.</p>
       <p>If you signed anything about competing, inventions or confidentiality, have a lawyer read it before you give notice.</p>
+      <p>To put all six steps on paper, print the <a href="/side-kit/leap-worksheet/">Leap Worksheet</a>.</p>
 ''',
     faq=[
         ("How much money do I really need saved?", "It depends on what you spend, what your health coverage will cost and how quickly the business can pay you. Six months of expenses is a common place to start. A fee-only financial planner can work it out with your actual numbers."),
@@ -898,6 +901,174 @@ PAGES["leap"] = dict(
     ],
     related=["customers", "price", "test"],
     sources=[COBRA_SSA, HCGOV_JOB],
+)
+
+
+# ---------------------------------------------------------------- Test a big idea small
+ASTHO_COTTAGE = ("ASTHO: Do cottage foods really come from a cottage?", "https://www.astho.org/communications/blog/do-cottage-foods-really-come-from-a-cottage/")
+NALC_COTTAGE = ("National Agricultural Law Center: Cottage food laws by state", "https://nationalaglawcenter.org/center-projects/cottage-food-laws/")
+
+PAGES["bigsmall"] = dict(
+    path="/break-room/start/test-a-big-idea-small/", section="Start", article=True, numbered=True,
+    take_label="Frank, between sips",
+    title="Test a Big Idea Small: Try a Food Truck or Shop Before You Buy One | SideFrog",
+    h1="Test a big idea small",
+    description="How to test a food truck, shop or other in-person business before you buy anything big: shrink it to one Saturday, check what your health department requires, rent before you buy, sell where the crowd already is, and count everything.",
+    take="Don't buy the truck yet. Sell fifty tacos at someone else's event first, and if people line up, do it again. Start pricing trucks once the line gets long.",
+    body='''
+      <p>Some ideas can't be tested with a web page. A taco truck, a bakery, a vintage shop or a coffee cart lives or dies on whether people buy the actual thing, in person, at your price. You can find that out for a few hundred dollars before you spend tens of thousands.</p>
+      <p class="aside">Think of it as a pilot program. You've sat through enough of those to know how they work.</p>
+
+      <h2>Shrink the dream to one Saturday</h2>
+      <p>\u201cTaco truck empire\u201d becomes \u201cone table at one event, selling three kinds of tacos.\u201d Keep the part people would actually come for and drop everything else: the truck, the logo, the second location. If the small version doesn't sell, the big version wouldn't have either, and you found out cheaply.</p>
+
+      <h2>Find out what your city requires before you cook for strangers</h2>
+      <p>Call or visit your local health department first. Selling food to the public usually needs a permit, and one-day events often have their own temporary food permit. Every state also has home-kitchen rules (often called cottage food laws), but they vary widely and usually cover only low-risk foods that don't need refrigeration, like baked goods and jams. Foods with meat or dairy, tacos included, almost always need a licensed kitchen. Ask the health department what applies to your exact food; they answer this question every day.</p>
+
+      <h2>Rent before you buy</h2>
+      <p>Many towns have shared commercial kitchens you can rent by the hour, and some restaurants rent out their kitchen on days they're closed. Rent or borrow the equipment, too: a tent, a griddle, coolers, a card reader. Your costs for the test should be a booth fee, ingredients and a few hours of kitchen time, not a down payment.</p>
+
+      <h2>Sell where the crowd already is</h2>
+      <p>Don't try to build a crowd for your first test. Go where hungry people already gather: a farmers market, a brewery without a kitchen, a school fundraiser, a friend's party, an office that orders lunch for its team. Catering one office lunch is an especially clean test, because you know the order size and get paid up front.</p>
+
+      <h2>Take pre-orders or deposits</h2>
+      <p>Before you cook for an event, ask people to order ahead: taco boxes for pickup, a holiday batch of tamales, a catering deposit. Money paid before the food exists is the strongest proof you can get, and it means you don't guess how much to make.</p>
+
+      <h2>Count everything</h2>
+      <p>Write down how many you sold, how fast you sold out (if you did), what each plate cost you to make, what people asked for that you didn't have, and who came back for seconds. Decide before the event what a good day looks like, like the \u201cGood sign\u201d SideFrog gives with every answer, and compare.</p>
+
+      <h2>Do it again before you scale</h2>
+      <p>One good day can be luck, so look for three good days at different events before you call it a pattern. Once you have that and you know your numbers, a used trailer or a regular market spot is a much smaller leap than a new truck, and <a href="/break-room/leap/before-you-leap/">Before you leap</a> covers the rest.</p>
+''',
+    faq=[
+        ("Can I sell food I make at home?", "Sometimes. Every state has home-kitchen rules, but they usually cover only low-risk foods like baked goods and jams, often with limits on where and how much you sell. Anything with meat or dairy usually needs a licensed kitchen. Your local health department can tell you exactly what applies."),
+        ("Do I need insurance for a pop-up?", "Many markets and events require vendors to carry liability insurance and will tell you how much. Ask the organizer before you sign up, and check whether short-term event coverage is available."),
+        ("What if my idea isn't food?", "The same approach works: a market stall, a pop-up in a friend's shop, a few items on consignment, or pre-orders before you buy inventory. Sell a small batch before you stock a store."),
+        ("How much does a food truck cost?", "Enough that you should know your numbers first. Prices vary a lot by size, age and city rules, so get quotes once your test days tell you what you'd actually sell. Leasing or a regular market spot are cheaper ways to grow first."),
+    ],
+    related=["test", "price", "leap"],
+    sources=[ASTHO_COTTAGE, NALC_COTTAGE],
+)
+
+
+# ---------------------------------------------------------------- Side Kit
+def kit_prompt(pid, title, get, watch, text):
+    """One copyable prompt: what you'll get, what to watch out for, the prompt, a copy button."""
+    return (f'<section class="kit-prompt" id="{pid}"><h3>{html.escape(title)}</h3>'
+            f'<p class="kit-meta"><span class="label">You\u2019ll get</span>{get}</p>'
+            f'<p class="kit-meta"><span class="label">Watch out</span>{watch}</p>'
+            f'<blockquote class="script">{html.escape(text)}</blockquote>'
+            f'<button type="button" class="kit-copy" data-copy="{pid}">Copy prompt</button></section>')
+
+
+SIDE_KIT_BODY = (
+    '<p>Copy a prompt, paste it into ChatGPT, Claude or Gemini, and fill in the parts in [brackets]. They\u2019re in the order you\u2019ll probably need them. Any AI can be confidently wrong, especially about local rules and money, so check anything that matters with a real person or an official source.</p>'
+    '<h2>Test it</h2>'
+    + kit_prompt("pressure-test", "Pressure-test the idea",
+        "an honest read on who would pay and why it might not work.",
+        "AI tends to be encouraging. The prompt asks it to argue against you on purpose.",
+        "Here's my side hustle idea: [your idea]. Act like a skeptical friend who wants me to succeed. Tell me who would pay for this, how often, and what they use or pay for today instead. Then give me the strongest reasons it might not work, and the cheapest way to find out within a week. Don't be encouraging for its own sake.")
+    + kit_prompt("small-test", "Plan a small real-world test",
+        "a one-day test plan: where to sell, what to make, a small budget and what to ask your city.",
+        'AI can be wrong about local permits. Confirm with your health department or city. See <a href="/break-room/start/test-a-big-idea-small/">Test a big idea small</a>.',
+        "I want to test [your idea] in person before I buy anything big. I live in [your city or area]. Help me plan one small test: where people who'd buy this already gather, what I should offer and how much to make, what I should ask my local health department or city before I sell, a simple budget for the day, and what result would tell me it's worth doing again. Assume I don't own any equipment yet.")
+    + '<h2>Money</h2>'
+    + kit_prompt("costs", "Startup costs and break-even",
+        "a list of costs as ranges, and how much you'd need to sell each month to cover them.",
+        "These are estimates, not quotes and not financial advice. Get real prices before you spend anything.",
+        "Help me estimate what it would cost to start [your idea], both one-time costs and monthly costs. Ask me questions before you guess. List each cost as a range and mark the ones you're least sure about. Then show how many [sales, customers or units] a month I'd need at [your price] to cover the monthly costs and pay myself [amount] a month.")
+    + kit_prompt("price", "Price it",
+        "a regular price, an honest founding price, and the reasoning behind both.",
+        'Check it against real competitor prices. See <a href="/break-room/sell/what-to-charge/">What should I charge?</a>',
+        "Help me set a price for [what you sell]. Competitors charge: [paste prices you found]. My costs per [job or item] are about [amount], and it takes me about [hours]. Suggest a regular price, a founding price for my first five customers with the date it ends, and a one-line way to describe the offer that makes the value clear. Explain your reasoning briefly.")
+    + '<h2>Sell it</h2>'
+    + kit_prompt("first-ten", "Write to your first ten customers",
+        "a short, honest message to send, and questions that get real answers.",
+        "Send it to people one at a time, not as a mass email.",
+        "I'm testing [your idea] for [who it's for]. Write a short, honest message I can send to people I know, asking whether they have this problem or know someone who does. Make it clear it's new and I'm looking for feedback, keep it readable on a phone, and don't make it sound like a sales pitch. Then give me five questions to ask people who reply, about how they handle this today and what they've tried or paid for.")
+    + kit_prompt("reviews", "Read your competitors' bad reviews",
+        "the complaints grouped into themes, and the opening they point to.",
+        "Use real reviews you copied yourself; don't ask the AI to invent them.",
+        "Below are one- to three-star reviews of businesses like the one I want to start: [your idea]. Group the complaints into themes, count how often each comes up, quote one short example for each, and tell me which complaint looks like the best opening for a small new business. Reviews: [paste them here]")
+    + '<h2>Build it</h2>'
+    + kit_prompt("page", "Build a one-page site",
+        "a single-file landing page with a point of view, ready to put online.",
+        "Never let it invent reviews or numbers. For a tailored version, run your idea through SideFrog and use the \u201cBuild the page\u201d prompt under the answer.",
+        "Build me a one-page landing page as a single HTML file. The business: [what it is, in one sentence]. Who it's for: [who pays]. The price: [your price, or \"early access\"]. What I believe about this work: [one sentence]. How it should feel: [a few words]. A place, era or brand whose look I like: [example]. The worry that almost stops people buying: [the worry]. Include a plain headline, one short paragraph, the price, a direct answer to that worry, and one button to this sign-up form: [your Google Form link]. Mobile first, plain language, no gradient hero, no stock icons, no emoji, and don't invent testimonials or statistics. Then critique it as a skeptical customer, list five things that feel generic or unfinished, and fix them.")
+    + kit_prompt("handoff", "Write the handoff before the chat runs out",
+        "a HANDOFF.md that lets a new chat pick up exactly where you left off.",
+        'Never include secret keys or passwords. See <a href="/break-room/build/vibe-coding-101/">Vibe coding 101</a>.',
+        "We're wrapping up this session. Write a HANDOFF.md I can paste into a new chat so it can pick up exactly where we left off. Include: what the project is and who it's for, in two sentences; how it's built (files, tools, hosting, where the code lives); what's done and working; what we're in the middle of and the exact next step; decisions we made and why, including anything we tried and dropped; known bugs and loose ends; and the file names, web addresses and setting names I'll need. Never include secret keys or passwords. Keep it short and plain, written for someone who has never seen this chat.")
+    + '<h2>Leap</h2>'
+    + kit_prompt("partner", "Talk it through with your partner",
+        "the questions they're likely to ask, and honest answers built from your real numbers.",
+        "This is for a conversation, not a pitch. Bring the real numbers, including the scary ones.",
+        "I'm thinking about [your plan, e.g. going part-time to build my side business]. Help me prepare to talk it through with [my partner or family]. List the questions they're likely to ask about money, time and risk. Using my real numbers below, help me write honest answers, including what I don't know yet. Suggest a checkpoint date and a number we could agree on for deciding whether to keep going. Don't turn it into a sales pitch. My numbers: [monthly expenses, savings, what the side business earns now]")
+    + kit_prompt("leave-well", "Leave well",
+        "a notice timeline, a handoff outline for your replacement, and a gracious resignation note.",
+        'Check your employment paperwork and company policy first, and never share confidential company information. See <a href="/break-room/leap/before-you-leap/">Before you leap</a>.',
+        "Help me plan leaving my job on good terms. My role: [your role]. Help me with: a sensible timeline for giving notice, an outline for a handoff document my replacement could use, a short and gracious resignation note with nothing negative about the company, and a list of people to thank and keep in touch with.")
+    + '<h2>The Leap Worksheet</h2>'
+    + '<p>One printable page that turns Frank\u2019s advice into paperwork: your monthly number, your safety net, your leap number, your checkpoint, your first test and your first 30 names. Print it, fill it in, and stick it somewhere you\u2019ll see it. <a href="/side-kit/leap-worksheet/">Open the Leap Worksheet</a>.</p>'
+)
+
+PAGES["kit"] = dict(
+    path="/side-kit/", title="The Side Kit: Ten AI Prompts for Starting a Side Hustle | SideFrog",
+    h1="The Side Kit",
+    description="Ten copyable AI prompts for testing, pricing, selling and building a side hustle, in the order you'll need them, plus a printable Leap Worksheet. Free, honest, no hype.",
+    take="Ten prompts, in the order you'll need them. Fill in the brackets, paste them into whatever AI you use, and double-check anything that involves money or the law.",
+    take_label="From Frank's desk",
+    scripts=["/side-kit.js"],
+    body=SIDE_KIT_BODY,
+)
+
+
+# ---------------------------------------------------------------- Leap Worksheet (printable)
+def ws_line(label, hint=""):
+    h = f'<span class="ws-hint">{hint}</span>' if hint else ""
+    return f'<div class="ws-line"><span class="ws-label">{label}</span><span class="ws-blank"></span>{h}</div>'
+
+
+WORKSHEET_BODY = (
+    '<p class="ws-intro no-print">Print it, fill it in with a pen, and stick it on the fridge. It\u2019s the advice from <a href="/break-room/leap/before-you-leap/">Before you leap</a>, turned into paperwork. General guidance, not financial advice.</p>'
+    '<p class="no-print ws-actions"><button type="button" class="kit-copy" data-print>Print the worksheet</button> <a class="text-btn" href="/side-kit/leap-worksheet.pdf" download>Download the PDF</a></p>'
+    '<div class="worksheet">'
+    '<p class="ws-form-title">Form SF-1 \u00b7 The Leap Worksheet</p>'
+    '<section class="ws-part"><h2>1. My monthly number</h2>'
+    + ws_line("What I actually spend in a month: $", "housing, food, insurance, debt payments, subscriptions")
+    + '</section><section class="ws-part"><h2>2. What my job quietly pays for</h2>'
+    + ws_line("Health insurance on my own, per month: $", "COBRA or a HealthCare.gov plan")
+    + ws_line("Other things I\u2019ll start paying for (retirement match, phone, laptop): $")
+    + ws_line("My real monthly number (1 + 2): $")
+    + '</section><section class="ws-part"><h2>3. My safety net</h2>'
+    + ws_line("Months of cushion I want:", "six is a common rule of thumb")
+    + ws_line("Months \u00d7 my real monthly number = $")
+    + ws_line("Saved so far: $")
+    + '</section><section class="ws-part"><h2>4. My leap number</h2>'
+    + ws_line("The side hustle earns $", "per month")
+    + ws_line("for this many months in a row:")
+    + '</section><section class="ws-part"><h2>5. My checkpoint</h2>'
+    + ws_line("If the business isn\u2019t paying $", "per month")
+    + ws_line("by this date:", "I start looking for a job")
+    + ws_line("Agreed with:")
+    + '</section><section class="ws-part"><h2>6. My first test</h2>'
+    + ws_line("What I\u2019ll sell:")
+    + ws_line("Where and when:")
+    + ws_line("A good sign would be:")
+    + '</section><section class="ws-part ws-names"><h2>7. My first 30 names</h2>'
+    + '<ol class="ws-names-list">' + "".join('<li><span class="ws-blank"></span></li>' for _ in range(30)) + '</ol>'
+    + '</section><section class="ws-part ws-sign">'
+    + ws_line("Signed:") + ws_line("Date:")
+    + '<p class="ws-reviewed">Reviewed by Frank.</p>'
+    + '</section></div>'
+)
+
+PAGES["worksheet"] = dict(
+    path="/side-kit/leap-worksheet/", title="The Leap Worksheet: A Printable Plan for Leaving Your 9-to-5 | SideFrog",
+    h1="The Leap Worksheet",
+    description="A free one-page printable worksheet for leaving a steady job for a side hustle: your monthly number, safety net, leap number, checkpoint, first test and first 30 names.",
+    cta=False, scripts=["/side-kit.js"],
+    body=WORKSHEET_BODY,
 )
 
 
@@ -916,7 +1087,7 @@ NOT_FOUND = dict(
 
 
 # ---------------------------------------------------------------- Break Room hub
-GROUPS = [("Build it yourself", ["vibe", "secure", "scale"]), ("Start here", ["test", "search", "competition"]), ("Name it", ["name", "domain"]), ("Sell it", ["customers", "price"]), ("Get found", ["ai"]), ("Make the leap", ["leap"])]
+GROUPS = [("Build it yourself", ["vibe", "secure", "scale"]), ("Start here", ["test", "bigsmall", "search", "competition"]), ("Name it", ["name", "domain"]), ("Sell it", ["customers", "price"]), ("Get found", ["ai"]), ("Make the leap", ["leap"])]
 
 
 def hub_body():

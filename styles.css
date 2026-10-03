@@ -969,3 +969,61 @@ button.row .row-cue { color: var(--deep); }
    Text stays full ink because it's meant to be read and copied. */
 .prose blockquote.script { margin: 0 0 1rem; padding: 0 0 0 0.8rem; background: none; border: 0;
   border-left: 3px solid var(--rule); border-radius: 0; font-size: 1.02rem; line-height: 1.6; color: var(--ink); }
+
+/* Side Kit prompts */
+.kit-prompt { margin: 0 0 2rem; }
+.kit-prompt h3 { margin: 1.4rem 0 0.4rem; }
+.kit-meta { margin: 0 0 0.35rem !important; font-size: 0.98rem; color: var(--muted); }
+.kit-meta .label { font-weight: 700; letter-spacing: 0.08em; text-transform: uppercase; font-size: 0.72rem; color: var(--deep); margin-right: 0.45rem; }
+.kit-prompt blockquote.script { margin-top: 0.7rem; }
+.kit-more { margin-top: 0.6rem; }
+/* Masthead with four links: Build it hides on the narrowest phones (it's in the Break Room) */
+@media (max-width: 359px) { .site-nav .nav-build { display: none; } }
+
+/* The Leap Worksheet: an office form, on screen and on paper */
+.worksheet { border: 2px solid var(--ink); padding: 1.1rem 1.2rem 1.3rem; background: var(--surface); margin: 1rem 0 0; }
+.ws-form-title { margin: 0 0 0.6rem !important; font-size: 0.75rem; font-weight: 700; letter-spacing: 0.12em; text-transform: uppercase; color: var(--accent-text); border-bottom: 1.5px solid var(--ink); padding-bottom: 0.4rem; }
+.worksheet h2 { font-size: 1rem !important; margin: 1rem 0 0.35rem !important; clear: none; }
+.ws-line { display: flex; flex-wrap: wrap; align-items: baseline; gap: 0 0.5rem; margin: 0.35rem 0; }
+.ws-label { white-space: nowrap; }
+.ws-blank { flex: 1 1 6rem; border-bottom: 1px solid var(--ink); min-height: 1.4rem; }
+.ws-hint { flex-basis: 100%; font-size: 0.82rem; color: var(--muted); margin-top: 0.1rem; }
+.ws-names-list { columns: 2; column-gap: 1.6rem; margin: 0.3rem 0 0 !important; padding-left: 1.6rem; }
+.ws-names-list li { margin: 0; break-inside: avoid; }
+.ws-names-list .ws-blank { display: block; min-height: 1.55rem; }
+.ws-sign { display: grid; grid-template-columns: 1fr 1fr; gap: 0 1.5rem; margin-top: 1rem; }
+.ws-reviewed { grid-column: 1 / -1; margin: 0.5rem 0 0 !important; font-size: 0.85rem; color: var(--muted); text-align: right; }
+.ws-actions { display: flex; flex-wrap: wrap; align-items: center; gap: 0.5rem 1.2rem; }
+
+@media print {
+  @page { size: letter; margin: 0.5in; }
+  body { background: #fff !important; color: #000; }
+  .site-header, .site-footer, .crumbs, .no-print, .take, .cta-box, .related, .sources, #kit-announce { display: none !important; }
+  .page main { max-width: none; padding: 0; margin: 0; }
+  .page h1 { font-size: 20pt; margin: 0 0 6pt; }
+  .worksheet { border: 1.5pt solid #000; background: #fff; padding: 10pt 12pt; margin: 0; font-size: 10.5pt; }
+  .worksheet h2 { font-size: 11pt !important; margin: 7pt 0 3pt !important; }
+  .ws-line { margin: 3pt 0; }
+  .ws-blank { border-bottom-color: #000; min-height: 16pt; }
+  .ws-hint { font-size: 8pt; color: #444; }
+  .ws-names-list .ws-blank { min-height: 15pt; }
+  a { color: #000; text-decoration: none; }
+}
+.worksheet p, .worksheet ol { max-width: none; }   /* the form title's rule runs the full width */
+@media print {
+  .page h1 { font-size: 17pt; margin: 0 0 4pt; }
+  .worksheet { padding: 8pt 11pt; font-size: 9.5pt; }
+  .worksheet h2 { font-size: 10pt !important; margin: 5pt 0 1pt !important; }
+  .ws-line { margin: 1.5pt 0; flex-wrap: nowrap; }
+  .ws-blank { min-height: 13pt; }
+  .ws-hint { flex: 0 0 auto; font-size: 7.5pt; margin: 0; white-space: nowrap; }
+  .ws-names-list { columns: 3; column-gap: 14pt; padding-left: 14pt; }
+  .ws-names-list .ws-blank { min-height: 14pt; }
+  .ws-sign { margin-top: 6pt; }
+}
+@media screen and (max-width: 560px) {
+  .ws-label { white-space: normal; flex: 1 1 100%; }   /* long labels wrap on phones; the blank goes underneath */
+  .ws-blank { flex-basis: 100%; }
+  .ws-names-list { columns: 1; }
+  .ws-sign { grid-template-columns: 1fr; }
+}

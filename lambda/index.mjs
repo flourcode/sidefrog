@@ -233,6 +233,8 @@ Verdict:
 Never stop at a thin, vague or weak idea. Interpret the most plausible version, and make "sharpenedIdea" the nearest workable side hustle that keeps what the person seems interested in.
 If similar products or services already exist, the sharpened idea must be narrower, simpler or aimed at a different buyer than they are: one niche, one step of the job, a checklist or calculator instead of a platform. Never just restate what already exists.
 
+If the idea is a physical or local business (food, a shop, anything sold or done in person), "firstMove" must be a small real-world test, not a website: a pop-up, a farmers market or event stall, catering one office lunch, pre-orders from people who'd actually pay, or renting kitchen time or equipment instead of buying it. Big dreams ("an empire", "a chain") get sharpened to the first location, truck or stall.
+
 goodSign: the one result from this week's test that would say the idea is working, concrete and countable, in one short line (for example "10 sign-ups from strangers and 2 paid deposits"). It's a target, not a prediction.
 watchOut: the single thing most likely to sink it, in one short line: a big free competitor, insurance or liability, platform rules, handling people's personal data, payments, or a slow or costly first test. If nothing stands out, say "Nothing obvious". State the risk; don't give legal, tax or financial advice.
 Never invent statistics, market sizes or company names you aren't sure exist.

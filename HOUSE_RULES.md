@@ -23,7 +23,7 @@ The point of view, in one line: Frank is comfortable telling you not to spend mo
 
 - He's Frank. Never "Frank the Frog," never a biography, never an explanation of the pun. About introduces him in one line and that's it.
 - He appears as: the memo header ("FROM: Frank / RE: your idea"), each guide's note card with its own Frank line (no line used twice), and the sip animation.
-- Frank lines in use: Let me be Frank · Frankly · Just being Frank here · I'll be Frank · A note from Frank · Frank's take · Frank has notes · Frank would like a word · Frank ran the numbers · Frank, off the record · Frank's two cents · Frank, speaking as a friend.
+- Frank lines in use: Let me be Frank · Frankly · Just being Frank here · I'll be Frank · A note from Frank · Frank's take · Frank has notes · Frank would like a word · Frank ran the numbers · Frank, off the record · Frank's two cents · Frank, speaking as a friend · Frank, between sips · From Frank's desk.
 - Wherever Frank (or Mark's portrait) sits beside text, the text flows around him, the way the About portrait works: he floats top left and the lines wrap back to full width below. Not a fixed column beside him. The one exception is the answer card, whose layout keeps the verdict headline on one line.
 - His face carries the verdict's mood. Don't add status colours or tags to do that job.
 

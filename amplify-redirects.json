@@ -96,6 +96,24 @@
     "condition": null
   },
   {
+    "source": "/break-room/start/test-a-big-idea-small",
+    "target": "/break-room/start/test-a-big-idea-small/",
+    "status": "301",
+    "condition": null
+  },
+  {
+    "source": "/side-kit",
+    "target": "/side-kit/",
+    "status": "301",
+    "condition": null
+  },
+  {
+    "source": "/side-kit/leap-worksheet",
+    "target": "/side-kit/leap-worksheet/",
+    "status": "301",
+    "condition": null
+  },
+  {
     "source": "/break-room",
     "target": "/break-room/",
     "status": "301",

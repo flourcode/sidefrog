@@ -560,6 +560,7 @@ function tryIdea(text) {
 // The grey examples the empty box rotates through: realistic side hustles with
 // the odd weird one, so people see any idea is fair game.
 const EXAMPLES = [
+  "taco truck empire",
   "website tune-ups for local restaurants",
   "travel planning for busy families",
   "estate sale flipping on weekends",

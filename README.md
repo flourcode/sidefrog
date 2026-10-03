@@ -57,6 +57,9 @@ Built by `make_pages.py` from the copy inside it. **Edit the copy there, then ru
 | /break-room/build/vibe-coding-101/ | Vibe coding 101: build the ugly first version (8 numbered steps: one sentence, brief it with a point of view, smallest thing that works, one change at a time, use it like a customer, save your work, write a handoff before the chat runs out (with copyable prompts to write HANDOFF.md and to start the next chat from it), put it online; "Frank has notes") |
 | /break-room/build/before-you-put-it-online/ | Before you put it on the internet: keys, spending limits, rate limits, user input and prompt injection, collecting less, free protections, backups ("Frank would like a word"; help box) |
 | /break-room/build/six-users-now-what/ | Six people use it. Now what? Error alerts, the weekly bill, what to count, adding pieces only when needed, when to stop vibe coding ("Frank ran the numbers"; help box) |
+| /break-room/start/test-a-big-idea-small/ | Test a big idea small (7 numbered steps for food trucks, shops and other in-person businesses: shrink it to one Saturday, check your health department first (cottage food rules, sourced), rent before you buy, sell where the crowd already is, pre-orders, count everything, repeat before you scale; "Frank, between sips") |
+| /side-kit/ | The Side Kit: ten copyable prompts by stage (Test it, Money, Sell it, Build it, Leap), each with "You'll get" and "Watch out", copy buttons via `side-kit.js` ("From Frank's desk") |
+| /side-kit/leap-worksheet/ | The Leap Worksheet ("Form SF-1"): a printable form (monthly number, what the job pays for, safety net, leap number, checkpoint, first test, 30 names, signed, "Reviewed by Frank."). Print button and `side-kit/leap-worksheet.pdf` (one Letter page, made by `make_og.py` from the print styles) |
 | /about/ | About SideFrog (Mark, first person) |
 | /what-it-costs/ | What it costs me to test an idea (Mark's real bills; its card is labeled "My usual costs" with Mark's photo, since Mark is the one talking) |
 
@@ -161,6 +164,10 @@ To install: Amplify console, your app, **Hosting > Rewrites and redirects > Mana
 `404.html` ("Frank can't find that page") is built from the same template, with root links (`/styles.css`) because it's served at whatever address was mistyped, `noindex` so search engines skip it, and links back to the tool and the Break Room. It's not in the sitemap.
 
 **Text flows around Frank:** the guide note cards ("Frank has notes" and the rest), the What it costs card and Frank's introduction on About float Frank (or Mark's round portrait) top left with `shape-outside`, so the text wraps beside him and returns to full width underneath, like the About portrait. The answer card keeps its own layout so the verdict stays on one line.
+
+## For the non-technical dreamer
+
+The taco-truck reader is served by: "taco truck empire" leading the rotating examples; a rule in Frank's prompt that physical and local businesses get a small real-world first test (pop-up, market stall, catering one lunch, pre-orders, renting kitchen time) instead of a website, and that empires get sharpened to the first truck or stall; the "Test a big idea small" guide; the Side Kit (linked in the masthead, the footer and under the answer's prompt kit); and the Leap Worksheet (linked from the kit and from Before you leap). The masthead is BREAK ROOM · SIDE KIT · BUILD IT · ABOUT (Build it hides under 360px and About under 400px; both are a tap away). Deliberately not built: accounts, saved progress, a course or a community.
 
 ## Sharing, icons and analytics
 

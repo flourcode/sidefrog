@@ -4,7 +4,8 @@
     pip install playwright && python3 -m playwright install chromium
     python3 make_og.py
 
-Writes og/home.jpg and one og/<slug>.jpg per page in make_pages.PAGES, using the
+Writes og/home.jpg and one og/<slug>.jpg per page in make_pages.PAGES (plus the
+printable side-kit/leap-worksheet.pdf), using the
 site's own font, colours and Frank. Titles come from make_pages.py, so rerun this
 after changing a page title. Then rerun make_pages.py (it links each page's card).
 """
@@ -120,6 +121,16 @@ async def main(font_file=None):
             Image.open(io.BytesIO(png)).convert("RGB").save(out / f"{name}.jpg", quality=86, optimize=True, progressive=True)
             print("og/" + name + ".jpg")
         tmp.unlink()
+
+        # The Leap Worksheet as a PDF, printed with the page's own print styles
+        ws = ROOT / "side-kit" / "leap-worksheet" / "index.html"
+        if ws.exists():
+            await page.goto(ws.as_uri())
+            await page.evaluate("document.fonts.ready")
+            await page.emulate_media(media="print")
+            await page.pdf(path=str(ROOT / "side-kit" / "leap-worksheet.pdf"), format="Letter", print_background=False,
+                           margin={"top": "0.5in", "bottom": "0.5in", "left": "0.5in", "right": "0.5in"})
+            print("side-kit/leap-worksheet.pdf")
         await browser.close()
 
 
