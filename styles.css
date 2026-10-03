@@ -1030,3 +1030,13 @@ button.row .row-cue { color: var(--deep); }
 
 /* Masthead: two links that never wrap or shrink */
 .site-nav a { white-space: nowrap; flex-shrink: 0; }
+
+/* Frank's nudge on an empty click: the message, then a small "or check the example" link */
+.form-error .error-body { display: flex; flex-direction: column; align-items: flex-start; gap: 0.15rem; }
+.form-error .error-body p { margin: 0; }
+#try-example { min-height: 2.75rem; padding: 0; font-size: 0.95rem; }
+/* "or check the example" (and any other text-style button): looks like the site's links */
+.text-btn { appearance: none; background: none; border: 0; padding: 0; margin: 0; font: inherit; font-weight: 600;
+  color: var(--blue); text-decoration: underline; text-decoration-thickness: 2px; text-underline-offset: 3px; cursor: pointer; }
+@media (hover: hover) { .text-btn:hover { color: var(--ink); } }
+.text-btn:focus-visible { outline: 3px solid var(--blue); outline-offset: 3px; border-radius: 2px; }

@@ -69,9 +69,9 @@ Every guide opens with a note from Frank (each guide has its own Frank line), us
 
 **The idea box's grey example rotates** every 3.5 seconds through realistic side hustles with the odd weird one, so people see any idea is fair game: website tune-ups for local restaurants, travel planning for busy families, estate sale flipping on weekends, LinkedIn coaching for executives, cruise broker, candles that smell like the office (`EXAMPLES` in `app.js`). It holds still while someone is in the box or has typed, while the tab is in the background, and for reduced motion. The box is sized to the longest example, so its height never jumps as they rotate. The grey text is `#66614F` (6.1:1, readable but clearly not typed text). None of the examples is the example answer card's idea (pet turtles), so a live answer never contradicts the card beside it.
 
-**Clicking Check it with an empty box** checks whichever example is showing at that moment, instead of an error. It moves into the box as real text, Clear appears, and clicking the box selects it so typing replaces it. A one-letter entry still gets "Type an idea first. Half-baked is fine."
+**An empty click coaches instead of checking the example.** The button says "Check my idea" and the field is labelled "YOUR IDEA", with the rotating grey examples shown as "e.g. taco truck empire". Clicking with an empty box sends nothing: the cursor goes into the box (the keyboard opens on phones) and Frank says "Your turn. Type your own idea above, even a half-baked one.", with a small "or check the example" link that runs whichever example is showing (without the "e.g."). So nobody gets a taco truck verdict by accident. A one-letter entry still gets "Type an idea first. Half-baked is fine." Analytics events: `empty_nudge`, `example_check`.
 
-**"Or try:" chips:** bookkeeping for side hustlers (an office skill you already have), home tech help for boomers (an ordinary problem people pay to make go away), candles that smell like the office (yes, dumb ideas are allowed). The label stays plain.
+**No "Or try" chips:** they duplicated the rotating examples and pushed the example answer below the first screen on phones, so they were removed.
 
 **Frank thinks in the answer card:** while a check runs, the card already on screen (the example on a first check, the last answer after that) shows "FROM: Frank / RE: your new idea", the headline "SIPPING ON IT…" and Frank sipping on a loop; after 4.5 seconds a note adds "Circling back on the .com names…". On desktop that's the right-hand column beside the input; on phones it's the card under the input, scrolled into view if needed. The answer replaces it as before, and a failed check puts the card back exactly as it was. The old separate loading Frank under the input is gone; its messages are still announced to screen readers through a visually hidden live region.
 
@@ -271,7 +271,7 @@ Verdict captions are 800 uppercase.
 | Lede | "Type an idea. Get a straight verdict in about ten seconds." |
 | Hint | "Half-baked is fine. This is a coffee break, not Shark Tank." |
 | Empty box | "Type an idea first. Half-baked is fine." |
-| Chips | "Or try:" with bookkeeping for side hustlers, home tech help for boomers, and candles that smell like the office |
+| Examples | Rotating grey "e.g." examples in the box; no chips |
 | Loading | Frank thinks in the answer card: "SIPPING ON IT…", then "Circling back on the .com names…" |
 | Answer card | opens like a memo: "RE: meal prep for pet turtles" |
 | Footer | "Made for coffee breaks. Your manager remains uninformed." |

@@ -95,13 +95,15 @@ let justChecked = false; // after a result, the next click into the box selects 
 async function check(raw) {
   const input = $("#idea-input");
   let idea = String(raw || "").replace(/\s+/g, " ").trim();
-  // Empty box: check the grey example instead of showing an error. It moves into
-  // the box as real text, so it's clear what was checked and easy to type over.
-  if (!idea && input.placeholder) {
-    idea = input.placeholder.trim();
-    input.value = idea;
-    track("example_check");
-    input.dispatchEvent(new Event("input", { bubbles: true }));   // shows Clear, resizes the box
+  // Empty box: coach instead of checking the example. Frank asks for their own idea,
+  // the cursor goes into the box (the keyboard opens on phones), and a small link
+  // offers the example for anyone who just wants to see it work.
+  if (!idea) {
+    showError("Your turn. Type your own idea above, even a half-baked one.", { offerExample: true });
+    input.removeAttribute("aria-invalid");
+    input.focus();
+    track("empty_nudge");
+    return;
   }
   const error = $("#idea-error");
   error.hidden = true;
@@ -179,9 +181,10 @@ function stopThinking(failed) {
   thinkingCard = null;
 }
 
-function showError(msg) {
+function showError(msg, opts = {}) {
   const e = $("#idea-error");
   $("#idea-error-text").textContent = msg;
+  $("#try-example").hidden = !opts.offerExample;
   e.hidden = false;
   $("#idea-input").setAttribute("aria-invalid", "true");
 }
@@ -575,7 +578,7 @@ function autosize(textarea) {
   // rotate and no example is ever cut off on a narrow screen.
   if (!textarea.value) {
     let h = 0;
-    for (const ex of EXAMPLES.concat(textarea.placeholder || [])) {
+    for (const ex of EXAMPLES.map((x) => "e.g. " + x).concat(textarea.placeholder || [])) {
       textarea.value = ex;
       h = Math.max(h, textarea.scrollHeight);
     }
@@ -588,13 +591,17 @@ function autosize(textarea) {
 
 // Rotate the grey example every few seconds, but hold still while someone is in
 // the box or has typed, while the tab is in the background, and for reduced motion.
+// The grey text reads "e.g. taco truck empire" so it's clearly an example.
+const EG = "e.g. ";
+const currentExample = (input) => input.placeholder.replace(/^e\.g\.\s*/i, "").trim() || EXAMPLES[0];
+
 function rotateExamples(input) {
   if (reducedMotion()) return;
-  let i = Math.max(0, EXAMPLES.indexOf(input.placeholder));
+  let i = Math.max(0, EXAMPLES.indexOf(currentExample(input)));
   setInterval(() => {
     if (document.hidden || input.value || document.activeElement === input) return;
     i = (i + 1) % EXAMPLES.length;
-    input.placeholder = EXAMPLES[i];
+    input.placeholder = EG + EXAMPLES[i];
   }, 3500);
 }
 
@@ -644,9 +651,14 @@ function init() {
     if (!$("#idea-error").hidden) $("#idea-error").hidden = true;
     input.removeAttribute("aria-invalid");
   });
-  for (const btn of document.querySelectorAll("#examples .chip")) {
-    btn.addEventListener("click", () => tryIdea(btn.textContent));
-  }
+  // "or check the example": runs whichever example is showing, typed into the box
+  $("#try-example").addEventListener("click", () => {
+    const ex = currentExample(input);
+    input.value = ex;
+    input.dispatchEvent(new Event("input", { bubbles: true }));
+    track("example_check");
+    check(ex);
+  });
 }
 
 if (document.readyState === "loading") document.addEventListener("DOMContentLoaded", init);
