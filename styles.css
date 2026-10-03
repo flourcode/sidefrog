@@ -963,3 +963,9 @@ button.row .row-cue { color: var(--deep); }
 .frank-intro { display: flow-root; }
 .frank-intro .frog { float: left; width: 5.5rem; height: auto; margin: 0 1rem 0.25rem 0;
   shape-outside: ellipse(50% 50%); shape-margin: 0.35rem; }
+
+/* Prompts and example messages (blockquote.script) use the same plain vertical
+   rule as the site's other tips (.aside): no box, no corners, no colored edge.
+   Text stays full ink because it's meant to be read and copied. */
+.prose blockquote.script { margin: 0 0 1rem; padding: 0 0 0 0.8rem; background: none; border: 0;
+  border-left: 3px solid var(--rule); border-radius: 0; font-size: 1.02rem; line-height: 1.6; color: var(--ink); }
