@@ -92,13 +92,14 @@ def page_card(p):
 .label {{ position: absolute; left: 64px; top: 168px; font-size: 22px; font-weight: 700; letter-spacing: 0.12em; text-transform: uppercase; color: #4A5C34; }}
 h1 {{ position: absolute; left: 64px; top: 210px; width: 720px; font-size: {size}px; line-height: 1.04; letter-spacing: -0.04em; font-weight: 800; text-wrap: balance; }}
 .big {{ position: absolute; right: 70px; bottom: 60px; width: 330px; }}
+.dek {{ position: absolute; left: 64px; top: 380px; width: 680px; font-size: 27px; line-height: 1.35; color: #5A5A4A; margin: 0; }}
 .where {{ position: absolute; left: 64px; bottom: 96px; font-size: 22px; color: #5A5A4A; }}
 </style></head><body>
 <div class="frame"></div>
 <div class="brand">{frank()}SideFrog</div>
 <div class="tagline">Free advice from a frog<br>with no stake in your idea.</div>
 <p class="label">{html.escape(label)}</p>
-<h1>{title}</h1>
+<h1>{title}</h1>{f'<p class="dek">{html.escape(p["dek"])}</p>' if p.get("dek") else ""}
 <p class="where">{html.escape(where)}</p>
 <div class="big">{frank("smirk", "left")}</div>
 <div class="url">sidefrog.com</div>

@@ -1040,3 +1040,6 @@ button.row .row-cue { color: var(--deep); }
   color: var(--blue); text-decoration: underline; text-decoration-thickness: 2px; text-underline-offset: 3px; cursor: pointer; }
 @media (hover: hover) { .text-btn:hover { color: var(--ink); } }
 .text-btn:focus-visible { outline: 3px solid var(--blue); outline-offset: 3px; border-radius: 2px; }
+
+/* A dek: the magazine-style subhead under a page headline */
+.page .dek { font-size: 1.2rem; line-height: 1.45; color: var(--muted); margin: -0.4rem 0 1.4rem; max-width: 36ch; }

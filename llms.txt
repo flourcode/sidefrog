@@ -6,7 +6,7 @@
 - [Check an idea](https://sidefrog.com/): the idea checker
 
 ## Guides
-- [Vibe coding 101: build the ugly first version](https://sidefrog.com/break-room/build/vibe-coding-101/): How someone who has never written code can use AI tools like Claude or ChatGPT to build a small, working first version of an idea, one step at a time.
+- [Vibe coding 101: vibe a site tonight](https://sidefrog.com/break-room/build/vibe-coding-101/): A plain-English guide to getting your weird idea onto the internet before you talk yourself out of it. Eight steps for people who don't code, using AI tools like Claude, ChatGPT or Gemini.
 - [Before you put it on the internet](https://sidefrog.com/break-room/build/before-you-put-it-online/): The security and cost basics to check before you share a vibe-coded site: secret keys, spending limits, rate limits, user input, privacy and backups.
 - [Six people use it. Now what?](https://sidefrog.com/break-room/build/six-users-now-what/): What to watch, what to fix and what to ignore when a small vibe-coded project gets its first real users, without rebuilding everything too early.
 - [Test a side hustle idea in a week](https://sidefrog.com/break-room/start/test-an-idea-in-a-week/): A cheap, one-week way to find out if strangers will pay for your side hustle idea, before you buy a domain, a logo or anything else.

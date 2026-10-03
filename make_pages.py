@@ -170,6 +170,7 @@ def page_html(p):
     {crumbs}
     {'<img class="who-photo" src="/mark-mono.jpg" alt="Mark Flournoy" width="120" height="120">' if p.get("portrait") else ""}
     <h1>{html.escape(p["h1"])}</h1>
+    {f'<p class="dek">{html.escape(p["dek"])}</p>' if p.get("dek") else ""}
     {take}
     <div class="prose">
       {number_steps(p["body"]) if p.get("numbered") else p["body"]}
@@ -612,9 +613,10 @@ HELP_BOX = '''<div class="help-box">
 PAGES["vibe"] = dict(
     path="/break-room/build/vibe-coding-101/", section="Build it yourself", article=True, numbered=True,
     take_label="Frank has notes",
-    title="Vibe Coding 101: Build the Ugly First Version | SideFrog",
-    h1="Vibe coding 101: build the ugly first version",
-    description="How someone who has never written code can use AI tools like Claude or ChatGPT to build a small, working first version of an idea, one step at a time.",
+    title="Vibe Coding 101: Vibe a Site Tonight | SideFrog",
+    h1="Vibe coding 101: vibe a site tonight",
+    dek="A plain-English guide to getting your weird idea onto the internet before you talk yourself out of it.",
+    description="A plain-English guide to getting your weird idea onto the internet before you talk yourself out of it. Eight steps for people who don't code, using AI tools like Claude, ChatGPT or Gemini.",
     take="You don't need to learn to code to build a first version. You need to describe one small thing clearly, change one thing at a time, and save your work when it works. Keep the first version embarrassingly small.",
     body='''
       <p>Vibe coding means describing what you want in plain English and letting an AI tool write the code. It's how SideFrog was built: Claude, Notepad, GitHub and a $16 domain, by someone whose last job was sales. This guide is the version of that process we'd hand a friend.</p>
