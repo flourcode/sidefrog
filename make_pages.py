@@ -142,12 +142,12 @@ def page_html(p):
   <meta name="description" content="{desc}">
   <link rel="canonical" href="{url}">
   <meta property="og:site_name" content="SideFrog">
-  <meta property="og:image" content="{BASE_URL}/og/{slug_of(p)}.jpg">
-  <meta property="og:image:width" content="1200">
-  <meta property="og:image:height" content="630">
-  <meta property="og:image:alt" content="SideFrog: {title}">
+  <meta property="og:image" content="{BASE_URL}/og/{slug_of(p)}.jpg?v={fingerprint('og/' + slug_of(p) + '.jpg')}">
+  <meta property="og:image:width" content="2400">
+  <meta property="og:image:height" content="1260">
+  <meta property="og:image:alt" content="SideFrog: {html.escape(p['h1'])}">
   <meta name="twitter:card" content="summary_large_image">
-  <meta name="twitter:image" content="{BASE_URL}/og/{slug_of(p)}.jpg">
+  <meta name="twitter:image" content="{BASE_URL}/og/{slug_of(p)}.jpg?v={fingerprint('og/' + slug_of(p) + '.jpg')}">
   <meta property="og:title" content="{title}">
   <meta property="og:description" content="{desc}">
   <meta property="og:type" content="{"article" if p.get("article") else "website"}">
@@ -1204,6 +1204,9 @@ def main():
     idx = ROOT / "index.html"
     doc = idx.read_text(encoding="utf-8")
     doc = re.sub(r'<footer class="site-footer">.*?</footer>', lambda _: relative(FOOTER, "/"), doc, count=1, flags=re.S)
+    v = fingerprint("og/home.jpg")
+    doc = re.sub(r'(content="https://[^"]+/og/home\.jpg)(?:\?v=[0-9a-f]+)?"', lambda mm: f'{mm.group(1)}?v={v}"', doc)
+    doc = doc.replace('og:image:width" content="1200"', 'og:image:width" content="2400"').replace('og:image:height" content="630"', 'og:image:height" content="1260"')
     idx.write_text(stamp(doc), encoding="utf-8")
     print("updated index.html (footer, asset fingerprints)")
 

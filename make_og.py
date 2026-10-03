@@ -116,7 +116,9 @@ async def main(font_file=None):
     jobs = [("home", home_card())] + [(slug(p["path"]), page_card(p)) for p in make_pages.PAGES.values()]
     async with async_playwright() as pw:
         browser = await pw.chromium.launch()
-        page = await browser.new_page(viewport={"width": 1200, "height": 630})
+        # Rendered at 2x (2400x1260, the same 1.91:1 shape) so text stays crisp after
+        # LinkedIn and others shrink and re-compress it, and on high-resolution screens.
+        page = await browser.new_page(viewport={"width": 1200, "height": 630}, device_scale_factor=2)
         if font_file:  # offline: serve the font from disk instead of Google
             data = pathlib.Path(font_file).read_bytes()
             await page.route("https://fonts.googleapis.com/**", lambda r: r.fulfill(status=200, content_type="text/css",
@@ -131,7 +133,7 @@ async def main(font_file=None):
             png = await page.screenshot(type="png")
             from PIL import Image
             import io
-            Image.open(io.BytesIO(png)).convert("RGB").save(out / f"{name}.jpg", quality=86, optimize=True, progressive=True)
+            Image.open(io.BytesIO(png)).convert("RGB").save(out / f"{name}.jpg", quality=90, subsampling=0, optimize=True, progressive=True)   # 4:4:4 keeps small coloured text sharp
             print("og/" + name + ".jpg")
         tmp.unlink()
 
