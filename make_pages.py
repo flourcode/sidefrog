@@ -213,7 +213,7 @@ def number_steps(body):
 
 import hashlib
 
-ASSET_RE = re.compile(r'(href|src)="((?:\.\./)*)((?:styles\.css|app\.js|frank\.js|analytics\.js|local-links\.js|site\.webmanifest|favicon[^"?]*|apple-touch-icon\.png|mark(?:-mono)?\.jpg|frogs/[^"?]+))(?:\?v=[0-9a-f]+)?"')
+ASSET_RE = re.compile(r'(href|src)="(/|(?:\.\./)*)((?:styles\.css|app\.js|frank\.js|analytics\.js|local-links\.js|site\.webmanifest|favicon[^"?]*|apple-touch-icon\.png|mark(?:-mono)?\.jpg|frogs/[^"?]+))(?:\?v=[0-9a-f]+)?"')
 _fingerprints = {}
 
 
@@ -637,6 +637,14 @@ PAGES["vibe"] = dict(
       <h2>Save your work when it works</h2>
       <p>GitHub is a free place to keep your files with every version saved. Each save point is called a commit. Make one every time something works, and you can always get back to the last good version when a change goes sideways. It's the undo button you'll wish you had the first time the AI \u201cimproves\u201d something that was fine.</p>
 
+      <h2>Write a handoff before the chat runs out</h2>
+      <p>Long chats get slower, start forgetting decisions you made an hour ago, and eventually hit a limit. When that happens mid-project, the next chat starts from zero. A handoff file fixes that: a short note, saved as <code>HANDOFF.md</code> next to your code, that tells a brand-new chat what the project is, what's done and what's next. SideFrog is built this way, one session at a time.</p>
+      <p>Write one at the end of every working session, and any time the AI starts repeating old mistakes or forgetting what you agreed. Don't wait for the limit message. Ask for it like this:</p>
+      <blockquote class="script">We're wrapping up this session. Write a HANDOFF.md I can paste into a new chat so it can pick up exactly where we left off. Include: what the project is and who it's for, in two sentences; how it's built (files, tools, hosting, where the code lives); what's done and working; what we're in the middle of and the exact next step; decisions we made and why, including anything we tried and dropped; known bugs and loose ends; and the file names, web addresses and setting names I'll need. Never include secret keys or passwords. Keep it short and plain, written for someone who has never seen this chat.</blockquote>
+      <p>Save it with your code and commit it, so it lives next to the work it describes. Then start the next chat like this, with the handoff and your current files attached:</p>
+      <blockquote class="script">Here's the handoff from my last session and my current files. Read them, tell me in three lines what you understand the project to be and what's next, and wait for me to confirm before changing anything.</blockquote>
+      <p>That last line matters. It catches misunderstandings before they turn into changes you have to undo. Update the same file at the end of each session rather than starting a new one.</p>
+
       <h2>Put it online</h2>
       <p>A simple page can live for free or close to it on hosts like GitHub Pages, Netlify or AWS Amplify (what SideFrog uses), pointed at your domain. Before you share the link with anyone, read <a href="/break-room/build/before-you-put-it-online/">Before you put it on the internet</a>. It's an hour of boring work that saves you from the expensive kind of surprise.</p>
 ''',
@@ -644,6 +652,7 @@ PAGES["vibe"] = dict(
         ("Do I need to learn to code first?", "No. It helps to learn a little as you go, like reading an error message or knowing which file does what, and the AI will explain anything you ask about. Start building and learn what the project needs."),
         ("Which AI tool should I use?", "Any of the big ones can write a first version. Claude, ChatGPT and Gemini all work in a chat window. Tools like Cursor or Claude Code work directly on your files once you're comfortable. Pick one and stick with it for the first project."),
         ("What if it breaks something that used to work?", "Go back to your last commit on GitHub, then ask for the change again in a smaller step. This is the main reason to save often."),
+        ("What do I do when I hit the chat limit?", "Start a new chat and paste in your HANDOFF.md and your current files, then ask the AI to tell you what it understands before it changes anything. If you didn't write a handoff in time, paste your files and describe where you were in a few sentences, and write the handoff at the end of this new session."),
         ("Why does my AI-built site look like every other site?", "Because the AI gives you the most likely answer when you don't give it yours. Tell it what you believe about the work, how it should feel, a look you like and one detail only your business would think of, then have it critique the result as a skeptical customer."),
         ("Is code written by AI safe to put online?", "It can be, but don't assume it. AI tools will happily put a secret key where anyone can read it. The next guide covers what to check before you share the link."),
     ],
@@ -892,6 +901,20 @@ PAGES["leap"] = dict(
 )
 
 
+# ---------------------------------------------------------------- 404 (not in the sitemap)
+NOT_FOUND = dict(
+    path="/404.html", title="Page not found | SideFrog", h1="Frank can't find that page",
+    description="This page doesn't exist on SideFrog.", cta=False,
+    body='''
+      <p>It may have moved, or the link had a typo. Frank checked the break room and the supply closet. Nothing.</p>
+      <ul class="rows">
+        <li><a class="row" href="/"><span class="row-main">Check a side hustle idea</span><span class="row-cue" aria-hidden="true">Go</span></a></li>
+        <li><a class="row" href="/break-room/"><span class="row-main">Browse the Break Room guides</span><span class="row-cue" aria-hidden="true">Go</span></a></li>
+      </ul>
+''',
+)
+
+
 # ---------------------------------------------------------------- Break Room hub
 GROUPS = [("Build it yourself", ["vibe", "secure", "scale"]), ("Start here", ["test", "search", "competition"]), ("Name it", ["name", "domain"]), ("Sell it", ["customers", "price"]), ("Get found", ["ai"]), ("Make the leap", ["leap"])]
 
@@ -941,6 +964,24 @@ def main():
               f"- [What it costs]({BASE_URL}/what-it-costs/): {PAGES['costs']['description']}", ""]
     (ROOT / "llms.txt").write_text("\n".join(lines), encoding="utf-8")
     print("built sitemap.xml, robots.txt, llms.txt")
+
+    # 404 page: served for any address that doesn't exist, at any depth, so its
+    # links stay root-relative (/styles.css) instead of being made relative.
+    nf = page_html(NOT_FOUND).replace('<meta name="theme-color"', '<meta name="robots" content="noindex">\n  <meta name="theme-color"')
+    (ROOT / "404.html").write_text(stamp(nf), encoding="utf-8")
+
+    # Amplify rewrites and redirects: /about -> /about/ (301) for every page,
+    # then anything that doesn't exist -> /404.html with a real 404 status.
+    # www always goes to the bare domain (first, so it wins before anything else):
+    # the home page, then any path, keeping the path.
+    host = BASE_URL.split("://", 1)[1]
+    rules = [{"source": f"https://www.{host}", "target": f"https://{host}", "status": "301", "condition": None},
+             {"source": f"https://www.{host}/<*>", "target": f"https://{host}/<*>", "status": "301", "condition": None}]
+    rules += [{"source": p["path"].rstrip("/"), "target": p["path"], "status": "301", "condition": None}
+              for p in PAGES.values()]
+    rules.append({"source": "/<*>", "target": "/404.html", "status": "404", "condition": None})
+    (ROOT / "amplify-redirects.json").write_text(json.dumps(rules, indent=2) + "\n", encoding="utf-8")
+    print(f"built 404.html and amplify-redirects.json ({len(rules)} rules)")
 
     # The tool page (index.html) is hand-written, but its footer comes from the
     # same template, and its asset links get the same fingerprints.

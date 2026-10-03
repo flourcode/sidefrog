@@ -1,0 +1,110 @@
+[
+  {
+    "source": "https://www.sidefrog.com",
+    "target": "https://sidefrog.com",
+    "status": "301",
+    "condition": null
+  },
+  {
+    "source": "https://www.sidefrog.com/<*>",
+    "target": "https://sidefrog.com/<*>",
+    "status": "301",
+    "condition": null
+  },
+  {
+    "source": "/break-room/start/test-an-idea-in-a-week",
+    "target": "/break-room/start/test-an-idea-in-a-week/",
+    "status": "301",
+    "condition": null
+  },
+  {
+    "source": "/break-room/start/is-anyone-searching-for-this",
+    "target": "/break-room/start/is-anyone-searching-for-this/",
+    "status": "301",
+    "condition": null
+  },
+  {
+    "source": "/break-room/start/size-up-the-competition",
+    "target": "/break-room/start/size-up-the-competition/",
+    "status": "301",
+    "condition": null
+  },
+  {
+    "source": "/break-room/name/check-if-a-business-name-is-taken",
+    "target": "/break-room/name/check-if-a-business-name-is-taken/",
+    "status": "301",
+    "condition": null
+  },
+  {
+    "source": "/break-room/name/how-to-buy-a-domain",
+    "target": "/break-room/name/how-to-buy-a-domain/",
+    "status": "301",
+    "condition": null
+  },
+  {
+    "source": "/break-room/launch/getting-found-by-ai-answers",
+    "target": "/break-room/launch/getting-found-by-ai-answers/",
+    "status": "301",
+    "condition": null
+  },
+  {
+    "source": "/about",
+    "target": "/about/",
+    "status": "301",
+    "condition": null
+  },
+  {
+    "source": "/what-it-costs",
+    "target": "/what-it-costs/",
+    "status": "301",
+    "condition": null
+  },
+  {
+    "source": "/break-room/build/vibe-coding-101",
+    "target": "/break-room/build/vibe-coding-101/",
+    "status": "301",
+    "condition": null
+  },
+  {
+    "source": "/break-room/build/before-you-put-it-online",
+    "target": "/break-room/build/before-you-put-it-online/",
+    "status": "301",
+    "condition": null
+  },
+  {
+    "source": "/break-room/build/six-users-now-what",
+    "target": "/break-room/build/six-users-now-what/",
+    "status": "301",
+    "condition": null
+  },
+  {
+    "source": "/break-room/sell/first-ten-customers",
+    "target": "/break-room/sell/first-ten-customers/",
+    "status": "301",
+    "condition": null
+  },
+  {
+    "source": "/break-room/sell/what-to-charge",
+    "target": "/break-room/sell/what-to-charge/",
+    "status": "301",
+    "condition": null
+  },
+  {
+    "source": "/break-room/leap/before-you-leap",
+    "target": "/break-room/leap/before-you-leap/",
+    "status": "301",
+    "condition": null
+  },
+  {
+    "source": "/break-room",
+    "target": "/break-room/",
+    "status": "301",
+    "condition": null
+  },
+  {
+    "source": "/<*>",
+    "target": "/404.html",
+    "status": "404",
+    "condition": null
+  }
+]
