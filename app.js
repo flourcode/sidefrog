@@ -592,13 +592,13 @@ function tryIdea(text) {
 // The grey examples the empty box rotates through: realistic side hustles with
 // the odd weird one, so people see any idea is fair game.
 const EXAMPLES = [
+  "interview coaching",
   "taco truck empire",
-  "restaurant site tune-ups",
-  "family trip planning",
-  "weekend estate sale flips",
-  "exec LinkedIn coaching",
-  "cruise broker",
-  "office-scented candles",
+  "YouTube influencer",
+  "yard sale flipping",
+  "fractional sales help",
+  "dog walking business",
+  "passive-aggressive mugs",
 ];
 
 function autosize(textarea) {
