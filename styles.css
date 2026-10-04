@@ -1096,3 +1096,7 @@ button.row .row-cue { color: var(--deep); }
 @keyframes plate-shake { 0%, 100% { transform: translateX(0); } 20% { transform: translateX(-6px); } 40% { transform: translateX(5px); } 60% { transform: translateX(-3px); } 80% { transform: translateX(2px); } }
 .plate.shake { animation: plate-shake 0.32s ease-in-out; }
 @media (prefers-reduced-motion: reduce) { .plate.shake { animation: none; } }
+
+/* Share Frank's verdict: a quiet text link under the verdict, hidden while he thinks */
+.share-row { margin: 0.85rem 0 0; }
+.result.is-loading .share-row { display: none; }

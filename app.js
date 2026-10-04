@@ -132,7 +132,9 @@ async function check(raw) {
   setStatus("");
   stopThinking(Boolean(err));
   if (err) { track("check_error"); return showError(err); }
-  track("check", { verdict: report.verdict });
+  checksThisVisit += 1;
+  track("check", { verdict: report.verdict, check_number: checksThisVisit });
+  if (checksThisVisit === 2) track("second_check", { verdict: report.verdict });
   render(report);
   justChecked = true;
 }
@@ -145,7 +147,9 @@ function setStatus(text) {
 // While a check runs, the card already on screen (the example on a first check,
 // the last answer after that) shows the new idea and Frank sipping on a loop.
 let thinkingCard = null;
-let savedTitle = "";                 // the tab title before a check, restored if it fails
+let savedTitle = "";
+let checksThisVisit = 0;      // analytics: 1st, 2nd, 3rd check in this visit (a 2nd check means it was fun)
+let shownReport = null;       // the answer on screen, for the share card                 // the tab title before a check, restored if it fails
 let savedMemo = "";
 function memoRow(label, text) {
   const row = el("span", { className: "memo-row" });
@@ -214,6 +218,8 @@ function render(r) {
   // The tab shows the verdict (never the idea, so nothing typed lands in browser history)
   document.title = `${VERDICT_LABEL[r.verdict] || "Here's the read"} \u00b7 SideFrog`;
   $("#mascot").dataset.mood = VERDICT_FACE[r.verdict] || "smirk";
+  shownReport = { ...r, idea: lastIdea };
+  $("#share-row").hidden = r.verdict === "cant_help";
   const sticker = $("#sticker");
   sticker.classList.remove("is-sipping");
   void sticker.getBoundingClientRect(); // restart the sip for every new answer
@@ -645,11 +651,163 @@ function rotateExamples(input) {
 }
 
 // ---------------------------------------------------------------------------
+// Share Frank's verdict: a 1080x1350 image drawn in the browser from the answer on
+// screen. Nothing is sent anywhere; the visitor decides whether to share it.
+// ---------------------------------------------------------------------------
+
+const SHARE = { w: 1080, h: 1350, pad: 72, paper: "#FBF7EF", card: "#FFFDF9", ink: "#1F241F",
+  muted: "#5A5A4A", rule: "#A89B84", accent: "#A4501F", font: '"Bricolage Grotesque", system-ui, sans-serif' };
+
+// Frank as one image: the page's own body, face and mug layers combined into a single SVG.
+async function frankImage(mood) {
+  const svg = $("#mascot");
+  const hrefs = [...svg.querySelectorAll("image")].map((i) => i.getAttribute("href"));
+  const body = hrefs.find((h) => h.includes("coffee-body")), mug = hrefs.find((h) => /coffee-mug\.svg/.test(h));
+  const strip = (t) => t.replace(/<\?xml[^>]*>/, "").replace(/<metadata>[\s\S]*?<\/metadata>/g, "").replace(/^[\s\S]*?<svg[^>]*>/, "").replace(/<\/svg>\s*$/, "");
+  const [b, m] = await Promise.all([body, mug].map((h) => fetch(h).then((r) => r.text()).then(strip)));
+  const face = (svg.querySelector(`.face-${mood}`) || svg.querySelector(".face-smirk")).outerHTML;
+  const full = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="${svg.getAttribute("viewBox")}">${b}${face}${m}</svg>`;
+  const img = new Image();
+  img.src = "data:image/svg+xml;charset=utf-8," + encodeURIComponent(full);
+  await img.decode();
+  return img;
+}
+
+function wrapLines(ctx, text, maxWidth, maxLines) {
+  const words = String(text).split(/\s+/).filter(Boolean), lines = [];
+  let line = "";
+  for (const w of words) {
+    const test = line ? `${line} ${w}` : w;
+    if (ctx.measureText(test).width <= maxWidth || !line) line = test;
+    else { lines.push(line); line = w; }
+  }
+  if (line) lines.push(line);
+  if (lines.length > maxLines) {
+    const kept = lines.slice(0, maxLines);
+    let last = kept[maxLines - 1];
+    while (ctx.measureText(last + "\u2026").width > maxWidth && last.includes(" ")) last = last.slice(0, last.lastIndexOf(" "));
+    kept[maxLines - 1] = last.replace(/[,.;:]$/, "") + "\u2026";
+    return kept;
+  }
+  return lines;
+}
+
+async function drawShareCard(r) {
+  const S = SHARE, c = document.createElement("canvas");
+  c.width = S.w; c.height = S.h;
+  const ctx = c.getContext("2d");
+  const font = (weight, size) => { ctx.font = `${weight} ${size}px ${S.font}`; };
+  const spacing = (px) => { if ("letterSpacing" in ctx) ctx.letterSpacing = `${px}px`; };
+  try { await Promise.all([document.fonts.load(`800 100px ${S.font}`), document.fonts.load(`400 40px ${S.font}`)]); } catch {}
+  const mood = VERDICT_FACE[r.verdict] || "smirk";
+  let bigFrank = null, smallFrank = null;
+  try { [bigFrank, smallFrank] = await Promise.all([frankImage(mood), frankImage("smirk")]); } catch { /* draws without Frank */ }
+
+  ctx.fillStyle = S.paper; ctx.fillRect(0, 0, S.w, S.h);
+  // masthead: Frank, the wordmark, a rule
+  const L = S.pad, R = S.w - S.pad;
+  if (smallFrank) ctx.drawImage(smallFrank, L, 58, 84, 76);
+  font(800, 48); spacing(-1.5); ctx.fillStyle = S.ink; ctx.textBaseline = "alphabetic";
+  ctx.fillText("SideFrog", L + (smallFrank ? 98 : 0), 118);
+  ctx.fillRect(L, 164, R - L, 3);
+
+  // the memo card: measure first, then draw
+  const cardX = L, cardW = R - L, inPad = 56, inL = cardX + inPad, inW = cardW - inPad * 2;
+  const frankW = 290, frankH = Math.round(frankW * 524 / 576);
+  const memoW = inW - frankW - 24;
+  font(800, 30); spacing(3);
+  const reLabelW = ctx.measureText("RE: ").width;
+  font(400, 34); spacing(0);
+  const reLines = wrapLines(ctx, r.idea, memoW - reLabelW - 10, 2);
+  // the verdict on one line if it fits at a size from 108 down to 84; otherwise it wraps at 108
+  const verdictText = (VERDICT_LABEL[r.verdict] || "Here's the read").toUpperCase();
+  let vSize = 108;
+  for (let s = 108; s >= 84; s -= 4) { font(800, s); spacing(-s / 27); if (ctx.measureText(verdictText).width <= inW) { vSize = s; break; } vSize = 108; }
+  font(800, vSize); spacing(-vSize / 27);
+  const verdictLines = wrapLines(ctx, verdictText, inW, 3);
+  const vLine = Math.round(vSize * 0.94);
+  font(400, 42); spacing(0);
+  const reasonLines = wrapLines(ctx, r.verdictReason || "", inW, 6);
+  // lay out once at the top to get the height, then center the card and the URL below the masthead
+  const layout = (cardY) => {
+    const memoTop = cardY + 78, memoBottom = memoTop + 52 + (reLines.length - 1) * 46 + 18;
+    const verdictTop = Math.max(memoBottom + 30, cardY + 36 + frankH + 10);
+    const reasonTop = verdictTop + verdictLines.length * vLine + 26;
+    const cardH = reasonTop + reasonLines.length * 58 - cardY + 50;
+    return { cardY, memoTop, memoBottom, verdictTop, reasonTop, cardH };
+  };
+  const first = layout(0), blockH = first.cardH + 14 + 96 + 54, room = S.h - 200 - 70;
+  const { cardY, memoTop, memoBottom, verdictTop, reasonTop, cardH } = layout(200 + Math.max(20, (room - blockH) / 2));
+
+  // hard offset shadow, then the card
+  const rr = (x, y, w, h, rad) => { ctx.beginPath(); ctx.moveTo(x + rad, y); ctx.arcTo(x + w, y, x + w, y + h, rad); ctx.arcTo(x + w, y + h, x, y + h, rad); ctx.arcTo(x, y + h, x, y, rad); ctx.arcTo(x, y, x + w, y, rad); ctx.closePath(); };
+  ctx.fillStyle = S.ink; rr(cardX + 14, cardY + 14, cardW, cardH, 34); ctx.fill();
+  ctx.fillStyle = S.card; rr(cardX, cardY, cardW, cardH, 34); ctx.fill();
+  ctx.lineWidth = 4; ctx.strokeStyle = S.ink; ctx.stroke();
+
+  // FROM / RE
+  font(800, 30); spacing(3); ctx.fillStyle = S.accent; ctx.fillText("FROM:", inL, memoTop);
+  const fromW = ctx.measureText("FROM: ").width;
+  font(400, 34); spacing(0); ctx.fillStyle = S.muted; ctx.fillText("Frank", inL + fromW, memoTop);
+  font(800, 30); spacing(3); ctx.fillStyle = S.accent; ctx.fillText("RE:", inL, memoTop + 52);
+  font(400, 34); spacing(0); ctx.fillStyle = S.muted;
+  reLines.forEach((line, i) => ctx.fillText(line, inL + reLabelW, memoTop + 52 + i * 46));
+  ctx.fillStyle = S.rule; ctx.fillRect(inL, memoBottom, memoW, 2);
+  if (bigFrank) ctx.drawImage(bigFrank, cardX + cardW - inPad - frankW + 18, cardY + 36, frankW, frankH);
+
+  // the verdict, then the reason
+  font(800, vSize); spacing(-vSize / 27); ctx.fillStyle = S.ink;
+  verdictLines.forEach((line, i) => ctx.fillText(line, inL, verdictTop + Math.round(vSize * 0.82) + i * vLine));
+  font(400, 42); spacing(0); ctx.fillStyle = S.ink;
+  reasonLines.forEach((line, i) => ctx.fillText(line, inL, reasonTop + 40 + i * 58));
+
+  // under the card: where to get your own
+  const footY = cardY + cardH + 14 + 96;
+  font(800, 64); spacing(-2); ctx.fillStyle = S.ink; ctx.fillText("sidefrog.com", L, footY);
+  font(400, 34); spacing(0); ctx.fillStyle = S.muted;
+  ctx.fillText("Free advice from a frog with no stake in your idea.", L, footY + 54);
+  return c;
+}
+
+async function shareVerdict() {
+  const r = shownReport, btn = $("#share-verdict");
+  if (!r) return;
+  const label = "Share Frank\u2019s verdict";
+  btn.textContent = "Making the card\u2026"; btn.disabled = true;
+  try {
+    const canvas = await drawShareCard(r);
+    const blob = await new Promise((ok) => canvas.toBlob(ok, "image/png"));
+    const file = new File([blob], "frank-verdict.png", { type: "image/png" });
+    if (navigator.canShare && navigator.canShare({ files: [file] })) {
+      try {
+        await navigator.share({ files: [file], title: "Frank's verdict", text: "Frank's verdict on my idea. Get yours at sidefrog.com" });
+        track("share", { verdict: r.verdict, method: "share_sheet" });
+      } catch (e) { if (e.name !== "AbortError") throw e; }
+    } else {
+      const url = URL.createObjectURL(blob);
+      const a = Object.assign(document.createElement("a"), { href: url, download: "frank-verdict.png" });
+      document.body.append(a); a.click(); a.remove();
+      setTimeout(() => URL.revokeObjectURL(url), 4000);
+      track("share", { verdict: r.verdict, method: "download" });
+      btn.textContent = "Saved. Post it anywhere.";
+      setStatus("Frank's verdict was saved as an image.");
+      btn.disabled = false;
+      setTimeout(() => { btn.textContent = label; }, 2500);
+      return;
+    }
+  } catch (e) {
+    setStatus("Couldn't make the image. Try again.");
+  }
+  btn.textContent = label; btn.disabled = false;
+}
+
+// ---------------------------------------------------------------------------
 // Wire up
 // ---------------------------------------------------------------------------
 
 function init() {
   const input = $("#idea-input");
+  $("#share-verdict").addEventListener("click", shareVerdict);
   $("#idea-form").addEventListener("submit", (e) => {
     e.preventDefault();
     check(input.value);
