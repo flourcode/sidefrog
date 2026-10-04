@@ -516,6 +516,7 @@ function renderNames(names, verdict) {
   // Frank doesn't sell a domain for an idea he just told you not to pursue:
   // on "Keep your day job" the names are shown for reference, with no registrar link.
   const buyable = verdict !== "nah";
+  list.hidden = shown.length === 0;   // no empty list (and no stray bullet) when nothing is open
   for (const n of shown) {
     const li = el("li", { "data-status": n.status });
     const parts = [el("span", { className: "name-word" }, n.name), el("span", { className: "name-domain" }, n.domain)];
@@ -536,8 +537,8 @@ function renderNames(names, verdict) {
 
   if (!open.length && !unknown.length) {
     note.textContent = names.length === 1
-      ? "The name we came up with already has its .com taken. Check it again for a fresh batch."
-      : `All ${names.length} names we came up with already have their .com taken. Check it again for a fresh batch.`;
+      ? "The name we came up with already has its .com taken. Check it again for a fresh batch, or add a name of your own to the idea."
+      : `All ${names.length} names we came up with already have their .com taken. Check it again for a fresh batch, or add a name of your own to the idea.`;
   } else if (!open.length) {
     note.textContent = "Couldn't reach the .com registry just now, so these aren't checked yet.";
   } else {
