@@ -221,10 +221,13 @@ function render(r) {
   facts.replaceChildren();
   // "Watch out for" is skipped when Frank finds nothing worth flagging, to keep the card short
   const watchOut = r.watchOut && !/^nothing obvious/i.test(r.watchOut.trim()) ? r.watchOut : "";
-  for (const [label, value] of [["Sharper version", r.sharpenedIdea], ["Who pays", r.whoPays], ["Try this first", r.firstMove],
-                                ["Good sign", r.goodSign], ["Watch out for", watchOut]]) {
+  // Ordered by the reader's decision: what to do first (the lead), how to tell if it's
+  // working and what could sink it (signals), then who pays and the sharper version (context).
+  for (const [label, value, role] of [["Try this first", r.firstMove, "fact-lead"],
+                                      ["Good sign", r.goodSign, "fact-signal"], ["Watch out for", watchOut, "fact-signal"],
+                                      ["Who pays", r.whoPays, "fact-minor"], ["Sharper version", r.sharpenedIdea, "fact-minor"]]) {
     if (!value) continue;
-    const row = el("div");
+    const row = el("div", { className: role });
     row.append(el("dt", {}, label), el("dd", {}, value));
     facts.append(row);
   }
@@ -337,7 +340,7 @@ if ("ResizeObserver" in window) {
 }
 if (document.fonts?.ready) document.fonts.ready.then(fitVerdict);
 
-// ---- Take it further: ready-made prompts to paste into your own AI ---------------
+// ---- Hand it to your AI: ready-made prompts to paste into your own AI ---------------
 // Built in the browser from the answer you just got. Nothing is sent anywhere again.
 
 const GUIDES = {

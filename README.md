@@ -121,6 +121,10 @@ From a talk on how premium e-commerce brands justify their prices, four plain id
 
 Left out on purpose: income-based targeting, ad-agency tactics, subscription lock-in, an unsourced promotions-per-year figure, and the pitch. None of it fits SideFrog's readers or trust rules.
 
+## The answer's facts, in decision order
+
+After the verdict and its reason, the facts follow the reader's decision path: **Try this first** leads (full width, larger type, a 4px avocado rule, the same idea as the site's vertical-rule tips rather than a tinted box), then **Good sign** and **Watch out for** side by side as signals, then **Who pays** and **Sharper version** smaller and muted as context. One column on phones, same order. Names, searches, other ideas and the prompts stay below as secondary tools; the prompts section is called "Hand it to your AI" (it was "Take it further").
+
 ## Two answer fields borrowed from the old Sifter
 
 The Lambda returns two more short lines, both shown in the answer's facts list after "Try this first":
@@ -150,6 +154,13 @@ The tool page has `WebApplication` data (free, by Mark); guides have `Article`, 
 ## The stylesheet
 
 Each Frank animation is defined once (the final versions); retired parts (the separate loading Frank, the front forearm) and rules fully overridden later were removed in a cleanup that was verified two ways: every sip animation (idle, thinking, landing) is identical before and after, and home, a guide, About and a full answer render pixel-identical on desktop and phone.
+
+## Two zips
+
+- **`sidefrog-site.zip`** is for Amplify: only the files the website serves (pages, styles, scripts, images, sitemap, robots, llms.txt, the AI catalog). Nothing internal is public.
+- **`sidefrog-source.zip`** is the whole project for GitHub: the site plus `customHttp.yml`, `amplify-redirects.json`, the build scripts, the docs, the Lambda source and the video script.
+
+`customHttp.yml` and `amplify-redirects.json` are not uploaded with the site on manual deploys; paste their contents into the Amplify console (Hosting > Custom headers, and Hosting > Rewrites and redirects). To confirm the headers are live: Chrome DevTools > Network > reload > the page's first row > Response Headers should show `cache-control: no-cache` and `content-security-policy`.
 
 ## Updating the site (cache busting)
 
@@ -200,7 +211,7 @@ The taco-truck reader is served by: "taco truck empire" leading the rotating exa
 - Amplify rewrites and redirects: paste `amplify-redirects.json` (see below).
 - Submit `sitemap.xml` in Google Search Console.
 
-## Take it further (the prompt kit)
+## Hand it to your AI (the prompt kit)
 
 Under every answer, ready-made prompts to paste into your own Claude, ChatGPT or Gemini, built in the browser from the answer itself (nothing is sent anywhere again). Shown by verdict: Surprisingly, yes and This could work get Build the page, Talk to ten buyers and Answer the questions; Crowded pond gets Read their bad reviews first; Keep your day job gets Talk to ten buyers only; Can't help gets none. Each prompt opens in place with a Copy button, and a "Read next" link points to the matching guide. Prompt text lives in `kitPrompts()` in `app.js`. Every prompt tells the AI not to invent testimonials, reviews or statistics.
 

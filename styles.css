@@ -1045,3 +1045,14 @@ button.row .row-cue { color: var(--deep); }
 /* A dek: the magazine-style subhead under a page headline */
 .page .dek { font-size: 1.2rem; line-height: 1.45; color: var(--muted); margin: -0.4rem 0 1.4rem; max-width: 36ch; }
 
+
+/* Answer facts, in decision order: the first test leads (full width, larger, an avocado rule
+   like the site's tips), the two signals pair up, then who pays and the sharper version sit
+   smaller as context. One column on phones, same order. */
+.facts { grid-template-columns: 1fr; gap: 1rem 1.75rem; }
+@media (min-width: 560px) { .facts { grid-template-columns: 1fr 1fr; } .facts .fact-lead { grid-column: 1 / -1; } }
+.facts .fact-lead { border-left: 4px solid var(--frog); padding: 0.15rem 0 0.15rem 0.9rem; }
+.facts .fact-lead dt { color: var(--deep); }
+.facts .fact-lead dd { font-size: 1.28rem; line-height: 1.4; font-weight: 500; }
+.facts .fact-minor dd { font-size: 0.98rem; color: var(--muted); }
+.facts .fact-minor dt { opacity: 0.85; }

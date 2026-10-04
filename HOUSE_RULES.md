@@ -49,6 +49,7 @@ The tagline: "Free advice from a frog with no stake in your idea." It leads the 
 ## UX
 
 - Show value before any ask (the example answer is on screen from the start).
+- The answer card follows the decision path: verdict, why, then what to try first (the lead), how to tell it's working and what could sink it, then context. Emphasis comes from type size and the vertical rule, not tinted boxes.
 - The tool asks for the visitor's own idea: "YOUR IDEA", "Check my idea", grey examples marked "e.g.". An empty click coaches (Frank asks for their idea and offers "or check the example") rather than silently checking someone else's idea. No example chips; the rotation does that job.
 - Every action gets feedback. Mobile first from 320px, nothing sideways, 44px touch targets.
 - Respect reduced motion everywhere. Readable contrast (WCAG AA) in light and dark.
