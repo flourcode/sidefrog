@@ -365,37 +365,51 @@ function kitPrompts(r) {
   return {
     page: {
       name: "Build the page",
-      text: `Build me a one-page landing page as a single HTML file (HTML, CSS and a little JavaScript, no frameworks, under 40KB).
+      text: `Design and build a one-page landing page for my business, as a single complete HTML file.
 
-The business: ${idea}
-Who it's for and who pays: ${who}
-The name: ${nameLine}
-The price: [your price, or "early access"]
+ABOUT THE BUSINESS
+- What it is: ${idea}
+- Who it's for and what they pay: ${who}
+- Name: ${nameLine}
 
-What makes it mine (fill these in; they're what keep it from looking like every other site):
-- What I believe about this work: [e.g. "restaurant owners shouldn't need a web developer to change their hours"]
-- How it should feel, in a few words: [e.g. "warm, local, no-nonsense"]
-- A place, era or brand whose look I like: [e.g. "an old diner menu" or "1970s travel posters"]
-- One detail only someone in this business would think of: [e.g. "today's hours at the top, because that's what customers check"]
-- The worry that almost stops people buying: [e.g. "I'll have to learn some new system" or "you'll disappear after the first month"]
+BEFORE YOU BUILD
+Ask me these in one short message, then wait for my answers:
+1. The name (or confirm the one above), and the exact price.
+2. What I believe about this work that others in my field don't.
+3. How it should feel, in a few words, and a place, era or brand whose look I like.
+4. The worry that almost stops people from buying, and any real proof I have that answers it (a customer's words I'm allowed to use, a before-and-after, a guarantee).
+5. The link people should land on when they tap the button (a Google Form is fine).
+If I answer "you choose" to any of these, make a confident, specific choice that fits this business and tell me what you chose.
 
-The page needs:
-- A headline that says what it is in plain words
-- One short paragraph on who it's for and the problem it solves
-- The price
-- A short, direct answer to that worry, right above the button, with real evidence if I have it: a before-and-after, a real customer's words used with permission, or a specific guarantee
-- One button that opens this sign-up form: [paste your Google Form link]
+THE ONE JOB
+The page has one job: get the right person to tap one button. Everything on it should help that. Anything that doesn't, leave out.
 
-Rules:
-- Mobile first and easy to read on a small phone
-- Plain, specific language. No hype words.
-- Don't invent testimonials, reviews, customer counts or statistics.
-- One page only, with no navigation menu.
-- Skip the generic startup template look: no gradient hero, no stock icons, no emoji. Pick fonts and colors that fit how it should feel.
+WHAT IT CONTAINS, IN ORDER
+1. A first screen that works on a phone without scrolling: the name, a headline that says plainly what this is and who it's for, one supporting sentence, the price, and the button.
+2. A concrete picture of what the customer actually gets, or what happens first, in three short steps or one short paragraph. Specific beats impressive.
+3. The worry, answered directly with my real proof, just above the same button again.
+4. A quiet footer: the name, a way to reach me, and any fine print this business needs.
+No navigation menu, no feature grid, no wall of FAQs.
 
-When you're done:
-1. Look at the page the way a skeptical customer would, list the five things that make it feel generic or unfinished, and fix them.
-2. Tell me in two sentences how to put it online for free.`,
+HOW IT SHOULD LOOK AND FEEL
+- Design it from this business, not from a template. Someone in this trade should recognize it as theirs.
+- Premium craft: a confident type scale, generous spacing, and a restrained palette taken from the business and the feel I described. You may load one or two Google Fonts.
+- One simple visual drawn in inline SVG or CSS that belongs to this business. No stock photos, icon sets, emoji or gradient hero.
+- Calm, purposeful motion: sections ease in as they scroll into view, and the button responds to a tap. Respect prefers-reduced-motion, and never make anyone wait to read.
+- Mobile first, easy to read on a small phone, good contrast, visible keyboard focus.
+
+HOW IT SHOULD WORK
+- One self-contained file (HTML, CSS and a little JavaScript), no frameworks or build step, fast on a phone.
+- Both buttons open my link in a new tab. If I haven't given one, put a clearly marked placeholder at the top of the script.
+- Include a page title, a description and social-sharing tags.
+
+HONESTY
+Plain, specific words, no hype. Never invent testimonials, reviews, customer counts, statistics, credentials or awards. Where proof is missing, leave a clearly marked spot for it.
+
+BEFORE YOU SHOW ME
+1. Read the page as a skeptical customer on a phone, then as a demanding designer. List the five weakest things and fix them.
+2. Ask what's on the page because it could be, not because it should be, and remove it.
+3. Give me the finished file, tell me exactly where to paste my link, and explain in two sentences how to put it online for free.`,
     },
     buyers: {
       name: "Talk to ten buyers",

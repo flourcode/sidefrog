@@ -953,16 +953,17 @@ button.row .row-cue { color: var(--deep); }
 /* The costs card: the same round portrait */
 .take .take-photo { width: 4.25rem; height: 4.25rem; aspect-ratio: auto; border-radius: 50%; border: 0; object-fit: cover; }
 
-/* Frank's notes: text flows around Frank (like the About portrait) instead of
-   sitting in a column beside him. The card stays a box (flow-root contains the float). */
+/* Frank's notes: Frank floats top left and the text wraps beside him, then returns to full
+   width underneath. (His right edge is nearly straight, so text can't curve around him the
+   way it does around Mark's round portrait; following his outline only crowds him.) The card stays a box (flow-root contains the float). */
 .take { display: flow-root; }
 .take .frog { float: left; width: 4.25rem; height: auto; margin: 0.15rem 1rem 0.25rem 0;
-  shape-outside: ellipse(50% 50%); shape-margin: 0.35rem; }
+  }
 .take .take-photo { float: left; margin: 0.15rem 1rem 0.35rem 0; shape-outside: circle(50%); shape-margin: 0.4rem; }
 /* About: Frank's one-line introduction flows the same way */
 .frank-intro { display: flow-root; }
 .frank-intro .frog { float: left; width: 5.5rem; height: auto; margin: 0 1rem 0.25rem 0;
-  shape-outside: ellipse(50% 50%); shape-margin: 0.35rem; }
+  }
 
 /* Prompts and example messages (blockquote.script) use the same plain vertical
    rule as the site's other tips (.aside): no box, no corners, no colored edge.
@@ -1043,3 +1044,4 @@ button.row .row-cue { color: var(--deep); }
 
 /* A dek: the magazine-style subhead under a page headline */
 .page .dek { font-size: 1.2rem; line-height: 1.45; color: var(--muted); margin: -0.4rem 0 1.4rem; max-width: 36ch; }
+

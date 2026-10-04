@@ -60,7 +60,7 @@ h1 {{ position: absolute; left: 64px; top: 150px; width: 560px; font-size: 64px;
 <div class="brand">{frank()}SideFrog</div>
 <div class="tagline">Free advice from a frog<br>with no stake in your idea.</div>
 <h1>Thinking about making the leap from your 9-to-5?</h1>
-<p class="lede">Type a side hustle idea. Get a straight verdict in about ten seconds.</p>
+<p class="lede">Type in your side hustle idea. Find out if it has legs.</p>
 <div class="card">{frank("nah", "left")}
   <p class="memo"><b>FROM:</b> Frank<br><b>RE:</b> meal prep for pet turtles</p>
   <p class="verdict">Keep your day job</p>
