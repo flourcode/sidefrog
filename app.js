@@ -95,13 +95,15 @@ let justChecked = false; // after a result, the next click into the box selects 
 async function check(raw) {
   const input = $("#idea-input");
   let idea = String(raw || "").replace(/\s+/g, " ").trim();
-  // Empty box: coach instead of checking the example. Frank asks for their own idea,
-  // the cursor goes into the box (the keyboard opens on phones), and a small link
-  // offers the example for anyone who just wants to see it work.
+  // Empty box: a quiet nudge. The cursor stays in the box (the keyboard opens on
+  // phones), the box gives a small shake, and one short line asks for an idea.
+  // The rotating examples are inspiration only; they're never checked.
   if (!idea) {
-    showError("Your turn. Type your own idea above, even a half-baked one.", { offerExample: true });
+    showError("Give me something to work with.", { hint: true });
     input.removeAttribute("aria-invalid");
     input.focus();
+    const plate = $(".plate");
+    if (!reducedMotion()) { plate.classList.remove("shake"); void plate.offsetWidth; plate.classList.add("shake"); }
     track("empty_nudge");
     return;
   }
@@ -116,6 +118,7 @@ async function check(raw) {
   setBusy(true);
   setStatus("Frank's sipping on it…");
   startThinking(idea);
+  thinkingNote("This is a coffee break, not Shark Tank.");   // the joke while Frank sips; replaced if it runs long
   const step = setTimeout(() => {
     if (id !== runId) return;
     setStatus("Circling back on the .com names…");
@@ -184,8 +187,9 @@ function stopThinking(failed) {
 function showError(msg, opts = {}) {
   const e = $("#idea-error");
   $("#idea-error-text").textContent = msg;
-  $("#try-example").hidden = !opts.offerExample;
+  e.classList.toggle("is-hint", Boolean(opts.hint));   // a quiet nudge: no Frank, no red
   e.hidden = false;
+  keepMessageInView();
   $("#idea-input").setAttribute("aria-invalid", "true");
 }
 
@@ -221,10 +225,11 @@ function render(r) {
   facts.replaceChildren();
   // "Watch out for" is skipped when Frank finds nothing worth flagging, to keep the card short
   const watchOut = r.watchOut && !/^nothing obvious/i.test(r.watchOut.trim()) ? r.watchOut : "";
-  // Ordered by the reader's decision: what to do first (the lead), how to tell if it's
-  // working and what could sink it (signals), then who pays and the sharper version (context).
-  for (const [label, value, role] of [["Try this first", r.firstMove, "fact-lead"],
-                                      ["Good sign", r.goodSign, "fact-signal"], ["Watch out for", watchOut, "fact-signal"],
+  // The cheap test leads, then its pass/fail pair (when to keep going, when to rethink),
+  // then context. An older Lambda without rethinkIf just skips that row.
+  for (const [label, value, role] of [["Cheap test", r.firstMove, "fact-lead"],
+                                      ["Keep going if", r.goodSign, "fact-signal"], ["Rethink it if", r.rethinkIf, "fact-signal"],
+                                      ["Watch out for", watchOut, "fact-minor"],
                                       ["Who pays", r.whoPays, "fact-minor"], ["Sharper version", r.sharpenedIdea, "fact-minor"]]) {
     if (!value) continue;
     const row = el("div", { className: role });
@@ -582,12 +587,12 @@ function tryIdea(text) {
 // the odd weird one, so people see any idea is fair game.
 const EXAMPLES = [
   "taco truck empire",
-  "website tune-ups for local restaurants",
-  "travel planning for busy families",
-  "estate sale flipping on weekends",
-  "LinkedIn coaching for executives",
+  "restaurant site tune-ups",
+  "family trip planning",
+  "weekend estate sale flips",
+  "exec LinkedIn coaching",
   "cruise broker",
-  "candles that smell like the office",
+  "office-scented candles",
 ];
 
 function autosize(textarea) {
@@ -612,6 +617,22 @@ function autosize(textarea) {
 // The grey text reads "e.g. taco truck empire" so it's clearly an example.
 const EG = "e.g. ";
 const currentExample = (input) => input.placeholder.replace(/^e\.g\.\s*/i, "").trim() || EXAMPLES[0];
+
+// Frank's message lives inside the idea box. If it isn't fully visible (a phone keyboard
+// takes about half the screen), bring the whole box up so it sits just below the top.
+function keepMessageInView() {
+  const check = () => {
+    const box = $(".plate"), msg = $("#idea-error");
+    if (!box || !msg || msg.hidden) return;
+    const vv = window.visualViewport;
+    const top = vv ? vv.offsetTop : 0, height = vv ? vv.height : window.innerHeight;
+    const r = msg.getBoundingClientRect();
+    if (r.top >= top + 8 && r.bottom <= top + height - 8) return;
+    window.scrollBy({ top: box.getBoundingClientRect().top - top - 10, behavior: reducedMotion() ? "auto" : "smooth" });
+  };
+  requestAnimationFrame(check);
+  setTimeout(check, 350);   // again once a phone keyboard has finished opening
+}
 
 function rotateExamples(input) {
   if (reducedMotion()) return;
@@ -668,14 +689,6 @@ function init() {
     autosize(input);
     if (!$("#idea-error").hidden) $("#idea-error").hidden = true;
     input.removeAttribute("aria-invalid");
-  });
-  // "or check the example": runs whichever example is showing, typed into the box
-  $("#try-example").addEventListener("click", () => {
-    const ex = currentExample(input);
-    input.value = ex;
-    input.dispatchEvent(new Event("input", { bubbles: true }));
-    track("example_check");
-    check(ex);
   });
 }
 

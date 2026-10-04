@@ -1056,3 +1056,43 @@ button.row .row-cue { color: var(--deep); }
 .facts .fact-lead dd { font-size: 1.28rem; line-height: 1.4; font-weight: 500; }
 .facts .fact-minor dd { font-size: 0.98rem; color: var(--muted); }
 .facts .fact-minor dt { opacity: 0.85; }
+
+/* The idea box's status line, under the button: the promise normally; Frank's message
+   (an empty click or an error) takes its place, inside the box where it stays visible
+   when the phone keyboard opens. */
+.plate .form-error { margin: 0; flex-basis: 100%; align-items: flex-start; gap: 0.6rem; font-size: 0.98rem; line-height: 1.4; }
+.plate .error-frog { width: 2.6rem; margin-top: 0.1rem; }
+.plate:has(#idea-error:not([hidden])) .promise { display: none; }
+.plate .promise { flex-basis: 100%; margin: 0; }
+
+/* Phones: a tighter hero and a one-line idea box, so the box and the example answer
+   start higher on the first screen */
+@media (max-width: 560px) {
+  main { padding-top: 0.9rem; }
+  h1 { font-size: clamp(2rem, 9.2vw, 2.3rem); margin-bottom: 0.4rem; }
+  .lede { font-size: 1.05rem; margin-bottom: 0.9rem; }
+  .plate { padding: 0.85rem 1rem 0.9rem; }
+  .plate-label { margin-bottom: 0.1rem; }
+  .plate-input { font-size: 1.3rem; }
+  .plate-foot { margin-top: 0.6rem; gap: 0.55rem 0.8rem; }
+  .plate-btn { padding-top: 0.7rem; padding-bottom: 0.7rem; }
+  .result { margin-top: 1rem; }
+}
+@media (max-width: 560px) {
+  .plate .form-error { font-size: 0.92rem; line-height: 1.32; gap: 0.5rem; }
+  .plate .error-frog { width: 2.2rem; }
+  #try-example { min-height: 2.4rem; }
+}
+.lede { text-wrap: balance; }   /* no lone word on the second line */
+
+/* Frank's nudge: one short line with the example link beside it (it wraps under on narrow phones) */
+.plate .form-error { align-items: center; }
+.plate .form-error .error-body { flex-direction: row; flex-wrap: wrap; align-items: baseline; gap: 0 0.55rem; }
+.plate .form-error #try-example { min-height: 0; padding: 0.35rem 0; }
+
+/* An empty click: a quiet nudge in the status line (no Frank, no red) and a small shake */
+.plate .form-error.is-hint { color: var(--deep); font-weight: 600; }
+.plate .form-error.is-hint .error-frog { display: none; }
+@keyframes plate-shake { 0%, 100% { transform: translateX(0); } 20% { transform: translateX(-6px); } 40% { transform: translateX(5px); } 60% { transform: translateX(-3px); } 80% { transform: translateX(2px); } }
+.plate.shake { animation: plate-shake 0.32s ease-in-out; }
+@media (prefers-reduced-motion: reduce) { .plate.shake { animation: none; } }
