@@ -358,6 +358,7 @@ const GUIDES = {
   test: { href: "break-room/start/test-an-idea-in-a-week/", title: "Test a side hustle idea in a week" },
   competition: { href: "break-room/start/size-up-the-competition/", title: "Who's already doing it?" },
   leap: { href: "break-room/leap/before-you-leap/", title: "Before you leap" },
+  feedback: { href: "break-room/start/where-to-get-feedback/", title: "Where to get honest feedback" },
 };
 const READ_NEXT = { great: "leap", worth_a_shot: "test", crowded: "competition", nah: "test" };   // "Surprisingly, yes" is when people are most tempted to quit on the spot
 const KIT_FOR = {
@@ -503,7 +504,9 @@ function renderKit(r) {
   // or "Crowded pond" the free guide below is the next step, not a sales pitch.
   const help = part.querySelector(".help-note");
   if (help) help.hidden = !(r.verdict === "great" || r.verdict === "worth_a_shot");
-  const next = GUIDES[READ_NEXT[r.verdict]];
+  // when the cheap test is about asking people online, point to the feedback guide
+  const asksOnline = /\b(reddit|subreddit|r\/|facebook|nextdoor|linkedin|forum|community|group|post (it|them|a|an|in|on))\b/i.test(r.firstMove || "");
+  const next = GUIDES[asksOnline && r.verdict !== "nah" ? "feedback" : READ_NEXT[r.verdict]];
   const read = $("#read-next");
   read.replaceChildren();
   if (next) read.append("Read next: ", el("a", { href: next.href }, next.title));
