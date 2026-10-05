@@ -24,7 +24,7 @@
   function gtag() { window.dataLayer.push(arguments); }
   window.gtag = gtag;
   gtag("js", new Date());
-  gtag("config", GA_ID);
+  gtag("config", GA_ID, { page_location: location.origin + location.pathname + location.search });   // never the #, where shared verdicts live
 
   // Events with no personal text in them.
   window.sfTrack = function (name, params) { gtag("event", name, params || {}); };
@@ -35,6 +35,7 @@
     if (!a) return;
     var h = a.href;
     if (/calendly\.com/.test(h)) window.sfTrack("help_click", { via: "calendly" });
+    else if (/linkedin\.com\/sharing/.test(h)) window.sfTrack("guide_share", { method: "linkedin" });
     else if (/linkedin\.com/.test(h)) window.sfTrack("help_click", { via: "linkedin" });
     else if (/porkbun\.com/.test(h)) window.sfTrack("register_click");
     else if (/google\.com\/search/.test(h)) window.sfTrack("search_click");

@@ -158,35 +158,29 @@ a:hover { color: var(--blue-hover); }
    -------------------------------------------------------------------------- */
 
 .frog { display: block; overflow: visible; }
-.frog .face { display: none; }
-.frog[data-mood="yeah"] .face-yeah,
-.frog[data-mood="smirk"] .face-smirk,
-.frog[data-mood="meh"] .face-meh,
-.frog[data-mood="nah"] .face-nah,
-.frog[data-mood="sad"] .face-sad,
-.frog[data-mood="think"] .face-think,
-.frog[data-mood="oops"] .face-oops { display: inline; }
+
+
 
 /* ---- The sip ----------------------------------------------------------------
    The mug is its own layer. While a check runs, the loading frog sips on a slow
    loop. When the answer lands, the answer frog is still mid-sip, lowers the mug,
    and his face settles into the verdict. Reduced motion: static frog. */
-.frog .mug { transform-box: view-box; transform-origin: 122px 447px; }
+
 /* The forearm and elbow: behind the body, grows out from the shoulder as the mug rises */
-.frog .arm { opacity: 0; transform-box: view-box; transform-origin: 150px 430px; transform: scale(0.4); }
 
-.sticker.is-sipping .arm { animation: arm-sip-once 1.5s ease-in-out both; }
-.frog .face-sip { display: none; }
 
-.sticker.is-sipping .mug { animation: mug-sip-once 1.5s ease-in-out both; }
-.sticker.is-sipping .face:not(.face-sip) { animation: face-in-late 1.5s step-end both; }
-.sticker.is-sipping .face-sip { display: inline; animation: face-away-late 1.5s step-end both; }
 
-@keyframes face-in-late   { 0% { opacity: 0; } 54%, 100% { opacity: 1; } }
-@keyframes face-away-late { 0% { opacity: 1; } 54%, 100% { opacity: 0; } }
-.frog .pupil { transition: transform 0.3s ease; }
-.frog.look-left .pupil { transform: translateX(-12px); }
-.frog.look-right .pupil { transform: translateX(12px); }
+
+
+
+
+
+
+
+
+
+
+
 
 /* --------------------------------------------------------------------------
    Hero
@@ -406,7 +400,7 @@ h1 {
 @media (min-width: 600px) {
   .card-head {
     grid-template-areas:
-      "re      frog"
+      "re      re"
       "verdict frog"
       "reason  frog";
     align-items: start;
@@ -430,10 +424,12 @@ h1 {
   width: 5.75rem;
   margin-bottom: 0.1rem;           /* sit right on the verdict line */
 }
-.sticker-frog.look-left .pupil { transform: translate(-12px, 8px); }   /* down-left, at the verdict */
+   /* down-left, at the verdict */
 @media (min-width: 600px) {
-  .sticker { width: clamp(7.5rem, 20vw, 10.5rem); align-self: center; margin: 0; }
-  .sticker-frog.look-left .pupil { transform: translateX(-12px); }
+  /* Frank starts at the verdict row, so a long RE can't push the verdict below his gaze;
+     --frank-lift raises him so his eyes sit level with the verdict's words */
+  .sticker { --frank-lift: 1rem; width: clamp(7.5rem, 20vw, 10.5rem); align-self: start; margin: calc(-1 * var(--frank-lift, 0px)) 0 0; }
+  
 }
 .sticker { position: relative; isolation: isolate; }
 .sticker-frog { width: 100%; height: auto; }
@@ -630,15 +626,15 @@ button.row .row-cue { color: var(--deep); }
     column-gap: 0.75rem;
   }
   #example .sticker { width: 6.5rem; align-self: end; margin: 0 0 0.1rem; }
-  #example .sticker-frog.look-left .pupil { transform: translate(-12px, 8px); }
+  
   #example .verdict { font-size: 2.6rem; }
 }
 
 @media (prefers-reduced-motion: reduce) {
-  .frog .face-sip { display: none !important; }
-  .frog .face { opacity: 1 !important; }
-  .frog .mug { transform: none !important; }
-  .frog .arm { display: none !important; }
+  
+  
+  
+  
   *, *::before, *::after { animation: none !important; transition: none !important; scroll-behavior: auto !important; }
   .plate:focus-within, .chip:hover, .row:hover, .plate-btn:hover, .again-btn:hover { transform: none; }
 }
@@ -762,29 +758,18 @@ button.row .row-cue { color: var(--deep); }
 .memo-row { display: block; }   /* FROM: Gary / RE: your idea */
 
 /* ---- Frank's idle sip (frank.js picks one on-screen Frank now and then) ------- */
-.frog.is-idle-sip .mug { animation: mug-idle-sip 2.6s ease-in-out; }
-.frog.is-idle-sip .arm { animation: arm-idle-sip 2.6s ease-in-out; }
-.frog.is-idle-sip .face:not(.face-sip) { animation: idle-face-away 2.6s step-end; }
-.frog.is-idle-sip .face-sip { display: inline; opacity: 0; animation: idle-face-in 2.6s step-end; }
 
-   /* eyes open once the mug is on its way down */
 
-@media (prefers-reduced-motion: reduce) {
-  .frog.is-idle-sip .mug, .frog.is-idle-sip .arm, .frog.is-idle-sip .face { animation: none !important; }
-  .frog.is-idle-sip .face-sip { display: none !important; }
-}
+
+
 /* An inline Frank in an article header or note card sizes like the old image did */
 .take .frog { width: 4.25rem; height: auto; flex: none; margin-top: 0.15rem; }
 
 /* The tilted mug: rim and coffee flatten, the underside peeks out. It swaps in
    on the same beats as the sip face, so the two mugs are never shown together. */
-.frog .mug-tilt { opacity: 0; }   /* loaded but invisible between sips, so it never pops in late */
+   /* loaded but invisible between sips, so it never pops in late */
 
-.frog.is-idle-sip .mug-tilt { display: inline; opacity: 0; animation: idle-face-in 2.6s step-end; }
-@media (prefers-reduced-motion: reduce) {
-  .frog .mug-tilt { display: none !important; }
-  .frog .mug-flat { opacity: 1 !important; animation: none !important; }
-}
+
 
 /* ==========================================================================
    Frank's sip, animated the way a cartoonist would (overrides the earlier
@@ -799,82 +784,47 @@ button.row .row-cue { color: var(--deep); }
    ========================================================================== */
 
 /* Loading loop, 3.2s */
-@keyframes mug-sip-loop {
-  0%, 12%   { transform: none; }
-  16%       { transform: translate(0, 6px); }
-  32%       { transform: translate(84px, -156px) rotate(16deg); }
-  40%, 56%  { transform: translate(86px, -160px) rotate(19deg); }
-  62%       { transform: translate(84px, -156px) rotate(16deg); }
-  76%       { transform: translate(0, 4px); }
-  80%, 100% { transform: none; }
-}
-@keyframes face-away-mid { 0% { opacity: 1; } 27% { opacity: 0; } 64%, 100% { opacity: 1; } }
-@keyframes face-in-mid   { 0% { opacity: 0; } 27% { opacity: 1; } 64%, 100% { opacity: 0; } }
 
-@keyframes tilt-loop { 0%, 21% { opacity: 0; } 26%, 64% { opacity: 1; } 70%, 100% { opacity: 0; } }
-@keyframes arm-loop  { 0% { opacity: 0; } 13% { opacity: 1; } 79%, 100% { opacity: 0; } }
+
+
+
+
+
 
 /* Landing, 1.5s: starts mid-sip, lowers, settles */
-@keyframes mug-sip-once {
-  0%, 30%   { transform: translate(86px, -160px) rotate(19deg); }
-  38%       { transform: translate(84px, -156px) rotate(16deg); }
-  80%       { transform: translate(0, 4px); }
-  90%, 100% { transform: none; }
-}
 
-@keyframes tilt-once { 0%, 50% { opacity: 1; } 60%, 100% { opacity: 0; } }
-@keyframes arm-once  { 0% { opacity: 1; } 88%, 100% { opacity: 0; } }
 
-.sticker.is-sipping .mug-tilt { display: inline; animation: tilt-once 1.5s linear both; }
+
+
+
+
 
 /* Idle sip, 2.6s */
-@keyframes mug-idle-sip {
-  0%        { transform: none; }
-  8%        { transform: translate(0, 6px); }
-  28%       { transform: translate(84px, -156px) rotate(16deg); }
-  36%, 60%  { transform: translate(86px, -160px) rotate(19deg); }
-  66%       { transform: translate(84px, -156px) rotate(16deg); }
-  88%       { transform: translate(0, 4px); }
-  96%, 100% { transform: none; }
-}
-@keyframes idle-face-away { 0% { opacity: 1; } 26% { opacity: 0; } 72%, 100% { opacity: 1; } }
-@keyframes idle-face-in   { 0% { opacity: 0; } 26% { opacity: 1; } 72%, 100% { opacity: 0; } }
 
-@keyframes tilt-idle { 0%, 16% { opacity: 0; } 23%, 70% { opacity: 1; } 78%, 100% { opacity: 0; } }
+
+
+
+
 @keyframes arm-idle  { 0% { opacity: 0; } 4% { opacity: 1; } 96%, 100% { opacity: 0; } }
 
-.frog.is-idle-sip .mug-tilt { display: inline; animation: tilt-idle 2.6s linear; }
 
-@media (prefers-reduced-motion: reduce) {
-}
 
 /* No see-through mid-swap: the tilted mug fades in ON TOP while the flat mug
    stays solid underneath, and the flat mug only drops out once it's covered
    (and comes back underneath before the tilted one fades away). */
-@keyframes flat-loop { 0% { opacity: 1; } 26% { opacity: 0; } 64%, 100% { opacity: 1; } }
-@keyframes flat-once { 0% { opacity: 0; } 50%, 100% { opacity: 1; } }
-@keyframes flat-idle { 0% { opacity: 1; } 23% { opacity: 0; } 70%, 100% { opacity: 1; } }
 
-.sticker.is-sipping .mug-flat { animation: flat-once 1.5s step-end both; }
-.frog.is-idle-sip .mug-flat { animation: flat-idle 2.6s step-end; }
+
+
+
+
+
 
 /* The earlier arm is back (behind the body, elbow out to the side), retimed to
    the new lift: it grows out from the shoulder as the mug rises, holds while he
    drinks, and folds away as the mug comes down. The front forearm is retired. */
-@keyframes arm-sip-loop {
-  0%, 14%   { opacity: 0; transform: scale(0.4); }
-  32%, 62%  { opacity: 1; transform: none; }
-  80%, 100% { opacity: 0; transform: scale(0.4); }
-}
-@keyframes arm-sip-once {
-  0%, 38%   { opacity: 1; transform: none; }
-  85%, 100% { opacity: 0; transform: scale(0.4); }
-}
-@keyframes arm-idle-sip {
-  0%, 6%    { opacity: 0; transform: scale(0.4); }
-  28%, 66%  { opacity: 1; transform: none; }
-  92%, 100% { opacity: 0; transform: scale(0.4); }
-}
+
+
+
 
 /* About: Frank's one-line introduction, with a small sipping Frank beside it */
 .frank-intro { display: flex; align-items: center; gap: 1rem; }
@@ -892,12 +842,12 @@ button.row .row-cue { color: var(--deep); }
 .result.is-loading .part,
 .result.is-loading .again-btn,
 .result.is-loading .example-foot { display: none; }
-.result.is-loading .sticker-frog .mug { animation: mug-sip-loop 3.2s ease-in-out infinite; }
-.result.is-loading .sticker-frog .mug-flat { animation: flat-loop 3.2s step-end infinite; }
-.result.is-loading .sticker-frog .mug-tilt { display: inline; animation: tilt-loop 3.2s linear infinite; }
-.result.is-loading .sticker-frog .arm { animation: arm-sip-loop 3.2s ease-in-out infinite; }
-.result.is-loading .sticker-frog .face:not(.face-sip) { animation: face-away-mid 3.2s step-end infinite; }
-.result.is-loading .sticker-frog .face-sip { display: inline; opacity: 0; animation: face-in-mid 3.2s step-end infinite; }
+
+
+
+
+
+
 
 /* Office-manual step numbers in sequential guides */
 .prose h2 .step { color: var(--accent-text); margin-right: 0.15em; }
@@ -1100,3 +1050,55 @@ button.row .row-cue { color: var(--deep); }
 /* Share Frank's verdict: a quiet text link under the verdict, hidden while he thinks */
 .share-row { margin: 0.85rem 0 0; }
 .result.is-loading .share-row { display: none; }
+
+/* Copy link beside Share; a shared verdict in the example card's place */
+.share-row { display: flex; flex-wrap: wrap; align-items: center; gap: 0 0.55rem; }
+.share-row .dot { color: var(--muted); }
+.is-shared .example-foot { display: flex; flex-direction: column; align-items: flex-start; gap: 0.6rem; }
+.shared-test { display: block; color: var(--ink); font-size: 1.05rem; line-height: 1.45; border-left: 4px solid var(--frog); padding-left: 0.8rem; }
+.shared-test .label-caps { display: block; margin-bottom: 0.15rem; }
+
+/* "Share this guide" at the end of each guide */
+.guide-share { margin: 2rem 0 0.5rem; padding-top: 1rem; border-top: 1px solid var(--rule); gap: 0.2rem 0.6rem; }
+.guide-share .label-caps { margin-right: 0.3rem; }
+.guide-share a { font-weight: 600; }
+
+/* Side Kit: video-call backgrounds */
+.bg-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 220px), 1fr)); gap: 1.2rem; margin: 1rem 0 2rem; }
+.bg-item { margin: 0; }
+.bg-item img { display: block; width: 100%; height: auto; border: 2px solid var(--ink); border-radius: 10px; }
+.bg-item figcaption { display: flex; justify-content: space-between; align-items: baseline; gap: 0.5rem; margin-top: 0.45rem; font-size: 0.95rem; }
+.bg-item figcaption a { font-weight: 600; }
+
+/* Frank (2026 art): one sprite, 13 square frames traced from the approved drawings.
+   0 Surprisingly yes, 1 This could work, 2 Crowded pond / Keep your day job, 3 Can't help,
+   4 Error, 5-11 the sip, 12 relaxed and looking straight at you. data-mood picks his face; frank.js steps --frame during a sip.
+   build_frank_sprite.py writes the sprite's fingerprinted name into the url below. */
+.frank { display: inline-block; aspect-ratio: 1 / 1; height: auto; background-image: url("frogs/frank-sprite.26bd1900.webp");
+  background-repeat: no-repeat; background-size: 1300% 100%; background-position: calc(var(--frame, 1) * 100% / 12) 0; }
+.frank[data-mood="yeah"] { --frame: 0; }
+.frank[data-mood="smirk"], .frank[data-mood="think"] { --frame: 1; }
+.frank[data-mood="meh"], .frank[data-mood="nah"] { --frame: 2; }
+.frank[data-mood="sad"] { --frame: 3; }
+.frank[data-mood="oops"] { --frame: 4; }
+
+.nf-frog { display: block; width: 8rem; margin: 0 0 0.6rem -0.4rem; }   /* the 404 page: Frank, puzzled by the missing page */
+
+/* Content-aware gaze: data-look points Frank at the text beside him. Looking left (the cards) he
+   rests on his verdict face; looking right (logo, guide notes, About, Side Kit) his smile rests on
+   frame 11, the sip sheet's last frame, eyes right. The error face already looks right. */
+.frank[data-look="right"][data-mood="smirk"] { --frame: 11; }
+.frank[data-look="you"][data-mood="smirk"] { --frame: 12; }      /* talking Franks: looking at you */
+
+/* Round Frank: identity and sharing (About here; share cards and profile pictures elsewhere).
+   The circle is calculated across all frames (frank_art.py); the round sprite is pre-cropped,
+   transparent around him, so .frank-portrait gives the circle its colour. Same --frame logic,
+   so he sips like every other Frank. */
+:root { --frank-round: url("frogs/frank-round.4ecec947.webp"); }
+.frank.is-round { background-image: var(--frank-round); display: block; width: 100%; }
+.frank-portrait { display: block; float: left; width: 120px; height: 120px; border-radius: 50%; overflow: hidden;
+  background: #ECE3D1; margin: 0.1rem 1.2rem 0.5rem 0; shape-outside: circle(50%); shape-margin: 0.4rem; }
+@media (max-width: 560px) { .frank-portrait { width: 96px; height: 96px; margin-right: 1rem; } }
+
+/* RE is a memo subject line: one line, trimmed if it's ever long (Frank usually sends 3-6 words) */
+.card-head .you-wrote .memo-row { display: block; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }

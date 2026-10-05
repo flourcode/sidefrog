@@ -167,6 +167,7 @@ function startThinking(idea) {
   memo.replaceChildren(memoRow("FROM: ", "Frank"), memoRow("RE: ", idea));
   card.querySelector(".loading-note").textContent = "";
   card.classList.add("is-loading");
+  if (window.frankLoop) window.frankLoop(card.querySelector(".frank"));
   savedTitle = document.title;
   document.title = "Sipping on it\u2026 \u00b7 SideFrog";   // for people who switched tabs while Frank thinks
   fitVerdict();
@@ -181,6 +182,7 @@ function thinkingNote(text) {
 function stopThinking(failed) {
   if (!thinkingCard) return;
   thinkingCard.classList.remove("is-loading");
+  if (window.frankStop) window.frankStop(thinkingCard.querySelector(".frank"));
   if (failed) {
     thinkingCard.querySelector(".you-wrote").innerHTML = savedMemo;  // put the card back as it was
     document.title = savedTitle;
@@ -213,12 +215,16 @@ function render(r) {
 
   const wrote = $("#you-wrote");
   // Memo header: from Frank (the frog; no explanation), re: your idea
-  wrote.replaceChildren(memoRow("FROM: ", "Frank"), memoRow("RE: ", lastIdea));
+  // RE is a memo subject line: Frank's 3-6 word summary, or the idea trimmed to one line (CSS) if there isn't one
+  const subject = (r.subject || "").trim() || lastIdea;
+  const reRow = memoRow("RE: ", subject);
+  if (subject !== lastIdea) reRow.title = lastIdea;              // the full idea on hover
+  wrote.replaceChildren(memoRow("FROM: ", "Frank"), reRow);
   $("#verdict").replaceChildren(el("span", { className: "verdict-text" }, VERDICT_LABEL[r.verdict] || "Here's the read"));
   // The tab shows the verdict (never the idea, so nothing typed lands in browser history)
   document.title = `${VERDICT_LABEL[r.verdict] || "Here's the read"} \u00b7 SideFrog`;
   $("#mascot").dataset.mood = VERDICT_FACE[r.verdict] || "smirk";
-  shownReport = { ...r, idea: lastIdea };
+  shownReport = { ...r, idea: lastIdea, re: subject };
   $("#share-row").hidden = r.verdict === "cant_help";
   const sticker = $("#sticker");
   sticker.classList.remove("is-sipping");
@@ -661,19 +667,28 @@ function rotateExamples(input) {
 const SHARE = { w: 1080, h: 1350, pad: 72, paper: "#FBF7EF", card: "#FFFDF9", ink: "#1F241F",
   muted: "#5A5A4A", rule: "#A89B84", accent: "#A4501F", font: '"Bricolage Grotesque", system-ui, sans-serif' };
 
-// Frank as one image: the page's own body, face and mug layers combined into a single SVG.
-async function frankImage(mood) {
-  const svg = $("#mascot");
-  const hrefs = [...svg.querySelectorAll("image")].map((i) => i.getAttribute("href"));
-  const body = hrefs.find((h) => h.includes("coffee-body")), mug = hrefs.find((h) => /coffee-mug\.svg/.test(h));
-  const strip = (t) => t.replace(/<\?xml[^>]*>/, "").replace(/<metadata>[\s\S]*?<\/metadata>/g, "").replace(/^[\s\S]*?<svg[^>]*>/, "").replace(/<\/svg>\s*$/, "");
-  const [b, m] = await Promise.all([body, mug].map((h) => fetch(h).then((r) => r.text()).then(strip)));
-  const face = (svg.querySelector(`.face-${mood}`) || svg.querySelector(".face-smirk")).outerHTML;
-  const full = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="${svg.getAttribute("viewBox")}">${b}${face}${m}</svg>`;
-  const img = new Image();
-  img.src = "data:image/svg+xml;charset=utf-8," + encodeURIComponent(full);
-  await img.decode();
-  return img;
+// Frank for the share card: his face's frame, cut from the same sprite the page shows.
+const FRANK_FRAME = { yeah: 0, smirk: 1, think: 1, meh: 2, nah: 2, sad: 3, oops: 4, you: 12 };
+// two sprites: the cutout (the masthead logo) and the round one (the share card's Frank);
+// each loads once, so requests at the same time all wait for the same load
+const frankSprites = {};
+function loadFrankSprite(round) {
+  const key = round ? "round" : "cutout";
+  if (!frankSprites[key]) {
+    const css = round ? getComputedStyle(document.documentElement).getPropertyValue("--frank-round")
+                      : getComputedStyle($("#mascot")).backgroundImage;
+    const url = css.trim().replace(/^url\(["']?|["']?\)$/g, "");
+    const img = new Image(); img.src = url;
+    frankSprites[key] = img.decode().then(() => img);
+  }
+  return frankSprites[key];
+}
+async function frankImage(mood, round = false) {
+  const sprite = await loadFrankSprite(round);
+  const size = sprite.naturalHeight, f = FRANK_FRAME[mood] ?? 1;
+  const c = document.createElement("canvas"); c.width = c.height = size;
+  c.getContext("2d").drawImage(sprite, f * size, 0, size, size, 0, 0, size, size);
+  return c;
 }
 
 function wrapLines(ctx, text, maxWidth, maxLines) {
@@ -704,24 +719,24 @@ async function drawShareCard(r) {
   try { await Promise.all([document.fonts.load(`800 100px ${S.font}`), document.fonts.load(`400 40px ${S.font}`)]); } catch {}
   const mood = VERDICT_FACE[r.verdict] || "smirk";
   let bigFrank = null, smallFrank = null;
-  try { [bigFrank, smallFrank] = await Promise.all([frankImage(mood), frankImage("smirk")]); } catch { /* draws without Frank */ }
+  try { [bigFrank, smallFrank] = await Promise.all([frankImage(mood, true), frankImage("you")]); } catch { /* draws without Frank */ }
 
   ctx.fillStyle = S.paper; ctx.fillRect(0, 0, S.w, S.h);
   // masthead: Frank, the wordmark, a rule
   const L = S.pad, R = S.w - S.pad;
-  if (smallFrank) ctx.drawImage(smallFrank, L, 58, 84, 76);
+  if (smallFrank) ctx.drawImage(smallFrank, L - 4, 50, 90, 90);
   font(800, 48); spacing(-1.5); ctx.fillStyle = S.ink; ctx.textBaseline = "alphabetic";
   ctx.fillText("SideFrog", L + (smallFrank ? 98 : 0), 118);
   ctx.fillRect(L, 164, R - L, 3);
 
   // the memo card: measure first, then draw
   const cardX = L, cardW = R - L, inPad = 56, inL = cardX + inPad, inW = cardW - inPad * 2;
-  const frankW = 290, frankH = Math.round(frankW * 524 / 576);
+  const frankW = 250, frankH = 250;
   const memoW = inW - frankW - 24;
   font(800, 30); spacing(3);
   const reLabelW = ctx.measureText("RE: ").width;
   font(400, 34); spacing(0);
-  const reLines = wrapLines(ctx, r.idea, memoW - reLabelW - 10, 2);
+  const reLines = wrapLines(ctx, r.re || r.idea, memoW - reLabelW - 10, 2);
   // the verdict on one line if it fits at a size from 108 down to 84; otherwise it wraps at 108
   const verdictText = (VERDICT_LABEL[r.verdict] || "Here's the read").toUpperCase();
   let vSize = 108;
@@ -756,7 +771,13 @@ async function drawShareCard(r) {
   font(400, 34); spacing(0); ctx.fillStyle = S.muted;
   reLines.forEach((line, i) => ctx.fillText(line, inL + reLabelW, memoTop + 52 + i * 46));
   ctx.fillStyle = S.rule; ctx.fillRect(inL, memoBottom, memoW, 2);
-  if (bigFrank) ctx.drawImage(bigFrank, cardX + cardW - inPad - frankW + 18, cardY + 36, frankW, frankH);
+  if (bigFrank) {
+    // round Frank, like his profile picture: a cream circle with his verdict face
+    const fx = cardX + cardW - inPad - frankW + 18, fy = cardY + 36;
+    ctx.save(); ctx.beginPath(); ctx.arc(fx + frankW / 2, fy + frankH / 2, frankW / 2, 0, Math.PI * 2); ctx.closePath();
+    ctx.fillStyle = "#ECE3D1"; ctx.fill(); ctx.clip();
+    ctx.drawImage(bigFrank, fx, fy, frankW, frankH); ctx.restore();
+  }
 
   // the verdict, then the reason
   font(800, vSize); spacing(-vSize / 27); ctx.fillStyle = S.ink;
@@ -783,7 +804,7 @@ async function shareVerdict() {
     const file = new File([blob], "frank-verdict.png", { type: "image/png" });
     if (navigator.canShare && navigator.canShare({ files: [file] })) {
       try {
-        await navigator.share({ files: [file], title: "Frank's verdict", text: "Frank's verdict on my idea. Get yours at sidefrog.com" });
+        await navigator.share({ files: [file], title: "Frank's verdict", text: `Frank's verdict on my idea: ${verdictLink(r)}` });
         track("share", { verdict: r.verdict, method: "share_sheet" });
       } catch (e) { if (e.name !== "AbortError") throw e; }
     } else {
@@ -805,12 +826,92 @@ async function shareVerdict() {
 }
 
 // ---------------------------------------------------------------------------
+// Shared verdict links: sidefrog.com/#v=... carries the idea, verdict, reason and
+// cheap test inside the link itself. The part after # is never sent to the server
+// and never stored; opening the link shows that exact card, with no new check.
+// ---------------------------------------------------------------------------
+
+const b64urlEncode = (s) => btoa(unescape(encodeURIComponent(s))).replace(/\+/g, "-").replace(/\//g, "_").replace(/=+$/, "");
+const b64urlDecode = (s) => decodeURIComponent(escape(atob(s.replace(/-/g, "+").replace(/_/g, "/"))));
+
+function verdictLink(r) {
+  const data = { i: String(r.re || r.idea || "").slice(0, 160), v: r.verdict, r: String(r.verdictReason || "").slice(0, 300),
+                 t: String(r.firstMove || "").slice(0, 220) };
+  const base = location.protocol === "file:" ? "https://sidefrog.com/" : location.origin + location.pathname;
+  return `${base}#v=${b64urlEncode(JSON.stringify(data))}`;
+}
+
+function readSharedVerdict() {
+  const m = location.hash.match(/^#v=([A-Za-z0-9_-]+)$/);
+  if (!m) return null;
+  try {
+    const d = JSON.parse(b64urlDecode(m[1]));
+    if (!d || !VERDICT_LABEL[d.v] || d.v === "cant_help" || typeof d.i !== "string" || typeof d.r !== "string") return null;
+    return { idea: d.i.slice(0, 160), verdict: d.v, reason: d.r.slice(0, 300), test: typeof d.t === "string" ? d.t.slice(0, 220) : "" };
+  } catch { return null; }
+}
+
+// Show a shared verdict in the example card's place: same memo, marked "Shared".
+function showSharedVerdict() {
+  const s = readSharedVerdict();
+  if (!s) return;
+  history.replaceState(null, "", location.pathname + location.search);   // keep the address clean
+  const card = $("#example");
+  card.dataset.verdict = s.verdict;
+  card.setAttribute("aria-label", "A shared answer from Frank");
+  const memo = card.querySelector(".you-wrote");
+  memo.replaceChildren();
+  const row = (label, text, tag) => {
+    const r = el("span", { className: "memo-row" });
+    r.append(el("span", { className: "re" }, label), text);
+    if (tag) { r.append(" "); r.append(el("span", { className: "example-tag" }, tag)); }
+    return r;
+  };
+  memo.append(row("FROM: ", "Frank"), row("RE: ", s.idea, "Shared"));
+  card.querySelector(".verdict:not(.loading-verdict) .verdict-text").textContent = VERDICT_LABEL[s.verdict];
+  card.querySelector(".reason").textContent = s.reason;
+  const frog = card.querySelector(".sticker .frank");
+  if (frog) frog.dataset.mood = VERDICT_FACE[s.verdict] || "smirk";
+  const foot = card.querySelector(".example-foot");
+  foot.replaceChildren();
+  if (s.test) {
+    const t = el("span", { className: "shared-test" });
+    t.append(el("span", { className: "label-caps" }, "Cheap test"), s.test);
+    foot.append(t);
+  }
+  const go = el("button", { type: "button", className: "text-btn shared-go" }, "Check your own idea");
+  go.addEventListener("click", () => {
+    const box = $(".plate");
+    box.scrollIntoView({ behavior: reducedMotion() ? "auto" : "smooth", block: "start" });
+    setTimeout(() => $("#idea-input").focus({ preventScroll: true }), reducedMotion() ? 0 : 450);
+  });
+  foot.append(go);
+  card.classList.add("is-shared");
+  track("shared_view", { verdict: s.verdict });
+  // they came for this card: bring it into view
+  requestAnimationFrame(() => card.scrollIntoView({ behavior: "auto", block: "center" }));
+}
+
+async function copyVerdictLink() {
+  const r = shownReport, btn = $("#copy-verdict-link");
+  if (!r) return;
+  const link = verdictLink(r);
+  try { await navigator.clipboard.writeText(link); }
+  catch { window.prompt("Copy this link:", link); }
+  track("share", { verdict: r.verdict, method: "copy_link" });
+  btn.textContent = "Link copied";
+  setStatus("Link copied. Paste it anywhere.");
+  setTimeout(() => { btn.textContent = "Copy link"; }, 2200);
+}
+
+// ---------------------------------------------------------------------------
 // Wire up
 // ---------------------------------------------------------------------------
 
 function init() {
   const input = $("#idea-input");
   $("#share-verdict").addEventListener("click", shareVerdict);
+  $("#copy-verdict-link").addEventListener("click", copyVerdictLink);
   $("#idea-form").addEventListener("submit", (e) => {
     e.preventDefault();
     check(input.value);
@@ -834,6 +935,7 @@ function init() {
   $("#idea-clear").addEventListener("click", () => newIdea());
   $("#again").addEventListener("click", () => newIdea({ scroll: true }));
 
+  showSharedVerdict();   // a shared link (#v=...) shows that card in the example's place
   fitVerdict();   // the example answer is on screen from the start
   // Size the idea box now, again once the web font is in, and when the width changes
   autosize(input);

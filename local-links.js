@@ -8,3 +8,14 @@ if (location.protocol === "file:") document.addEventListener("click", function (
   if (path.slice(-1) !== "/") return;
   e.preventDefault(); location.href = path + "index.html" + (parts[1] ? "#" + parts[1] : "");
 });
+
+// "Copy link" on Break Room guides (and anywhere else with data-copy-link)
+document.addEventListener("click", function (e) {
+  var b = e.target.closest("[data-copy-link]");
+  if (!b) return;
+  var url = b.getAttribute("data-copy-link"), label = b.textContent;
+  var done = function () { b.textContent = "Link copied"; setTimeout(function () { b.textContent = label; }, 2200); };
+  if (navigator.clipboard && window.isSecureContext) navigator.clipboard.writeText(url).then(done, function () { window.prompt("Copy this link:", url); });
+  else window.prompt("Copy this link:", url);
+  if (window.sfTrack) window.sfTrack("guide_share", { method: "copy_link" });
+});
