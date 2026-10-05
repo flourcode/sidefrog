@@ -677,9 +677,15 @@ function loadFrankSprite(round) {
   if (!frankSprites[key]) {
     const css = round ? getComputedStyle(document.documentElement).getPropertyValue("--frank-round")
                       : getComputedStyle($("#mascot")).backgroundImage;
-    const url = css.trim().replace(/^url\(["']?|["']?\)$/g, "");
-    const img = new Image(); img.src = url;
-    frankSprites[key] = img.decode().then(() => img);
+    // a url() inside a CSS variable is relative to the stylesheet, not this page (which can be /verdict/)
+    const sheet = document.querySelector('link[rel="stylesheet"][href*="styles.css"]');
+    const url = new URL(css.trim().replace(/^url\(["']?|["']?\)$/g, ""), sheet ? sheet.href : location.href).href;
+    frankSprites[key] = new Promise((ok, fail) => {
+      const img = new Image();
+      img.onload = () => ok(img);
+      img.onerror = () => { delete frankSprites[key]; fail(new Error("Frank's sprite didn't load")); };
+      img.src = url;
+    });
   }
   return frankSprites[key];
 }
@@ -719,7 +725,10 @@ async function drawShareCard(r) {
   try { await Promise.all([document.fonts.load(`800 100px ${S.font}`), document.fonts.load(`400 40px ${S.font}`)]); } catch {}
   const mood = VERDICT_FACE[r.verdict] || "smirk";
   let bigFrank = null, smallFrank = null;
-  try { [bigFrank, smallFrank] = await Promise.all([frankImage(mood, true), frankImage("you")]); } catch { /* draws without Frank */ }
+  // each Frank loads on his own: if one ever fails, the card still gets the other
+  const [big, small] = await Promise.allSettled([frankImage(mood, true), frankImage("you")]);
+  if (big.status === "fulfilled") bigFrank = big.value;
+  if (small.status === "fulfilled") smallFrank = small.value;
 
   ctx.fillStyle = S.paper; ctx.fillRect(0, 0, S.w, S.h);
   // masthead: Frank, the wordmark, a rule
