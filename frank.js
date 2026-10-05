@@ -64,6 +64,15 @@
       next(9000 + Math.random() * 14000);                 // every 9 to 23 seconds
     }, delay);
   }
-  next(5000 + Math.random() * 5000);                      // first sip within 5 to 10 seconds
+  // The first sip comes about 3 seconds after the page loads, by the biggest Frank on screen
+  // (the answer card, About's round Frank or a guide note's Frank rather than the little logo)
+  setTimeout(function () {
+    if (!document.hidden) {
+      var ready = frogs().filter(function (f) { return onScreen.has(f) && !f._sip && !f.closest(".is-loading"); });
+      ready.sort(function (a, b) { return b.getBoundingClientRect().width - a.getBoundingClientRect().width; });
+      if (ready[0]) play(ready[0], false);
+    }
+    next(9000 + Math.random() * 14000);                   // then every 9 to 23 seconds
+  }, 2500 + Math.random() * 1000);
   window.frankSip = function () { var f = pick(); if (f) play(f, false); return !!f; };   // handy for testing
 })();
