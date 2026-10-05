@@ -388,10 +388,10 @@ h1 {
   display: grid;
   grid-template-columns: minmax(0, 1fr) auto;
   grid-template-areas:
-    "re      frog"
-    "verdict verdict"
+    "re      re"
+    "verdict frog"
     "reason  reason";
-  align-items: end;
+  align-items: start;
   column-gap: 0.75rem;
 }
 .you-wrote { grid-area: re; align-self: start; }
@@ -419,10 +419,14 @@ h1 {
 .reason { margin: 0.6rem 0 0; font-size: 1.2rem; line-height: 1.45; max-width: var(--measure); }
 
 /* The frog: the character delivering the verdict, not the headline */
+/* Phones: Frank sits beside the verdict (which may wrap to two lines), raised so his eyes
+   are level with its first line: looking at the verdict, not the FROM/RE lines */
 .sticker {
   grid-area: frog;
+  --frank-lift: 0.65rem;
   width: 5.75rem;
-  margin-bottom: 0.1rem;           /* sit right on the verdict line */
+  align-self: start;
+  margin: calc(-1 * var(--frank-lift, 0px)) 0 0;
 }
    /* down-left, at the verdict */
 @media (min-width: 600px) {
@@ -443,9 +447,11 @@ h1 {
   text-transform: uppercase;
   color: var(--ink);
   margin: 0.15rem 0 0;
-  white-space: nowrap;              /* never breaks across lines */
+  white-space: normal;              /* phones: up to two lines beside Frank (app.js shrinks a word that can't fit) */
   min-width: 0;
 }
+@media (max-width: 599px) { .verdict { font-size: clamp(1.9rem, 9.2vw, 2.25rem); } }   /* phones: two lines fit beside Frank */
+@media (min-width: 600px) { .verdict { white-space: nowrap; } }   /* wider: one line */
 .verdict-text { display: inline-block; }
 @media (min-width: 600px) { .verdict { font-size: 3.9rem; } }
 .verdict:focus { outline: none; }
@@ -619,13 +625,14 @@ button.row .row-cue { color: var(--deep); }
   /* In the narrow column the example uses the stacked layout: frog over the verdict */
   #example .card-head {
     grid-template-areas:
-      "re      frog"
-      "verdict verdict"
+      "re      re"
+      "verdict frog"
       "reason  reason";
-    align-items: end;
+    align-items: start;
     column-gap: 0.75rem;
   }
-  #example .sticker { width: 6.5rem; align-self: end; margin: 0 0 0.1rem; }
+  #example .sticker { --frank-lift: 0.8rem; width: 6.5rem; align-self: start; margin: calc(-1 * var(--frank-lift)) 0 0; }
+  #example .verdict { white-space: normal; }
   
   #example .verdict { font-size: 2.6rem; }
 }
@@ -1094,7 +1101,7 @@ button.row .row-cue { color: var(--deep); }
    The circle is calculated across all frames (frank_art.py); the round sprite is pre-cropped,
    transparent around him, so .frank-portrait gives the circle its colour. Same --frame logic,
    so he sips like every other Frank. */
-:root { --frank-round: url("frogs/frank-round.4ecec947.webp"); }
+:root { --frank-round: url("frogs/frank-round.eff4fe41.webp"); }
 .frank.is-round { background-image: var(--frank-round); display: block; width: 100%; }
 .frank-portrait { display: block; float: left; width: 120px; height: 120px; border-radius: 50%; overflow: hidden;
   background: #ECE3D1; margin: 0.1rem 1.2rem 0.5rem 0; shape-outside: circle(50%); shape-margin: 0.4rem; }
