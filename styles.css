@@ -1232,3 +1232,6 @@ body.page main.ed { max-width: 70rem; }
 .ed-by { font-size: 0.85rem; color: var(--muted); margin-top: 0.15rem; }
 .ed-intro-note { max-width: 40rem; padding: 1.3rem 0 0.2rem; }
 .ed-fine { margin: 1.6rem 0 0; padding-top: 1rem; border-top: 1px solid var(--rule); font-size: 0.92rem; color: var(--muted); }
+
+/* Footer: the brand line, then the coffee-break line a little quieter */
+.site-footer .footer-aside { margin: 0 0 0.4rem; font-size: 0.92rem; color: var(--muted); }
