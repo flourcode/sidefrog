@@ -667,7 +667,8 @@ function rotateExamples(input) {
 // screen. Nothing is sent anywhere; the visitor decides whether to share it.
 // ---------------------------------------------------------------------------
 
-const SHARE = { w: 1080, h: 1350, pad: 72, paper: "#FBF7EF", card: "#FFFDF9", ink: "#1F241F",
+// Square: shows whole on LinkedIn, Instagram, X, iMessage and Slack
+const SHARE = { w: 1080, h: 1080, pad: 72, paper: "#FBF7EF", card: "#FFFDF9", ink: "#1F241F",
   muted: "#5A5A4A", rule: "#A89B84", accent: "#A4501F", font: '"Bricolage Grotesque", system-ui, sans-serif' };
 
 // Frank for the share card: his face's frame, cut from the same sprite the page shows.
@@ -751,47 +752,62 @@ async function drawShareCard(r) {
   if (!bigFrank || !smallFrank) throw new Error("no-frank");
 
   ctx.fillStyle = S.paper; ctx.fillRect(0, 0, S.w, S.h);
-  // masthead: Frank, the wordmark, a rule
+  // masthead: Frank, the wordmark with the tagline in small print beneath (like the site's header), a rule
   const L = S.pad, R = S.w - S.pad;
-  if (smallFrank) ctx.drawImage(smallFrank, L - 4, 50, 90, 90);
-  font(800, 48); spacing(-1.5); ctx.fillStyle = S.ink; ctx.textBaseline = "alphabetic";
-  ctx.fillText("SideFrog", L + (smallFrank ? 98 : 0), 118);
-  ctx.fillRect(L, 164, R - L, 3);
+  if (smallFrank) ctx.drawImage(smallFrank, L - 4, 32, 86, 86);
+  const wx = L + (smallFrank ? 94 : 0);
+  font(800, 46); spacing(-1.4); ctx.fillStyle = S.ink; ctx.textBaseline = "alphabetic";
+  ctx.fillText("SideFrog", wx, 80);
+  font(600, 22); spacing(0.2); ctx.fillStyle = S.muted;
+  ctx.fillText("For people who hate Mondays.", wx, 110);
+  ctx.fillStyle = S.ink; ctx.fillRect(L, 140, R - L, 3);
 
-  // the memo card: measure first, then draw
-  const cardX = L, cardW = R - L, inPad = 56, inL = cardX + inPad, inW = cardW - inPad * 2;
-  // Frank sits beside the verdict with his eyes level with its first line (like the answer card)
-  const frankW = 236, frankH = 236, frankEyes = 0.29;     // his eyes are ~29% down the round frame
-  const memoW = inW, vW = inW - frankW - 26;
-  font(800, 30); spacing(3);
-  const reLabelW = ctx.measureText("RE: ").width;
-  font(400, 34); spacing(0);
-  const reLines = wrapLines(ctx, r.re || r.idea, memoW - reLabelW - 10, 2);
-  // the verdict in the column beside Frank: the biggest size from 108 down to 84 that fits in two lines
+  // the memo card: measure first, then draw. Three size steps, normal to compact; the card uses the
+  // largest one that fits the square, so short verdicts stay big and long ones still fit.
+  const cardX = L, cardW = R - L, inPad = 52, inL = cardX + inPad, inW = cardW - inPad * 2;
+  const frankEyes = 0.29;                              // Frank's eyes are ~29% down his round frame
+  const TOP = 166, FOOT = 150, room = S.h - TOP - FOOT; // under the masthead; above sidefrog.com and its line
+  const TIERS = [
+    { frank: 224, vMax: 104, vMin: 84, label: 28, re: 32, reLine: 44, rSize: 40, rLine: 54 },
+    { frank: 206, vMax: 96, vMin: 76, label: 26, re: 30, reLine: 41, rSize: 36, rLine: 49 },
+    { frank: 190, vMax: 88, vMin: 68, label: 24, re: 28, reLine: 38, rSize: 32, rLine: 44 },
+  ];
   const verdictText = (VERDICT_LABEL[r.verdict] || "Here's the read").toUpperCase();
-  let vSize = 84;
-  for (let s = 108; s >= 84; s -= 4) {
-    font(800, s); spacing(-s / 27);
-    const lines = wrapLines(ctx, verdictText, vW, 3);
-    if (lines.length <= 2 && lines.every((l) => ctx.measureText(l).width <= vW)) { vSize = s; break; }
-  }
-  font(800, vSize); spacing(-vSize / 27);
-  const verdictLines = wrapLines(ctx, verdictText, vW, 3);
-  const vLine = Math.round(vSize * 0.94);
-  font(400, 42); spacing(0);
-  const reasonLines = wrapLines(ctx, r.verdictReason || "", inW, 6);
-  // lay out once at the top to get the height, then center the card and the URL below the masthead
-  const layout = (cardY) => {
-    const memoTop = cardY + 78, memoBottom = memoTop + 52 + (reLines.length - 1) * 46 + 18;
-    const verdictTop = memoBottom + 40;
-    const eyeLine = verdictTop + vSize * 0.46;                       // the middle of the verdict's first line
-    const frankY = Math.max(memoBottom + 12, eyeLine - frankH * frankEyes);
-    const reasonTop = Math.max(verdictTop + verdictLines.length * vLine, frankY + frankH) + 26;
-    const cardH = reasonTop + reasonLines.length * 58 - cardY + 50;
-    return { cardY, memoTop, memoBottom, verdictTop, frankY, reasonTop, cardH };
+  const plan = (t) => {
+    const frankW = t.frank, frankH = t.frank, vW = inW - frankW - 26;
+    font(800, t.label); spacing(3);
+    const reLabelW = ctx.measureText("RE: ").width;
+    font(400, t.re); spacing(0);
+    const reLines = wrapLines(ctx, r.re || r.idea, inW - reLabelW - 10, 2);
+    // the verdict beside Frank: the biggest size in this step that fits in two lines
+    let vSize = t.vMin;
+    for (let s = t.vMax; s >= t.vMin; s -= 4) {
+      font(800, s); spacing(-s / 27);
+      const lines = wrapLines(ctx, verdictText, vW, 3);
+      if (lines.length <= 2 && lines.every((l) => ctx.measureText(l).width <= vW)) { vSize = s; break; }
+    }
+    font(800, vSize); spacing(-vSize / 27);
+    const verdictLines = wrapLines(ctx, verdictText, vW, 3);
+    const vLine = Math.round(vSize * 0.94);
+    font(400, t.rSize); spacing(0);
+    const reasonLines = wrapLines(ctx, r.verdictReason || "", inW, 6);
+    const reGap = t.reLine + 6;
+    const layout = (cardY) => {
+      const memoTop = cardY + 64, memoBottom = memoTop + reGap + (reLines.length - 1) * t.reLine + 16;
+      const verdictTop = memoBottom + 34;
+      const eyeLine = verdictTop + vSize * 0.46;                     // the middle of the verdict's first line
+      const frankY = Math.max(memoBottom + 12, eyeLine - frankH * frankEyes);
+      const reasonTop = Math.max(verdictTop + verdictLines.length * vLine, frankY + frankH) + 22;
+      const cardH = reasonTop + reasonLines.length * t.rLine - cardY + 40;
+      return { cardY, memoTop, memoBottom, verdictTop, frankY, reasonTop, cardH };
+    };
+    return { t, frankW, frankH, reLabelW, reLines, reGap, vSize, verdictLines, vLine, reasonLines, layout };
   };
-  const first = layout(0), blockH = first.cardH + 14 + 96 + 54, room = S.h - 200 - 70;
-  const { cardY, memoTop, memoBottom, verdictTop, frankY, reasonTop, cardH } = layout(200 + Math.max(20, (room - blockH) / 2));
+  let P;
+  for (const t of TIERS) { P = plan(t); if (P.layout(0).cardH <= room) break; }
+  const { t, frankW, frankH, reLabelW, reLines, reGap, vSize, verdictLines, vLine, reasonLines } = P;
+  const memoW = inW;
+  const { cardY, memoTop, memoBottom, verdictTop, frankY, reasonTop, cardH } = P.layout(TOP + Math.max(0, (room - P.layout(0).cardH) / 2));
 
   // hard offset shadow, then the card
   const rr = (x, y, w, h, rad) => { ctx.beginPath(); ctx.moveTo(x + rad, y); ctx.arcTo(x + w, y, x + w, y + h, rad); ctx.arcTo(x + w, y + h, x, y + h, rad); ctx.arcTo(x, y + h, x, y, rad); ctx.arcTo(x, y, x + w, y, rad); ctx.closePath(); };
@@ -800,12 +816,12 @@ async function drawShareCard(r) {
   ctx.lineWidth = 4; ctx.strokeStyle = S.ink; ctx.stroke();
 
   // FROM / RE
-  font(800, 30); spacing(3); ctx.fillStyle = S.accent; ctx.fillText("FROM:", inL, memoTop);
+  font(800, t.label); spacing(3); ctx.fillStyle = S.accent; ctx.fillText("FROM:", inL, memoTop);
   const fromW = ctx.measureText("FROM: ").width;
-  font(400, 34); spacing(0); ctx.fillStyle = S.muted; ctx.fillText("Frank", inL + fromW, memoTop);
-  font(800, 30); spacing(3); ctx.fillStyle = S.accent; ctx.fillText("RE:", inL, memoTop + 52);
-  font(400, 34); spacing(0); ctx.fillStyle = S.muted;
-  reLines.forEach((line, i) => ctx.fillText(line, inL + reLabelW, memoTop + 52 + i * 46));
+  font(400, t.re); spacing(0); ctx.fillStyle = S.muted; ctx.fillText("Frank", inL + fromW, memoTop);
+  font(800, t.label); spacing(3); ctx.fillStyle = S.accent; ctx.fillText("RE:", inL, memoTop + reGap);
+  font(400, t.re); spacing(0); ctx.fillStyle = S.muted;
+  reLines.forEach((line, i) => ctx.fillText(line, inL + reLabelW, memoTop + reGap + i * t.reLine));
   ctx.fillStyle = S.rule; ctx.fillRect(inL, memoBottom, memoW, 2);
   if (bigFrank) {
     // round Frank, like his profile picture: a cream circle with his verdict face
@@ -818,14 +834,14 @@ async function drawShareCard(r) {
   // the verdict, then the reason
   font(800, vSize); spacing(-vSize / 27); ctx.fillStyle = S.ink;
   verdictLines.forEach((line, i) => ctx.fillText(line, inL, verdictTop + Math.round(vSize * 0.82) + i * vLine));
-  font(400, 42); spacing(0); ctx.fillStyle = S.ink;
-  reasonLines.forEach((line, i) => ctx.fillText(line, inL, reasonTop + 40 + i * 58));
+  font(400, t.rSize); spacing(0); ctx.fillStyle = S.ink;
+  reasonLines.forEach((line, i) => ctx.fillText(line, inL, reasonTop + Math.round(t.rSize * 0.95) + i * t.rLine));
 
   // under the card: where to get your own
-  const footY = cardY + cardH + 14 + 96;
-  font(800, 64); spacing(-2); ctx.fillStyle = S.ink; ctx.fillText("sidefrog.com", L, footY);
-  font(400, 34); spacing(0); ctx.fillStyle = S.muted;
-  ctx.fillText("Free advice from a frog with no stake in your idea.", L, footY + 54);
+  const footY = cardY + cardH + 14 + 74;
+  font(800, 54); spacing(-1.8); ctx.fillStyle = S.ink; ctx.fillText("sidefrog.com", L, footY);
+  font(400, 30); spacing(0); ctx.fillStyle = S.muted;
+  ctx.fillText("Free advice from a frog with no stake in your idea.", L, footY + 44);
   return c;
 }
 
