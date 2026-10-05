@@ -16,10 +16,17 @@
   window.sfTrack = function () {};                       // safe no-op until GA is on
   if (!GA_ID || location.protocol === "file:" || LIVE_HOSTS.indexOf(location.hostname) === -1) return;
 
-  var s = document.createElement("script");
-  s.async = true;
-  s.src = "https://www.googletagmanager.com/gtag/js?id=" + encodeURIComponent(GA_ID);
-  document.head.appendChild(s);
+  // Google's script (about 175KB) waits until the page has loaded, so on a slow phone it doesn't
+  // compete with what the visitor came to see. Everything below queues in dataLayer meanwhile
+  // (the page view included) and is sent once it arrives.
+  function loadGtag() {
+    var s = document.createElement("script");
+    s.async = true;
+    s.src = "https://www.googletagmanager.com/gtag/js?id=" + encodeURIComponent(GA_ID);
+    document.head.appendChild(s);
+  }
+  function whenIdle() { (window.requestIdleCallback || function (f) { setTimeout(f, 1); })(loadGtag, { timeout: 2000 }); }
+  if (document.readyState === "complete") whenIdle(); else window.addEventListener("load", whenIdle);
   window.dataLayer = window.dataLayer || [];
   function gtag() { window.dataLayer.push(arguments); }
   window.gtag = gtag;
