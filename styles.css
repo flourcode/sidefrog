@@ -1242,3 +1242,9 @@ body.page main.ed { max-width: 70rem; }
 @media (max-width: 420px) { .wordmark-tag { font-size: 0.56rem; } }
 @media (max-width: 380px) { .wordmark-tag { white-space: normal; max-width: 5.6rem; line-height: 1.2; } }   /* narrow phones: two short lines, so the menu fits */
 @media (min-width: 600px) { .wordmark-tag { font-size: 0.82rem; margin-top: 0.25rem; } }   /* wider screens: easy to read */
+
+/* Frank on YouTube (Break Room rail): round Frank with the text flowing around him, then the episodes */
+.ed-youtube .frank-portrait { float: right; width: 72px; height: 72px; margin: 0 0 0.3rem 0.7rem; shape-outside: circle(50%); }
+.ed-youtube > p:not(.ed-kicker) { margin: 0.4rem 0 0.2rem; font-size: 0.95rem; line-height: 1.45; }
+.ed-youtube .ed-mini { clear: both; }
+.ed-more { margin: 0.6rem 0 0; font-size: 0.9rem; font-weight: 700; }

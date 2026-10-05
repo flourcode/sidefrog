@@ -50,6 +50,8 @@
       else if (/^\/side-kit\/.+\.(png|pdf)$/i.test(u.pathname)) window.sfTrack("kit_download", { item: u.pathname.split("/").pop() });
       return;
     }
+    // Frank's Shorts and the channel: which one (the video's id, or "channel")
+    if (/youtube\.com|youtu\.be/.test(h)) { var vid = (h.match(/shorts\/([\w-]+)/) || [])[1]; window.sfTrack("youtube_click", { video: vid || "channel" }); return; }
     if (/calendly\.com/.test(h)) window.sfTrack("help_click", { via: "calendly" });
     else if (/linkedin\.com\/sharing/.test(h)) window.sfTrack("guide_share", { method: "linkedin" });
     else if (/linkedin\.com/.test(h)) window.sfTrack("help_click", { via: "linkedin" });
