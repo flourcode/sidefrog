@@ -731,31 +731,38 @@ async function drawShareCard(r) {
 
   // the memo card: measure first, then draw
   const cardX = L, cardW = R - L, inPad = 56, inL = cardX + inPad, inW = cardW - inPad * 2;
-  const frankW = 250, frankH = 250;
-  const memoW = inW - frankW - 24;
+  // Frank sits beside the verdict with his eyes level with its first line (like the answer card)
+  const frankW = 236, frankH = 236, frankEyes = 0.29;     // his eyes are ~29% down the round frame
+  const memoW = inW, vW = inW - frankW - 26;
   font(800, 30); spacing(3);
   const reLabelW = ctx.measureText("RE: ").width;
   font(400, 34); spacing(0);
   const reLines = wrapLines(ctx, r.re || r.idea, memoW - reLabelW - 10, 2);
-  // the verdict on one line if it fits at a size from 108 down to 84; otherwise it wraps at 108
+  // the verdict in the column beside Frank: the biggest size from 108 down to 84 that fits in two lines
   const verdictText = (VERDICT_LABEL[r.verdict] || "Here's the read").toUpperCase();
-  let vSize = 108;
-  for (let s = 108; s >= 84; s -= 4) { font(800, s); spacing(-s / 27); if (ctx.measureText(verdictText).width <= inW) { vSize = s; break; } vSize = 108; }
+  let vSize = 84;
+  for (let s = 108; s >= 84; s -= 4) {
+    font(800, s); spacing(-s / 27);
+    const lines = wrapLines(ctx, verdictText, vW, 3);
+    if (lines.length <= 2 && lines.every((l) => ctx.measureText(l).width <= vW)) { vSize = s; break; }
+  }
   font(800, vSize); spacing(-vSize / 27);
-  const verdictLines = wrapLines(ctx, verdictText, inW, 3);
+  const verdictLines = wrapLines(ctx, verdictText, vW, 3);
   const vLine = Math.round(vSize * 0.94);
   font(400, 42); spacing(0);
   const reasonLines = wrapLines(ctx, r.verdictReason || "", inW, 6);
   // lay out once at the top to get the height, then center the card and the URL below the masthead
   const layout = (cardY) => {
     const memoTop = cardY + 78, memoBottom = memoTop + 52 + (reLines.length - 1) * 46 + 18;
-    const verdictTop = Math.max(memoBottom + 30, cardY + 36 + frankH + 10);
-    const reasonTop = verdictTop + verdictLines.length * vLine + 26;
+    const verdictTop = memoBottom + 40;
+    const eyeLine = verdictTop + vSize * 0.46;                       // the middle of the verdict's first line
+    const frankY = Math.max(memoBottom + 12, eyeLine - frankH * frankEyes);
+    const reasonTop = Math.max(verdictTop + verdictLines.length * vLine, frankY + frankH) + 26;
     const cardH = reasonTop + reasonLines.length * 58 - cardY + 50;
-    return { cardY, memoTop, memoBottom, verdictTop, reasonTop, cardH };
+    return { cardY, memoTop, memoBottom, verdictTop, frankY, reasonTop, cardH };
   };
   const first = layout(0), blockH = first.cardH + 14 + 96 + 54, room = S.h - 200 - 70;
-  const { cardY, memoTop, memoBottom, verdictTop, reasonTop, cardH } = layout(200 + Math.max(20, (room - blockH) / 2));
+  const { cardY, memoTop, memoBottom, verdictTop, frankY, reasonTop, cardH } = layout(200 + Math.max(20, (room - blockH) / 2));
 
   // hard offset shadow, then the card
   const rr = (x, y, w, h, rad) => { ctx.beginPath(); ctx.moveTo(x + rad, y); ctx.arcTo(x + w, y, x + w, y + h, rad); ctx.arcTo(x + w, y + h, x, y + h, rad); ctx.arcTo(x, y + h, x, y, rad); ctx.arcTo(x, y, x + w, y, rad); ctx.closePath(); };
@@ -773,7 +780,7 @@ async function drawShareCard(r) {
   ctx.fillStyle = S.rule; ctx.fillRect(inL, memoBottom, memoW, 2);
   if (bigFrank) {
     // round Frank, like his profile picture: a cream circle with his verdict face
-    const fx = cardX + cardW - inPad - frankW + 18, fy = cardY + 36;
+    const fx = cardX + cardW - inPad - frankW + 18, fy = frankY;
     ctx.save(); ctx.beginPath(); ctx.arc(fx + frankW / 2, fy + frankH / 2, frankW / 2, 0, Math.PI * 2); ctx.closePath();
     ctx.fillStyle = "#ECE3D1"; ctx.fill(); ctx.clip();
     ctx.drawImage(bigFrank, fx, fy, frankW, frankH); ctx.restore();

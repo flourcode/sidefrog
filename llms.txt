@@ -23,4 +23,4 @@
 
 ## About
 - [About SideFrog](https://sidefrog.com/about/): SideFrog is a free side hustle idea checker built by Mark Flournoy, who retired early from Amazon and learned to build sites one cheap idea at a time.
-- [What it costs](https://sidefrog.com/what-it-costs/): Mark's real stack and monthly bills for testing side hustle ideas online: a $16 domain, about $8 a month for the sites, and free tools for the rest.
+- [What it costs](https://sidefrog.com/what-it-costs/): How to test a side hustle idea for about $16: a domain, cheap hosting and cheap AI, with the real monthly bills behind SideFrog.

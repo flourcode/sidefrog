@@ -1102,3 +1102,16 @@ button.row .row-cue { color: var(--deep); }
 
 /* RE is a memo subject line: one line, trimmed if it's ever long (Frank usually sends 3-6 words) */
 .card-head .you-wrote .memo-row { display: block; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+
+/* About: an eyebrow over the headline; Frank and Mark as plain circles the text wraps around
+   (no captions, so the words follow the curve). Frank leads at 150px on the left; Mark, the
+   person behind him, is 120px on the right. */
+.page .eyebrow { font-weight: 800; font-size: 0.78rem; letter-spacing: 0.14em; text-transform: uppercase; color: var(--deep); margin: 0 0 0.5rem; }
+.who { display: block; border-radius: 50%; shape-outside: circle(50%); shape-margin: 0.9rem; }
+.who-frank { float: left; width: 150px; height: 150px; margin: 0.25rem 1.1rem 0.6rem 0; }
+.who-mark { float: right; width: 120px; height: 120px; margin: 0.25rem 0 0.6rem 1.1rem; }
+.who-circle, .who .frank-portrait { display: block; float: none; width: 100%; height: 100%; margin: 0; border-radius: 50%; overflow: hidden; background: #ECE3D1; shape-outside: none; }
+.who-circle img { display: block; width: 100%; height: 100%; object-fit: cover; }
+.prose h2 { clear: both; }
+.prose p + h2 { margin-top: 2.2rem; }
+@media (max-width: 560px) { .who-frank { width: 112px; height: 112px; margin-right: 0.9rem; } .who-mark { width: 96px; height: 96px; margin-left: 0.9rem; } }
