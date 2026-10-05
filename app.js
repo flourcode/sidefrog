@@ -844,7 +844,9 @@ const b64urlDecode = (s) => decodeURIComponent(escape(atob(s.replace(/-/g, "+").
 function verdictLink(r) {
   const data = { i: String(r.re || r.idea || "").slice(0, 160), v: r.verdict, r: String(r.verdictReason || "").slice(0, 300),
                  t: String(r.firstMove || "").slice(0, 220) };
-  const base = location.protocol === "file:" ? "https://sidefrog.com/" : location.origin + location.pathname;
+  // /verdict/ is the same page with its own link preview ("Frank's verdict is in"), so the
+  // preview never shows the home card's sample verdict as if it were this one
+  const base = location.protocol === "file:" ? "https://sidefrog.com/verdict/" : `${location.origin}/verdict/`;
   return `${base}#v=${b64urlEncode(JSON.stringify(data))}`;
 }
 
