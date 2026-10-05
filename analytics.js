@@ -34,6 +34,15 @@
     var a = e.target.closest && e.target.closest("a[href]");
     if (!a) return;
     var h = a.href;
+    var u = null;
+    try { u = new URL(h, location.href); } catch (err) { /* not a link we count */ }
+    if (u && u.origin === location.origin) {
+      // A "Check an idea" button that leads to the checker, and the page it was on (not the logo)
+      if (u.pathname === "/" && a.classList.contains("plate-btn")) window.sfTrack("check_cta_click", { from: location.pathname });
+      // Side Kit downloads: the meeting backgrounds and the worksheet PDF, by file name
+      else if (/^\/side-kit\/.+\.(png|pdf)$/i.test(u.pathname)) window.sfTrack("kit_download", { item: u.pathname.split("/").pop() });
+      return;
+    }
     if (/calendly\.com/.test(h)) window.sfTrack("help_click", { via: "calendly" });
     else if (/linkedin\.com\/sharing/.test(h)) window.sfTrack("guide_share", { method: "linkedin" });
     else if (/linkedin\.com/.test(h)) window.sfTrack("help_click", { via: "linkedin" });

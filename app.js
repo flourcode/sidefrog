@@ -133,7 +133,9 @@ async function check(raw) {
   stopThinking(Boolean(err));
   if (err) { track("check_error"); return showError(err); }
   checksThisVisit += 1;
-  track("check", { verdict: report.verdict, check_number: checksThisVisit });
+  // from_shared: this check started on a shared verdict (the sharing loop: someone got a verdict, then tried their own)
+  const fromShared = location.pathname.startsWith("/verdict") || location.hash.startsWith("#v=");
+  track("check", { verdict: report.verdict, check_number: checksThisVisit, from_shared: fromShared ? "yes" : "no" });
   if (checksThisVisit === 2) track("second_check", { verdict: report.verdict });
   render(report);
   justChecked = true;
