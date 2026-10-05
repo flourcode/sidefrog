@@ -227,6 +227,7 @@ function render(r) {
   document.title = `${VERDICT_LABEL[r.verdict] || "Here's the read"} \u00b7 SideFrog`;
   $("#mascot").dataset.mood = VERDICT_FACE[r.verdict] || "smirk";
   shownReport = { ...r, idea: lastIdea, re: subject };
+  warmShareCard();
   $("#share-row").hidden = r.verdict === "cant_help";
   const sticker = $("#sticker");
   sticker.classList.remove("is-sipping");
@@ -718,19 +719,36 @@ function wrapLines(ctx, text, maxWidth, maxLines) {
   return lines;
 }
 
+// Start loading Frank's two pictures for the share card as soon as there's a verdict,
+// so they're ready by the time someone taps Share.
+function warmShareCard() {
+  try { loadFrankSprite(true).catch(() => {}); loadFrankSprite(false).catch(() => {}); } catch { /* the share retries */ }
+}
+
+// Waits for a promise, but never longer than ms: then it settles with the fallback instead.
+// The share card never hangs on a slow font or image; it draws with whatever has arrived.
+function withTimeout(promise, ms, fallback) {
+  return Promise.race([promise, new Promise((ok) => setTimeout(() => ok(fallback), ms))]);
+}
+
 async function drawShareCard(r) {
   const S = SHARE, c = document.createElement("canvas");
   c.width = S.w; c.height = S.h;
   const ctx = c.getContext("2d");
   const font = (weight, size) => { ctx.font = `${weight} ${size}px ${S.font}`; };
   const spacing = (px) => { if ("letterSpacing" in ctx) ctx.letterSpacing = `${px}px`; };
-  try { await Promise.all([document.fonts.load(`800 100px ${S.font}`), document.fonts.load(`400 40px ${S.font}`)]); } catch {}
+  try { await withTimeout(Promise.all([document.fonts.load(`800 100px ${S.font}`), document.fonts.load(`400 40px ${S.font}`)]), 3000); } catch {}
   const mood = VERDICT_FACE[r.verdict] || "smirk";
   let bigFrank = null, smallFrank = null;
   // each Frank loads on his own: if one ever fails, the card still gets the other
-  const [big, small] = await Promise.allSettled([frankImage(mood, true), frankImage("you")]);
+  const [big, small] = await Promise.allSettled([
+    withTimeout(frankImage(mood, true), 10000, null),     // null: not here yet
+    withTimeout(frankImage("you"), 10000, null),
+  ]);
   if (big.status === "fulfilled") bigFrank = big.value;
   if (small.status === "fulfilled") smallFrank = small.value;
+  // No card without Frank: if either picture is missing, stop here and let the person try again
+  if (!bigFrank || !smallFrank) throw new Error("no-frank");
 
   ctx.fillStyle = S.paper; ctx.fillRect(0, 0, S.w, S.h);
   // masthead: Frank, the wordmark, a rule
@@ -816,11 +834,16 @@ async function shareVerdict() {
   if (!r) return;
   const label = "Share Frank\u2019s verdict";
   btn.textContent = "Making the card\u2026"; btn.disabled = true;
+  // safety net: if anything still stalls, the button comes back instead of hanging
+  const stuck = setTimeout(() => { btn.textContent = label; btn.disabled = false; setStatus("That took too long. Try again."); }, 15000);
   try {
     const canvas = await drawShareCard(r);
     const blob = await new Promise((ok) => canvas.toBlob(ok, "image/png"));
     const file = new File([blob], "frank-verdict.png", { type: "image/png" });
-    if (navigator.canShare && navigator.canShare({ files: [file] })) {
+    // The share sheet only on phones and tablets: on desktop it can open behind the window or not at all
+    const touch = window.matchMedia && window.matchMedia("(pointer: coarse)").matches;
+    clearTimeout(stuck);
+    if (touch && navigator.canShare && navigator.canShare({ files: [file] })) {
       try {
         await navigator.share({ files: [file], title: "Frank's verdict", text: `Frank's verdict on my idea: ${verdictLink(r)}` });
         track("share", { verdict: r.verdict, method: "share_sheet" });
@@ -838,8 +861,10 @@ async function shareVerdict() {
       return;
     }
   } catch (e) {
-    setStatus("Couldn't make the image. Try again.");
+    setStatus(e && e.message === "no-frank" ? "Frank's picture didn't load, so there's no card yet. Try again in a moment."
+                                            : "Couldn't make the image. Try again.");
   }
+  clearTimeout(stuck);
   btn.textContent = label; btn.disabled = false;
 }
 

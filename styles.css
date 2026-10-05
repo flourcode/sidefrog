@@ -1235,3 +1235,9 @@ body.page main.ed { max-width: 70rem; }
 
 /* Footer: the brand line, then the coffee-break line a little quieter */
 .site-footer .footer-aside { margin: 0 0 0.4rem; font-size: 0.92rem; color: var(--muted); }
+
+/* The header: the tagline as small print under the name */
+.wordmark-words { display: flex; flex-direction: column; line-height: 1.05; }
+.wordmark-tag { font-size: 0.62rem; font-weight: 600; letter-spacing: 0.01em; color: var(--muted); margin-top: 0.2rem; white-space: nowrap; }
+@media (max-width: 420px) { .wordmark-tag { font-size: 0.56rem; } }
+@media (max-width: 380px) { .wordmark-tag { white-space: normal; max-width: 5.6rem; line-height: 1.2; } }   /* narrow phones: two short lines, so the menu fits */
