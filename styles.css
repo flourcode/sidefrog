@@ -1248,3 +1248,20 @@ body.page main.ed { max-width: 70rem; }
 .ed-youtube > p:not(.ed-kicker) { margin: 0.4rem 0 0.2rem; font-size: 0.95rem; line-height: 1.45; }
 .ed-youtube .ed-mini { clear: both; }
 .ed-more { margin: 0.6rem 0 0; font-size: 0.9rem; font-weight: 700; }
+
+/* Frank's verdicts: the page and the home page's "Frank's latest" */
+.fv-verdict { display: inline-block; vertical-align: 0.15em; font-size: 0.68rem; font-weight: 800; letter-spacing: 0.1em; text-transform: uppercase;
+  padding: 0.18rem 0.5rem; border-radius: 999px; border: 1.5px solid var(--ink); color: var(--ink); background: var(--surface); white-space: nowrap; }
+.fv-great, .fv-worth_a_shot { background: var(--lime); }
+.fv-list { list-style: none; margin: 0.6rem 0 0; padding: 0; max-width: 46rem; }
+.fv { padding: 1.4rem 0; border-bottom: 1px solid var(--rule); scroll-margin-top: 1rem; }
+.fv-meta { margin: 0; font-size: 0.78rem; font-weight: 700; letter-spacing: 0.08em; color: var(--muted); }
+.fv-idea { margin: 0.25rem 0 0.5rem; font-size: 1.5rem; line-height: 1.2; letter-spacing: -0.02em; }
+.fv-reason { margin: 0 0 0.6rem; font-size: 1.05rem; }
+.fv-test { margin: 0 0 0.6rem; }
+.fv-test .ed-kicker { display: inline; margin-right: 0.35rem; }
+.fv-watch { margin: 0; font-weight: 700; }
+.fv-len { font-weight: 500; font-size: 0.85rem; color: var(--muted); margin-left: 0.3rem; }
+.fv-end { max-width: 46rem; margin-top: 1.8rem; padding-top: 1.2rem; border-top: 2px solid var(--ink); }
+.fv-end p { margin: 0.3rem 0 0.9rem; }
+.franks-latest .row-main .fv-verdict { margin-left: 0.2rem; }
