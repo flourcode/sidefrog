@@ -292,6 +292,7 @@ h1 {
   box-shadow: 1px 1px 0 var(--shadow);
 }
 .plate-btn { font-size: 1.16rem; padding: 0.8rem 1.9rem; }
+a.plate-btn { display: inline-block; text-decoration: none; margin-bottom: 0.7rem; }   /* a link styled as a button: a real box, no underline */
 .plate-btn:disabled { cursor: progress; transform: none; box-shadow: 3px 3px 0 var(--shadow); opacity: 0.8; }
 @media (prefers-color-scheme: dark) {
   .plate-btn, .again-btn { border-color: var(--lime); }
@@ -610,6 +611,7 @@ button.row .row-cue { color: var(--deep); }
       "chips  example"
       "status status"
       "result result"
+      "latest latest"
       "guides guides";
     column-gap: 3.5rem;
     align-items: start;
@@ -622,6 +624,7 @@ button.row .row-cue { color: var(--deep); }
   main > #example { grid-area: example; align-self: start; margin-top: 0; }   /* top edge on the idea box's line */
   main > #result { grid-area: result; max-width: 50rem; }
   main > .guides { grid-area: guides; max-width: 50rem; }
+  main > .franks-latest { grid-area: latest; }      /* its own row: it shares the guides' look, not their slot */
   /* In the narrow column the example uses the stacked layout: frog over the verdict */
   #example .card-head {
     grid-template-areas:
