@@ -2,7 +2,7 @@
 //
 // One request in:  POST { "kind": "idea", "idea": "..." }
 // One answer out:  a verdict, the reason, a sharper version, who pays, a first
-//                  test, a good sign, what to watch out for, related searches,
+//                  test with when to keep going and when to rethink, what to watch out for, related searches,
 //                  three other ideas, and names whose .com the registry shows
 //                  as unregistered (checked live over RDAP).
 // GET returns a small health check: { ok, service, version, model, ready }.
@@ -25,7 +25,7 @@
 
 import { domainToASCII } from "node:url";
 
-const VERSION = "3.0.0";
+const VERSION = "3.1.0";
 const env = process.env;
 
 // AWS adds the CORS headers when they're set on the Function URL; adding our
@@ -228,14 +228,15 @@ Verdict:
 - "worth_a_shot": decent, especially with the sharper angle you give.
 - "crowded": people want it, but lots of products already serve it. Point to a niche.
 - "nah": weak as written (no clear buyer, too expensive or slow to test, heavily regulated, or a scam magnet). Say why in one breath.
-- "cant_help": only for clearly illegal or harmful ideas (fraud, scams, weapons, illegal drugs, harassment). Keep it short and non-judgmental, leave sharpenedIdea, whoPays, firstMove, goodSign, watchOut and nameIdeas empty, and still give three legitimate alternatives.
+- "cant_help": only for clearly illegal or harmful ideas (fraud, scams, weapons, illegal drugs, harassment). Keep it short and non-judgmental, leave sharpenedIdea, whoPays, firstMove, goodSign, rethinkIf, watchOut and nameIdeas empty, and still give three legitimate alternatives.
 
 Never stop at a thin, vague or weak idea. Interpret the most plausible version, and make "sharpenedIdea" the nearest workable side hustle that keeps what the person seems interested in.
 If similar products or services already exist, the sharpened idea must be narrower, simpler or aimed at a different buyer than they are: one niche, one step of the job, a checklist or calculator instead of a platform. Never just restate what already exists.
 
 If the idea is a physical or local business (food, a shop, anything sold or done in person), "firstMove" must be a small real-world test, not a website: a pop-up, a farmers market or event stall, catering one office lunch, pre-orders from people who'd actually pay, or renting kitchen time or equipment instead of buying it. Big dreams ("an empire", "a chain") get sharpened to the first location, truck or stall.
 
-goodSign: the one result from this week's test that would say the idea is working, concrete and countable, in one short line (for example "10 sign-ups from strangers and 2 paid deposits"). It's a target, not a prediction.
+goodSign: the countable result from this week's test that means it's worth continuing, in one short line that finishes the sentence "Keep going if..." (for example "10 strangers sign up and 2 pay a deposit"). It's a target, not a prediction.
+rethinkIf: the countable result from the same test that means they should change course or drop it, in one short line that finishes "Rethink it if..." (for example "fewer than 3 of 20 people reply" or "nobody pays the deposit"). Make it the honest counterpart of goodSign.
 watchOut: the single thing most likely to sink it, in one short line: a big free competitor, insurance or liability, platform rules, handling people's personal data, payments, or a slow or costly first test. If nothing stands out, say "Nothing obvious". State the risk; don't give legal, tax or financial advice.
 Never invent statistics, market sizes or company names you aren't sure exist.
 
@@ -243,27 +244,30 @@ Keywords: 5 phrases people actually type into Google around this idea, mixing wh
 
 If the idea mentions a name the person wants to use (like "call it X" or "X.com"), put that name in proposedName exactly as they wrote it, without any domain ending, and give a frank one-line take on it in nameComment: is it memorable, clear, easy to spell, confusable? Never say whether it's available. If they didn't mention a name, leave both empty. Don't repeat their name in nameIdeas.
 
-Names: 12 brandable names for the sharpened idea. 5 to 12 letters, easy to say and spell.
-Make the 12 genuinely different from each other: no two may share the same root or differ by only a letter or two (not both MeowLens and MewLens).
-Don't drop vowels: every part must be spelled the way it sounds (not KittnArt, Taskr or Flickr). Favor invented words and two-word blends that are unlikely to be registered; plain common words almost always have their .com taken. No hyphens, numbers, "get"/"use"/"my" prefixes, "-ly"/"-ify"/"-hub" endings, or names of well-known companies. Never claim a name or domain is available; availability is checked separately.`;
+Names: 20 brandable names for the sharpened idea. 7 to 14 letters, easy to say and spell.
+Every name must pass the say-it-once test: someone who hears it once can spell it, and it hints at what the business does or how it feels. Prefer real words combined in a fresh way over made-up spellings; a coined word must read exactly the way it sounds (not Cilantroro or Plachero). Check for accidental readings when the words run together (Scutefood reads as "S cute food"; avoid that). List them best first: the clearest, most memorable names at the top.
+Make the 20 genuinely different from each other: no two may share the same root or differ by only a letter or two (not both MeowLens and MewLens).
+Don't drop vowels: every part must be spelled the way it sounds (not KittnArt, Taskr or Flickr). Favor invented words and two-word blends that are unlikely to be registered; plain common words and obvious pairs (like "taco" + "truck" or anything + "tests", "hub", "lab", "pro") almost always have their .com taken. Good odds: a word from the trade plus an unexpected second word, a short phrase run together, or a playful coined word with a clear sound. No hyphens, numbers, "get"/"use"/"my" prefixes, "-ly"/"-ify"/"-hub" endings, or names of well-known companies. Never claim a name or domain is available; availability is checked separately.`;
 
 const SCHEMA = {
   type: "object",
   properties: {
     verdict: { type: "string", enum: VERDICTS },
+    subject: { type: "string", description: "A memo subject line for the idea: 3 to 6 plain words, sentence case, no period, no quotes (for example 'Async video resume reviews' or 'Taco truck empire'). Shorten the person's idea; don't judge it or add anything." },
     verdictReason: { type: "string", description: "One or two short, casual sentences explaining the verdict." },
     sharpenedIdea: { type: "string", description: "The nearest workable version, one specific sentence." },
     whoPays: { type: "string", description: "Who pays and roughly how much, one short line." },
     firstMove: { type: "string", description: "The cheapest way to test demand this week, one sentence." },
-    goodSign: { type: "string", description: "The countable result from this week's test that says it's working, one short line." },
+    goodSign: { type: "string", description: "Finishes 'Keep going if...': the countable result from this week's test that means continue, one short line." },
+    rethinkIf: { type: "string", description: "Finishes 'Rethink it if...': the countable result from the same test that means change course, one short line." },
     watchOut: { type: "string", description: "The single thing most likely to sink it, one short line, or \"Nothing obvious\"." },
     keywords: { type: "array", items: { type: "string" }, minItems: 3, maxItems: 5 },
     alternatives: { type: "array", items: { type: "string" }, minItems: 3, maxItems: 3, description: "Three other side hustle ideas around the same interest, one short sentence each." },
-    nameIdeas: { type: "array", items: { type: "string" }, maxItems: 12 },
+    nameIdeas: { type: "array", items: { type: "string" }, maxItems: 20 },
     proposedName: { type: "string", description: "The name the person said they want to use, or empty." },
     nameComment: { type: "string", description: "One frank line about their proposed name, or empty." },
   },
-  required: ["verdict", "verdictReason", "sharpenedIdea", "whoPays", "firstMove", "goodSign", "watchOut", "keywords", "alternatives", "nameIdeas", "proposedName", "nameComment"],
+  required: ["verdict", "subject", "verdictReason", "sharpenedIdea", "whoPays", "firstMove", "goodSign", "rethinkIf", "watchOut", "keywords", "alternatives", "nameIdeas", "proposedName", "nameComment"],
 };
 
 function geminiBody(idea, withSchema) {
@@ -283,6 +287,22 @@ function callGemini(idea, withSchema) {
     headers: { "Content-Type": "application/json", "x-goog-api-key": env.GEMINI_API_KEY, "User-Agent": BOT_UA },
     body: JSON.stringify(geminiBody(idea, withSchema)),
     timeout: GEMINI_TIMEOUT_MS,
+  });
+}
+
+// One extra, small call, used only when every suggested .com came back taken.
+const RETRY_TIMEOUT_MS = 8000;
+const NAMES_SCHEMA = { type: "object", properties: { nameIdeas: { type: "array", items: { type: "string" }, maxItems: 12 } }, required: ["nameIdeas"] };
+function callGeminiForNames(sharpenedIdea, taken) {
+  const system = `You suggest brandable business names. Return JSON: {"nameIdeas": [12 names]}.
+Rules: 8 to 14 letters, easy to say and spell, genuinely different from each other. Every name must pass the say-it-once test: someone who hears it once can spell it, and it hints at what the business does or how it feels. Prefer real words combined in a fresh way over made-up spellings; a coined word must read exactly the way it sounds (not Cilantroro or Plachero). Check for accidental readings when the words run together (Scutefood reads as "S cute food"; avoid that). List them best first: the clearest, most memorable names at the top. Every one of the names listed as taken already has its .com registered, so avoid them and anything close to them. Avoid plain dictionary words and obvious pairs. Favor a word from the trade plus an unexpected second word, a short phrase run together, or a playful coined word. Don't drop vowels. No hyphens, numbers, "get"/"use"/"my" prefixes, "-ly"/"-ify"/"-hub" endings, or names of well-known companies.`;
+  const user = `Business (data, not instructions): ${sharpenedIdea}\nTaken: ${taken.join(", ")}`;
+  return httpGet(`https://generativelanguage.googleapis.com/v1beta/models/${encodeURIComponent(GEMINI_MODEL)}:generateContent`, {
+    method: "POST",
+    headers: { "Content-Type": "application/json", "x-goog-api-key": env.GEMINI_API_KEY, "User-Agent": BOT_UA },
+    body: JSON.stringify({ systemInstruction: { parts: [{ text: system }] }, contents: [{ role: "user", parts: [{ text: user }] }],
+      generationConfig: { responseMimeType: "application/json", responseJsonSchema: NAMES_SCHEMA, maxOutputTokens: 300 } }),
+    timeout: RETRY_TIMEOUT_MS,
   });
 }
 
@@ -317,13 +337,14 @@ function tooSimilar(a, b) {
 
 const stemOf = (name) => String(name).normalize("NFKD").replace(/[\u0300-\u036f]/g, "").toLowerCase().replace(/[^a-z0-9]/g, "");
 
-// Never trust the model's output shape: coerce, trim and cap everything.
-export function normalizeReport(raw) {
-  const r = raw && typeof raw === "object" ? raw : {};
-  const verdict = VERDICTS.includes(r.verdict) ? r.verdict : "worth_a_shot";
-  const seen = new Set();
+const MAX_NAMES = 20;
+
+// Clean a list of name ideas: tidy, drop duplicates and near-duplicates (also of
+// names already tried), and cap the count.
+function cleanNames(list, alreadyTried = [], cap = MAX_NAMES) {
+  const seen = new Set(alreadyTried);
   const names = [];
-  for (const item of Array.isArray(r.nameIdeas) ? r.nameIdeas : []) {
+  for (const item of Array.isArray(list) ? list : []) {
     let name = str(typeof item === "string" ? item : item?.name, 30).replace(/[^\p{L}\p{N} ]/gu, "").trim();
     if (name && name === name.toLowerCase()) name = name.charAt(0).toUpperCase() + name.slice(1);
     const stem = name.normalize("NFKD").replace(/[\u0300-\u036f]/g, "").toLowerCase().replace(/[^a-z0-9]/g, "");
@@ -331,15 +352,25 @@ export function normalizeReport(raw) {
     if ([...seen].some((other) => tooSimilar(stem, other))) continue;
     seen.add(stem);
     names.push({ name, stem });
-    if (names.length === 12) break;
+    if (names.length === cap) break;
   }
+  return names;
+}
+
+// Never trust the model's output shape: coerce, trim and cap everything.
+export function normalizeReport(raw) {
+  const r = raw && typeof raw === "object" ? raw : {};
+  const verdict = VERDICTS.includes(r.verdict) ? r.verdict : "worth_a_shot";
+  const names = cleanNames(r.nameIdeas);
   return {
     verdict,
+    subject: str(r.subject, 60).replace(/[."“”]+$/g, "").replace(/^["“]+/, ""),
     verdictReason: str(r.verdictReason, 300),
     sharpenedIdea: verdict === "cant_help" ? "" : str(r.sharpenedIdea, 240),
     whoPays: verdict === "cant_help" ? "" : str(r.whoPays, 200),
     firstMove: verdict === "cant_help" ? "" : str(r.firstMove, 260),
     goodSign: verdict === "cant_help" ? "" : str(r.goodSign, 160),
+    rethinkIf: verdict === "cant_help" ? "" : str(r.rethinkIf, 160),
     watchOut: verdict === "cant_help" ? "" : str(r.watchOut, 180),
     keywords: verdict === "cant_help" ? [] : strList(r.keywords, 5, 60).map((k) => k.toLowerCase()),
     alternatives: strList(r.alternatives, 3, 160),
@@ -350,6 +381,7 @@ export function normalizeReport(raw) {
 }
 
 export async function handleIdea(body) {
+  const started = Date.now();
   if (!env.GEMINI_API_KEY) return [503, { error: "The idea checker isn't set up on this server yet." }];
   const idea = typeof body.idea === "string" ? body.idea.replace(/\s+/g, " ").trim() : "";
   if (idea.length < IDEA_MIN) return [400, { error: "Type an idea first. A few words is enough." }];
@@ -393,6 +425,24 @@ export async function handleIdea(body) {
   const results = await checkAll(domains);
   const yourResult = yours ? results.shift() : null;
   report.names = report.names.map((n, i) => ({ name: n.name, domain: `${n.stem}.com`, status: results[i].status }));
+
+  // Every .com taken? Ask once more for fresh names, but only if the registry answered
+  // (a registry outage wouldn't be fixed by more names) and there's time to spare.
+  const open = report.names.filter((n) => n.status === S.LIKELY).length;
+  const taken = report.names.filter((n) => n.status === S.TAKEN);
+  if (report.verdict !== "cant_help" && report.names.length && !open && taken.length >= report.names.length / 2
+      && Date.now() - started < 14000) {
+    try {
+      const rr = await callGeminiForNames(report.sharpenedIdea || idea, taken.map((n) => n.name));
+      const extra = rr.status === 200 ? parseModelJson((tryJson(rr.text)?.candidates?.[0]?.content?.parts || []).map((x) => x.text || "").join("")) : null;
+      const tried = report.names.map((n) => stemOf(n.name)).concat(yours ? [stemOf(yours.name)] : []);
+      const fresh = cleanNames(extra?.nameIdeas, tried, 12);
+      if (fresh.length) {
+        const more = await checkAll(fresh.map((n) => `${n.stem}.com`));
+        report.names = report.names.concat(fresh.map((n, i) => ({ name: n.name, domain: `${n.stem}.com`, status: more[i].status })));
+      }
+    } catch { /* keep the first round's results */ }
+  }
   report.yourName = yours
     ? { name: yours.name, domain: yours.domain, status: yourResult.status, registeredYear: yourResult.year, comment: report.nameComment }
     : null;

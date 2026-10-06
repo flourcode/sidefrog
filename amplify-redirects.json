@@ -102,6 +102,12 @@
     "condition": null
   },
   {
+    "source": "/break-room/start/where-to-get-feedback",
+    "target": "/break-room/start/where-to-get-feedback/",
+    "status": "301",
+    "condition": null
+  },
+  {
     "source": "/side-kit",
     "target": "/side-kit/",
     "status": "301",
@@ -114,8 +120,20 @@
     "condition": null
   },
   {
+    "source": "/stuff-i-like",
+    "target": "/stuff-i-like/",
+    "status": "301",
+    "condition": null
+  },
+  {
     "source": "/break-room",
     "target": "/break-room/",
+    "status": "301",
+    "condition": null
+  },
+  {
+    "source": "/verdict",
+    "target": "/verdict/",
     "status": "301",
     "condition": null
   },

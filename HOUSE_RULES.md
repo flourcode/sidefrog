@@ -25,7 +25,7 @@ The tagline: "Free advice from a frog with no stake in your idea." It leads the 
 
 - He's Frank. Never "Frank the Frog," never a biography, never an explanation of the pun. About introduces him in one line and that's it.
 - He appears as: the memo header ("FROM: Frank / RE: your idea"), each guide's note card with its own Frank line (no line used twice), and the sip animation.
-- Frank lines in use: Let me be Frank · Frankly · Just being Frank here · I'll be Frank · A note from Frank · Frank's take · Frank has notes · Frank would like a word · Frank ran the numbers · Frank, off the record · Frank's two cents · Frank, speaking as a friend · Frank, between sips · From Frank's desk.
+- Frank lines in use: Let me be Frank · Frankly · Just being Frank here · I'll be Frank · A note from Frank · Frank's take · Frank has notes · Frank would like a word · Frank ran the numbers · Frank, off the record · Frank's two cents · Frank, speaking as a friend · Frank, between sips · From Frank's desk · Frank, at the water cooler.
 - Frank is never cropped into a circle or avatar; the round crop is for Mark, the human. Wherever Frank (or Mark's portrait) sits beside text, the text flows around him, the way the About portrait works (text curves around Mark's circle; Frank keeps an even gap, since his outline is nearly straight): he floats top left and the lines wrap back to full width below. Not a fixed column beside him. The one exception is the answer card, whose layout keeps the verdict headline on one line.
 - His face carries the verdict's mood. Don't add status colours or tags to do that job.
 
@@ -44,13 +44,15 @@ The tagline: "Free advice from a frog with no stake in your idea." It leads the 
 - No affiliate links. Porkbun is the registrar we point to, and the domain guide says SideFrog's own domains are on Route 53.
 - Never urgency, fake proof, fake reviews or invented numbers. No "grab it fast."
 - Verdict-aware: on "Keep your day job" there are no registrar links and no help offer; Mark's help offer only follows a promising verdict.
+- Sharing is the visitor's choice and happens in their browser: the share card is drawn client-side and nothing is stored. Shared verdict links carry the idea, verdict, reason and cheap test after the # (sidefrog.com/#v=...), which browsers never send to the server; opening one shows that exact card with no new check, and analytics records the page without the #. Never add server-side saving of ideas or public result pages without changing the privacy copy and asking first.
 - Privacy copy must match the code: the idea goes to Gemini to write the verdict; SideFrog doesn't store it; analytics never sends typed text. If logging is ever added, the copy changes too.
 
 ## UX
 
 - Show value before any ask (the example answer is on screen from the start).
-- The answer card follows the decision path: verdict, why, then what to try first (the lead), how to tell it's working and what could sink it, then context. Emphasis comes from type size and the vertical rule, not tinted boxes.
-- The tool asks for the visitor's own idea: "YOUR IDEA", "Check my idea", grey examples marked "e.g.". An empty click coaches (Frank asks for their idea and offers "or check the example") rather than silently checking someone else's idea. No example chips; the rotation does that job.
+- The answer card follows the decision path: verdict, why, then a cheap test (the lead) with its pass/fail pair (keep going if, rethink it if), then context (watch out for, who pays, sharper version). Names stay visible: they're part of the fun. Emphasis comes from type size and the vertical rule, not tinted boxes.
+- The tool asks for the visitor's own idea: "YOUR IDEA", "Check my idea", grey examples marked "e.g." that rotate as inspiration and are never checked. An empty click gets a quiet nudge ("Give me something to work with.", a small shake, the cursor kept in the box), not an error. No example chips or "try the example" links.
+- Feedback about the idea box appears inside the box (the status line under the button), never below it where a phone keyboard would hide it.
 - Every action gets feedback. Mobile first from 320px, nothing sideways, 44px touch targets.
 - Respect reduced motion everywhere. Readable contrast (WCAG AA) in light and dark.
 - No inline scripts or inline event handlers (the Content-Security-Policy blocks them).
@@ -64,3 +66,20 @@ Built isn't the finish line. Before something ships:
 3. Run `python3 make_pages.py` (pages, sitemap, fingerprints, footer), and `python3 make_og.py` if a title changed.
 4. Check every internal link works and nothing scrolls sideways.
 5. Go one detail further than anyone will notice. People feel the care even when they can't name it.
+
+## Frank's art
+- Frank is traced from Mark's approved reference art, never hand-drawn or redrawn by AI. New poses or faces start as a generated sheet in the same style, approved by Mark, then traced.
+- Avocado green (#8DAA3F family), not lime. No teardrop, ever. No heavy-lidded "jaded" lids.
+- Verdict faces: Surprisingly, yes = surprised "o"; This could work = the sip's first frame (smile); Crowded pond and Keep your day job = heavy lids, flat mouth; Can't help = puzzled; Error and 404 = skeptical frown.
+- Frank's gaze (data-look): where he's talking or greeting (logo, guide notes, Side Kit, About, 404) he looks straight at the reader and glances at his text only while sipping; on the answer and example cards he looks at the verdict. Every sip starts and ends on his resting gaze. Any new placement sets data-look.
+- Round Frank for identity and sharing (About, share cards, the share-your-verdict image, backgrounds, profile pictures, video); cutout Frank beside text on the site. Both come from frank_art.py, never drawn by hand.
+- Frank's pupils stay exactly as traced (100%); smaller pupils were tried and rejected.
+- RE on the answer card is a short memo subject line from Frank, never a wrapped paragraph; Frank sits level with the verdict.
+- Plainspoken copy with no AI hallmarks: no punchy three-part lists, no "Maybe X. Maybe Y." fragments, no colon setups, no clever closing lines. Short, plain sentences in Mark's voice.
+- Portraits that text wraps around have no captions (captions turn them into blocks).
+- Shared verdict links use /verdict/#v=...: the verdict stays after the #, and the link preview is the neutral "Frank's verdict is in" card, never a sample verdict.
+- Editorial pages: labels, numbers and thin rules instead of cards; the italic serif only for one-line descriptions and pull lines. Every new guide gets a one-line description in BLURBS.
+- No made-up numbers anywhere, including joke statistics. "Frank's week" shows only real verdict counts.
+- Text next to Frank flows around his outline (shape-outside), never in a block beside him: the traced polygon for cutout Frank, a circle for round Frank.
+- Brand tagline: "For people who hate Mondays." (share cards, footer signature, About, video end card, social bios). Never explain it. "Free advice from a frog with no stake in your idea." stays where a reader needs to know what SideFrog is: page titles, search descriptions, the share-your-verdict image. Avoid "I hate Mondays" on merchandise (Garfield's line).
+- In the Shorts, Frank's faces are the traced originals on every screen; no moved-pupil variants.

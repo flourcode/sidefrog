@@ -1,0 +1,7 @@
+/* Fonts served from sidefrog.com (make_fonts.py trims them and fingerprints the names; it keeps these
+   urls current). Self-hosting keeps Google's stylesheet and two extra connections off a phone's
+   critical path; every page preloads Bricolage. swap: text shows at once in a fallback, then Bricolage. */
+@font-face { font-family: "Bricolage Grotesque"; src: url("fonts/bricolage.34fca46a.woff2") format("woff2");
+  font-weight: 400 800; font-style: normal; font-display: swap; }
+@font-face { font-family: "Source Serif 4"; src: url("fonts/serif-italic.e618a417.woff2") format("woff2");
+  font-weight: 400; font-style: italic; font-display: swap; }

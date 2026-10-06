@@ -13,6 +13,7 @@ The frog is Frank. About introduces him in one line ("He reads every idea that c
 Each guide gets its own Frank line as its label, so the bit doesn't turn into a tic.
 """
 import html
+import urllib.parse
 import re
 import json
 import pathlib
@@ -25,21 +26,38 @@ HOME_UPDATED = "2026-10-03"           # the tool page's lastmod in sitemap.xml; 
 ROOT = pathlib.Path(__file__).parent
 
 # ---- Frank, inline, so he can sip (frank.js picks when) ----------------------------
-ARM = '<g class="arm"><path d="M150 292 Q 98 330 82 368 Q 72 404 150 426" fill="none" stroke="#111" stroke-width="100" stroke-linecap="round" stroke-linejoin="round"/><path d="M150 292 Q 98 330 82 368 Q 72 404 150 426" fill="none" stroke="#8DAA3F" stroke-width="80" stroke-linecap="round" stroke-linejoin="round"/><path d="M152 290 L112 322 L96 356 L94 392 L112 414 L152 424 Z" fill="#8DAA3F"/></g>'
-VB = '19 21 576 524'
-FACES = {'smirk': '<g class="face face-smirk"><circle cx="202" cy="158" r="48" fill="#fff" stroke="#111" stroke-width="10" stroke-linecap="round" stroke-linejoin="round"/><ellipse class="pupil" cx="202" cy="162" rx="13" ry="19" fill="#111"/><circle cx="394" cy="161" r="48" fill="#fff" stroke="#111" stroke-width="10" stroke-linecap="round" stroke-linejoin="round"/><ellipse class="pupil" cx="394" cy="165" rx="13" ry="19" fill="#111"/><path d="M180 258 Q275 302 372 256" fill="none" stroke="#111" stroke-width="10" stroke-linecap="round" stroke-linejoin="round"/><path d="M168 250 Q174 258 182 258" fill="none" stroke="#111" stroke-width="8" stroke-linecap="round" stroke-linejoin="round"/><ellipse cx="249" cy="206" rx="5" ry="6.5" fill="#111"/><ellipse cx="282" cy="206" rx="5" ry="6.5" fill="#111"/></g>', 'nah': '<g class="face face-nah"><circle cx="202" cy="158" r="48" fill="#fff" stroke="#111" stroke-width="10" stroke-linecap="round" stroke-linejoin="round"/><ellipse class="pupil" cx="202" cy="166" rx="13" ry="19" fill="#111"/><circle cx="394" cy="161" r="48" fill="#fff" stroke="#111" stroke-width="10" stroke-linecap="round" stroke-linejoin="round"/><ellipse class="pupil" cx="394" cy="169" rx="13" ry="19" fill="#111"/><path d="M168 100 L236 104" fill="none" stroke="#111" stroke-width="9" stroke-linecap="round" stroke-linejoin="round"/><path d="M362 96 Q396 72 430 86" fill="none" stroke="#111" stroke-width="9" stroke-linecap="round" stroke-linejoin="round"/><path d="M164 272 Q245 240 382 288" fill="none" stroke="#111" stroke-width="10" stroke-linecap="round" stroke-linejoin="round"/><ellipse cx="249" cy="206" rx="5" ry="6.5" fill="#111"/><ellipse cx="282" cy="206" rx="5" ry="6.5" fill="#111"/></g>', 'sip': '<g class="face face-sip"><path d="M164 160 Q202 186 240 160" fill="none" stroke="#111" stroke-width="10" stroke-linecap="round" stroke-linejoin="round"/><path d="M356 163 Q394 189 432 163" fill="none" stroke="#111" stroke-width="10" stroke-linecap="round" stroke-linejoin="round"/><ellipse cx="262" cy="268" rx="15" ry="11" fill="#7A2420" stroke="#111" stroke-width="8" stroke-linecap="round" stroke-linejoin="round"/><ellipse cx="249" cy="206" rx="5" ry="6.5" fill="#111"/><ellipse cx="282" cy="206" rx="5" ry="6.5" fill="#111"/></g>'}
 
 
-MUG_TILT = '<g class="mug-tilt"><image href="/frogs/coffee-mug-tilt.svg" width="640" height="550"/></g>'
 
 
-def frank_svg(cls, mood="smirk", look="right"):
-    return (f'<svg class="frog {cls} can-sip look-{look}" data-mood="{mood}" viewBox="{VB}" aria-hidden="true" focusable="false">'
-            f'{ARM}<image href="/frogs/coffee-body.svg" width="640" height="550"/>{FACES[mood]}{FACES["sip"]}'
-            f'<g class="mug"><g class="mug-flat"><image href="/frogs/coffee-mug.svg" width="640" height="550"/></g>' + MUG_TILT + '</g></svg>')
+def frank_round_html(mood="smirk", look="you"):
+    """Round Frank in a circle, matching Mark's portrait (About). Sips like the others."""
+    return (f'<span class="frank-portrait" aria-hidden="true">'
+            f'<span class="frank is-round can-sip" data-mood="{mood}" data-look="{look}"></span></span>')
 
 
-FONT = '<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin><link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,400..800&display=swap" rel="stylesheet">'
+def og_image(p):
+    """A page's share card address with its version code; pages without a card (the 404) use the home card."""
+    slug = slug_of(p)
+    if (ROOT / "og" / f"{slug}.jpg").exists():
+        return f"{BASE_URL}/og/{slug}.jpg?v={fingerprint('og/' + slug + '.jpg')}"
+    return f"{BASE_URL}/og/home.jpg?v={fingerprint('og/home.jpg')}"
+
+
+def frank_svg(cls, mood="smirk", look="you"):
+    """Frank, from the sprite (see build_frank_sprite.py). The name is kept so callers don't change."""
+    return f'<span class="frog frank {cls} can-sip" data-mood="{mood}" data-look="{look}" aria-hidden="true"></span>'
+
+
+# Fonts: Google Fonts for now. Self-hosting (make_fonts.py, fonts/) is faster on phones but needs the
+# live security policy to allow font-src 'self'; it didn't take effect on Amplify, so it's switched off.
+# To switch it back on: confirm the live content-security-policy header includes font-src 'self', set
+# SELF_HOST_FONTS = True, put the @font-face rules back at the top of styles.css, and rebuild.
+SELF_HOST_FONTS = False
+GOOGLE_FONTS = '<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin><link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,400..800&family=Source+Serif+4:ital,wght@1,400&display=swap" rel="stylesheet">'
+FONT_FILES = dict(l.split() for l in (ROOT / "fonts" / "fonts.txt").read_text().splitlines() if l.strip())
+FONT = (f'<link rel="preload" href="/fonts/{FONT_FILES["bricolage"]}" as="font" type="font/woff2" crossorigin>'
+        if SELF_HOST_FONTS else GOOGLE_FONTS)
 
 NAV_TEMPLATE = '''<nav class="site-nav" aria-label="Sections"><a href="/break-room/"{br}>Break Room</a><a href="/side-kit/"{sk}>Side Kit</a></nav>'''
 
@@ -55,13 +73,14 @@ def site_nav(path):
 
 
 HEADER = '''<header class="site-header">
-    <a class="wordmark" href="/">''' + frank_svg("wordmark-frog") + '''SideFrog</a>
+    <a class="wordmark" href="/">''' + frank_svg("wordmark-frog") + '''<span class="wordmark-words"><span class="wordmark-name">SideFrog</span><span class="wordmark-tag">For people who hate Mondays.</span></span></a>
     {NAV}
   </header>'''
 
 FOOTER = '''<footer class="site-footer">
-    <p class="footer-tag">Made for coffee breaks. Your manager remains uninformed.</p>
-    <nav class="footer-nav" aria-label="More from SideFrog"><a href="/break-room/">Break Room</a><span class="dot" aria-hidden="true">·</span><a href="/side-kit/">Side Kit</a><span class="dot" aria-hidden="true">·</span><a href="/break-room/build/vibe-coding-101/">Build it</a><span class="dot" aria-hidden="true">·</span><a href="/what-it-costs/">What it costs</a><span class="dot" aria-hidden="true">·</span><a href="/about/">About</a><span class="dot" aria-hidden="true">·</span><a href="/about/#help">Get help</a></nav>
+    <p class="footer-tag">For people who hate Mondays.</p>
+    <p class="footer-aside">Made for coffee breaks. Your manager remains uninformed.</p>
+    <nav class="footer-nav" aria-label="More from SideFrog"><a href="/break-room/">Break Room</a><span class="dot" aria-hidden="true">·</span><a href="/side-kit/">Side Kit</a><span class="dot" aria-hidden="true">·</span><a href="/break-room/build/vibe-coding-101/">Build it</a><span class="dot" aria-hidden="true">·</span><a href="/what-it-costs/">What it costs</a><span class="dot" aria-hidden="true">·</span><a href="/about/">About</a><span class="dot" aria-hidden="true">·</span><a href="/about/#help">Get help</a><span class="dot" aria-hidden="true">·</span><a href="https://www.youtube.com/@SideFrogTV">YouTube</a></nav>
     <p class="fine-print"><span class="label">The fine print</span>Frank’s verdict is a quick AI read using Gemini 3.5 Flash-Lite, not market research. .com names are checked live at the registry. “Open” means no registry record was found, but premium or reserved names can still be unavailable, so confirm before you buy. Not legal, financial, or trademark advice. Your idea goes to Google’s Gemini to write the verdict; SideFrog itself doesn’t store what you type.</p>
     <p class="colophon"><span class="label">Colophon</span>SideFrog is made by <a href="/about/">Mark Flournoy</a> in California. Vibe coded with Claude over a weekend for about $20. So yeah, <a href="/break-room/build/vibe-coding-101/">you can probably build your thing too</a>. Set in Bricolage Grotesque. Printed on the internet. Updated ''' + UPDATED + '''.</p>
   </footer>'''
@@ -91,7 +110,7 @@ def page_html(p):
     if p.get("take"):
         label = p.get("take_label", "A note from Frank")
         take = f'''<div class="take">
-      {'<img class="take-photo" src="/mark-mono.jpg" alt="Mark" width="68" height="68">' if p.get("take_photo") else frank_svg("take-frog")}
+      {'<img class="take-photo" src="/mark-portrait.jpg" alt="Mark" width="68" height="68">' if p.get("take_photo") else frank_svg("take-frog", p.get("frank_mood", "smirk"))}
       <div><p class="take-label">{label}</p><blockquote>{p["take"]}</blockquote></div>
     </div>'''
     faq_html, ld = "", []
@@ -133,6 +152,73 @@ def page_html(p):
     cta = CTA.format(cal=CALENDLY + slug, li=LINKEDIN) if p.get("cta", True) else ""
     if p.get("help_box"):
         cta = HELP_BOX.format(cal=CALENDLY + slug) + "\n      " + cta
+    editorial = bool(p.get("article") or p.get("contents"))
+    if p.get("article"):
+        # the editorial guide: label, headline, one-line description, byline; a ruled side rail
+        if p.get("numbered"):
+            steps_html, titles = editorial_steps(pull_lines(p["body"]))
+        else:
+            steps_html, titles = pull_lines(p["body"]), []
+        byline = " · ".join(([f"{len(titles)} steps"] if titles else []) + [f"{read_minutes(p)} min read", f"Updated {UPDATED}"])
+        note = ""
+        if p.get("take"):
+            note = (f'<aside class="ed-rail-piece ed-note-piece"><div class="ed-frank-note">{frank_svg("take-frog", p.get("frank_mood", "smirk"))}'
+                    f'<div><p class="ed-kicker">{p.get("take_label", "A note from Frank")}</p><blockquote>{p["take"]}</blockquote></div></div></aside>')
+        toc = ""
+        if titles:
+            toc = ('<aside class="ed-rail-piece ed-toc-piece"><p class="ed-kicker">In this guide</p><ol class="ed-mini">'
+                   + "".join(f'<li><span><a href="#step-{i}">{t}</a></span></li>' for i, t in enumerate(titles, 1)) + "</ol></aside>")
+        read_next = ""
+        if p.get("related"):
+            read_next = ('<aside class="ed-rail-piece ed-related-piece"><p class="ed-kicker">Read next</p><ol class="ed-mini">'
+                         + "".join(f'<li><span><a href="{PAGES[k]["path"]}">{html.escape(PAGES[k]["h1"])}</a>'
+                                   f'<small>{html.escape(PAGES[k].get("blurb", ""))}</small></span></li>' for k in p["related"]) + "</ol></aside>")
+        main_html = f'''<main class="ed ed-article">
+    <header class="ed-mast">
+      <p class="ed-kicker"><a href="/break-room/">The Break Room</a> · {html.escape(p.get("section", ""))}</p>
+      <h1 class="ed-title">{html.escape(p["h1"])}</h1>
+      <p class="ed-dek">{html.escape(p.get("blurb", p["description"]))}</p>
+      <p class="ed-byline">{byline}</p>
+    </header>
+    <div class="ed-grid">
+      {note}
+      <article class="ed-body prose">
+        {steps_html}
+        {guide_share(p)}
+        {cta}
+        {faq_html}
+        {sources}
+      </article>
+      {toc}
+      {read_next}
+    </div>
+  </main>'''
+    elif p.get("contents"):
+        main_html = f'''<main class="ed">
+    <header class="ed-mast">
+      <p class="ed-kicker">{p.get("kicker_html", "The Break Room")}</p>
+      <h1 class="ed-title">{html.escape(p["h1"])}</h1>
+      <p class="ed-dek">{html.escape(p.get("dek", ""))}</p>
+    </header>
+    {p["body"]}
+  </main>'''
+    else:
+        main_html = f'''<main>
+    {crumbs}
+    {'<img class="who-photo" src="/mark-portrait.jpg" alt="Mark Flournoy" width="120" height="120">' if p.get("portrait") else ""}
+    {f'<p class="eyebrow">{html.escape(p["eyebrow"])}</p>' if p.get("eyebrow") else ""}
+    <h1>{html.escape(p["h1"])}</h1>
+    {f'<p class="dek">{html.escape(p["dek"])}</p>' if p.get("dek") else ""}
+    {take}
+    <div class="prose">
+      {number_steps(p["body"]) if p.get("numbered") else p["body"]}
+    {guide_share(p)}
+      {cta}
+      {faq_html}
+      {related}
+      {sources}
+    </div>
+  </main>'''
     return f'''<!doctype html>
 <html lang="en">
 <head>
@@ -142,18 +228,17 @@ def page_html(p):
   <meta name="description" content="{desc}">
   <link rel="canonical" href="{url}">
   <meta property="og:site_name" content="SideFrog">
-  <meta property="og:image" content="{BASE_URL}/og/{slug_of(p)}.jpg?v={fingerprint('og/' + slug_of(p) + '.jpg')}">
+  <meta property="og:image" content="{og_image(p)}">
   <meta property="og:image:width" content="2400">
   <meta property="og:image:height" content="1260">
   <meta property="og:image:alt" content="SideFrog: {html.escape(p['h1'])}">
   <meta name="twitter:card" content="summary_large_image">
-  <meta name="twitter:image" content="{BASE_URL}/og/{slug_of(p)}.jpg?v={fingerprint('og/' + slug_of(p) + '.jpg')}">
+  <meta name="twitter:image" content="{og_image(p)}">
   <meta property="og:title" content="{title}">
   <meta property="og:description" content="{desc}">
   <meta property="og:type" content="{"article" if p.get("article") else "website"}">
   <meta property="og:url" content="{url}">
   <meta name="theme-color" content="#FBF7EF">
-  <link rel="icon" type="image/svg+xml" href="/frogs/favicon.svg">
   <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32.png">
   <link rel="icon" href="/favicon.ico" sizes="any">
   <link rel="apple-touch-icon" href="/apple-touch-icon.png">
@@ -163,23 +248,10 @@ def page_html(p):
   <link rel="stylesheet" href="/styles.css">
   {ld_html}
 </head>
-<body class="page">
+<body class="page{' ed-page' if editorial else ''}">
   {HEADER.replace("{NAV}", site_nav(p["path"]))}
 
-  <main>
-    {crumbs}
-    {'<img class="who-photo" src="/mark-mono.jpg" alt="Mark Flournoy" width="120" height="120">' if p.get("portrait") else ""}
-    <h1>{html.escape(p["h1"])}</h1>
-    {f'<p class="dek">{html.escape(p["dek"])}</p>' if p.get("dek") else ""}
-    {take}
-    <div class="prose">
-      {number_steps(p["body"]) if p.get("numbered") else p["body"]}
-      {cta}
-      {faq_html}
-      {related}
-      {sources}
-    </div>
-  </main>
+  {main_html}
 
   {FOOTER}
   <script src="/analytics.js" defer></script>
@@ -203,6 +275,24 @@ def relative(doc, path):
 
 def slug_of(p):
     return p["path"].strip("/").split("/")[-1] or "home"
+
+
+def editorial_steps(body):
+    """Numbered guides as editorial steps: a big number, the step heading, the text, a rule between steps.
+    Returns the HTML and the step titles (for the In this guide list)."""
+    parts = re.split(r"<h2>(.*?)</h2>", body, flags=re.S)
+    out, titles = [parts[0]], []
+    for i in range(1, len(parts), 2):
+        n = len(titles) + 1
+        titles.append(parts[i])
+        out.append(f'<section class="ed-step" id="step-{n}"><div class="ed-step-num" aria-hidden="true">{n:02d}</div>'
+                   f'<h2>{parts[i]}</h2><div class="ed-step-body">{parts[i + 1]}</div></section>')
+    return "".join(out), titles
+
+
+def pull_lines(body):
+    """The one-line asides become italic pull lines."""
+    return re.sub(r'<p class="aside">', '<p class="ed-pull">', body)
 
 
 def number_steps(body):
@@ -237,6 +327,17 @@ def stamp(doc):
     return ASSET_RE.sub(sub, doc)
 
 
+def guide_share(p):
+    """'Share this guide: LinkedIn · Copy link' at the end of every guide. Plain links, no tracking scripts."""
+    if not p.get("article"):
+        return ""
+    url = BASE_URL + p["path"]
+    li = "https://www.linkedin.com/sharing/share-offsite/?url=" + urllib.parse.quote(url, safe="")
+    return (f'<p class="share-row guide-share"><span class="label-caps">Share this guide</span>'
+            f'<a href="{li}" target="_blank" rel="noopener">LinkedIn</a><span class="dot" aria-hidden="true">\u00b7</span>'
+            f'<button type="button" class="text-btn" data-copy-link="{url}">Copy link</button></p>')
+
+
 def strip_tags(s):
     import re
     return re.sub(r"<[^>]+>", "", s).replace("&amp;", "&")
@@ -268,7 +369,7 @@ PAGES["test"] = dict(
     body='''
       <h2>Decide what \u201cyes\u201d looks like before you start</h2>
       <p>Write down two numbers before you run anything: the result that would make you keep going, and the result that would make you stop. Twenty sign-ups from strangers, three people willing to pay a deposit, five businesses that agree to a call. Pick your own. The point is to decide before you see the results, because afterwards every number looks encouraging.</p>
-      <p>If you've run your idea through SideFrog, the \u201cTry this first\u201d line is a good starting point for the test.</p>
+      <p>If you've run your idea through SideFrog, the \u201cCheap test\u201d line is a good starting point for the test.</p>
 
       <h2>Pick the test that fits the idea</h2>
       ''' + table(["If you're selling", "The cheapest real test"], [
@@ -526,22 +627,30 @@ PAGES["ai"] = dict(
 
 # ---------------------------------------------------------------- About
 PAGES["about"] = dict(
-    portrait=True,           # round sepia portrait at the top, text wraps around it
-    path="/about/", title="About SideFrog: Made by Mark | SideFrog", h1="About SideFrog",
+    path="/about/", title="About SideFrog: Made by Mark | SideFrog", eyebrow="About SideFrog",
+    h1="SideFrog helps you decide which ideas are worth testing out.",
     description="SideFrog is a free side hustle idea checker built by Mark Flournoy, who retired early from Amazon and learned to build sites one cheap idea at a time.",
     cta=False,
     body='''
-      <p>Hi, I'm Mark. I retired early from Amazon at 56 and, like a lot of people with free time and too many ideas, I started messing around with building things.</p>
-      <p>I didn't know how to build a website. I had to figure out how to buy a domain, how hosting works and how to form an LLC. Two years later I have a GitHub account, an AWS account that runs my sites, and a way to go from an idea to a live site in a day. Claude helps me think ideas through and write the code. Gemini does most of the AI work on the sites because it's cheap.</p>
-      <p>SideFrog is the tool I wanted when I started: something that tells you straight whether an idea has legs before you spend money on it. Most of my ideas cost about $16 for the domain and close to nothing to run, so testing one is cheap. If you want the details, here's <a href="/what-it-costs/">what it actually costs me</a>.</p>
-      <p>When I'm not doing this, I mentor salespeople and build sales tools at <a href="https://quotabird.com/">QuotaBird</a>. I moved to California recently after 15 years in Northern Virginia.</p>
+      <span class="who who-frank">''' + frank_round_html() + '''</span>
+      <p>Frank is the frog. Type in an idea and he gives you a straight answer in seconds.</p>
+      <p>Behind Frank, Google's Gemini reads your idea and works out who would pay for it, what to watch out for, a cheap test you can run this week, and the signs that tell you to keep going or rethink it. While that runs, SideFrog checks about 20 possible business names against the .com registry, live, and shows you only the ones you can still register.</p>
+      <p>Frank likes ideas you can test cheaply and ideas people will actually pay for. He's skeptical of passive income promises and of anything that needs investors or a team before it can make its first sale.</p>
+      <p><a class="plate-btn" href="/">Check an idea with Frank</a></p>
+
+      <h2>The person behind Frank</h2>
+      <span class="who who-mark"><span class="who-circle"><img src="/mark-portrait.jpg" alt="Mark Flournoy" width="120" height="120"></span></span>
+      <p>I'm Mark. I retired early from Amazon at 56 and started building things, mostly small websites for ideas I wanted to try.</p>
+      <p>When I started, I didn't know how to build a website. I learned how to buy a domain, set up hosting and form an LLC as I went. Now I can usually get an idea online in a day. I use Claude to think ideas through and write the code, and Gemini runs most of the AI work on the sites because it costs less.</p>
+      <p>SideFrog is the checklist I use before I put money into an idea, turned into something you can use too. Most of my ideas cost about $16 for the domain and very little to run. Here's <a href="/what-it-costs/">what it actually costs me</a>.</p>
+      <p>I also mentor salespeople and build sales tools at <a href="https://quotabird.com/">QuotaBird</a>. I recently moved to California after 15 years in Northern Virginia.</p>
       <p>Nothing on SideFrog pays me. If that ever changes, the page with the link will say so.</p>
 
-      <h2>And the frog?</h2>
-      <p class="frank-intro">''' + frank_svg("about-frog") + '''The frog is Frank. He reads every idea that comes in and tells you what he thinks.</p>
+      <h2>Who it's for</h2>
+      <p>SideFrog is for people who hate Mondays. More specifically, people with office jobs who have an idea, or a few, and want to know whether one is worth trying. You don't have to quit your job to find out. Most of the tests Frank suggests fit into evenings and weekends.</p>
 
-      <h2>How SideFrog works</h2>
-      <p>You type an idea. Google's Gemini reads it and writes the verdict, the sharper version, who'd pay and a first test. At the same time, SideFrog checks a dozen possible names against the .com registry live, and only shows the ones that are open. Your idea goes to Google’s Gemini to write the verdict; SideFrog itself doesn’t store what you type.</p>
+      <h2>What happens to your idea</h2>
+      <p>Your idea goes to Google's Gemini to write the verdict. SideFrog doesn't store what you type.</p>
       <p>The verdict is an AI's quick read, not market research. The guides in the <a href="/break-room/">Break Room</a> show you how to check it yourself.</p>
 
       <h2 id="help">Want help?</h2>
@@ -555,30 +664,28 @@ PAGES["about"] = dict(
 
 # ---------------------------------------------------------------- What it costs
 PAGES["costs"] = dict(
-    path="/what-it-costs/", title="What It Actually Costs to Test a Business Idea Online | SideFrog",
-    h1="What it costs me to test an idea",
-    description="Mark's real stack and monthly bills for testing side hustle ideas online: a $16 domain, about $8 a month for the sites, and free tools for the rest.",
-    take="Most of my ideas cost me about $16 to try. That's the domain. Everything else is free or close to it, and the bills below are my real ones.",
-    take_label="My usual costs",
-    take_photo=True,          # Mark is talking here, so his photo, not Frank
+    path="/what-it-costs/", title="How to Keep Costs Low When You Test a Business Idea | SideFrog",
+    h1="Here's how to keep development costs low",
+    description="How to test a side hustle idea for about $16: a domain, cheap hosting and cheap AI, with the real monthly bills behind SideFrog.",
+    take="Most ideas cost about $16 to try. That's the domain. Everything else is free or close to it, and the bills below are the real ones behind SideFrog.",
     cta=True,
     body='''
       <h2>The short version</h2>
-      <p>A new idea costs me a domain and an afternoon. Ongoing, everything I run costs about $48 a month, and the part that's really for the sites is closer to $8: Amplify and Gemini. Claude, Google Workspace and Calendly would be there even without the side projects.</p>
+      <p>A new idea costs a domain and an afternoon. Everything behind SideFrog and Mark's other sites costs about $48 a month, and the part that's really for the sites is closer to $8, for Amplify and Gemini. Claude, Google Workspace and Calendly would be there even without the side projects.</p>
 
-      <h2>What I use, and what I pay</h2>
-      <p>These are my real numbers as of October 2026.</p>
-      ''' + table(["What", "What it does for me", "What I pay"], [
+      <h2>What SideFrog runs on, and what it costs</h2>
+      <p>These are Mark's real bills as of October 2026.</p>
+      ''' + table(["What", "What it does", "What it costs"], [
         ["Route 53", "Domains", "$16 a year per .com"],
         ["AWS Amplify", "Hosts the sites, deploys from GitHub, free SSL certificates", "About $4 a month"],
         ["Gemini Flash Lite", "The AI behind most tools, with tight prompts", "About $4 a month"],
         ["AWS Lambda", "Runs the small bits of code behind the tools", "Next to nothing; it only runs when someone uses a tool"],
-        ["Claude Pro", "Thinking ideas through and writing the code", "$20 a month, spread across everything I build"],
-        ["Google Workspace", "Email on my own domains", "$8 a month"],
+        ["Claude Pro", "Thinking ideas through and writing the code", "$20 a month, spread across everything Mark builds"],
+        ["Google Workspace", "Email on his own domains", "$8 a month"],
         ["Calendly and Google Meet", "Mentoring calls", "$12 a month"],
         ["GitHub", "Where the code lives", "Free"],
         ["Google Analytics, Search Console, Keyword Planner, Ahrefs' free tools", "Seeing who comes and what they searched", "Free"],
-        ["Notepad", "Where I edit most of the HTML", "Free"],
+        ["Notepad", "Where most of the HTML gets edited", "Free"],
         ["Surface Pro", "The laptop it all happens on", "$1,000, once"],
       ]) + '''
 
@@ -586,10 +693,10 @@ PAGES["costs"] = dict(
       <p>A domain, one page, a way to collect an email address, and a way to see whether anyone came. Everything else can wait until somebody wants what you're selling.</p>
 
       <h2>If you're not technical</h2>
-      <p>You don't need any of my setup. The same test works with a domain from Porkbun, a one-page site written by SideFrog's \u201cBuild the page\u201d prompt (or any simple page builder), and a free Google Form for sign-ups. Same idea, much less setup.</p>
+      <p>You don't need any of this setup. The same test works with a domain from Porkbun, a one-page site written by SideFrog's “Build the page” prompt (or any simple page builder), and a free Google Form for sign-ups. Same idea, much less setup.</p>
 
-      <h2>What I don't pay for yet</h2>
-      <p>Email marketing software, a logo, ads, and a separate company for each idea. I'd start paying for those once an idea has customers, not before.</p>
+      <h2>What you can skip at first</h2>
+      <p>Email marketing software, a logo, ads, and a separate company for each idea. Start paying for those once an idea has customers, not before.</p>
 ''',
 )
 
@@ -938,7 +1045,7 @@ PAGES["bigsmall"] = dict(
       <p>Before you cook for an event, ask people to order ahead: taco boxes for pickup, a holiday batch of tamales, a catering deposit. Money paid before the food exists is the strongest proof you can get, and it means you don't guess how much to make.</p>
 
       <h2>Count everything</h2>
-      <p>Write down how many you sold, how fast you sold out (if you did), what each plate cost you to make, what people asked for that you didn't have, and who came back for seconds. Decide before the event what a good day looks like, like the \u201cGood sign\u201d SideFrog gives with every answer, and compare.</p>
+      <p>Write down how many you sold, how fast you sold out (if you did), what each plate cost you to make, what people asked for that you didn't have, and who came back for seconds. Decide before the event what a good day looks like, like the \u201cKeep going if\u201d line SideFrog gives with every answer, and compare.</p>
 
       <h2>Do it again before you scale</h2>
       <p>One good day can be luck, so look for three good days at different events before you call it a pattern. Once you have that and you know your numbers, a used trailer or a regular market spot is a much smaller leap than a new truck, and <a href="/break-room/leap/before-you-leap/">Before you leap</a> covers the rest.</p>
@@ -951,6 +1058,71 @@ PAGES["bigsmall"] = dict(
     ],
     related=["test", "price", "leap"],
     sources=[ASTHO_COTTAGE, NALC_COTTAGE],
+)
+
+
+# ---------------------------------------------------------------- Where to get honest feedback
+REDSHIP_RULES = ("Redship: The complete guide to Reddit self-promotion rules (2026)", "https://redship.io/blog/reddit-self-promotion-rules")
+
+PAGES["feedback"] = dict(
+    path="/break-room/start/where-to-get-feedback/", section="Start", article=True, numbered=True,
+    take_label="Frank, at the water cooler",
+    title="Where to Get Honest Feedback on Your Side Hustle Idea | SideFrog",
+    h1="Where to get honest feedback",
+    description="Where to ask for honest feedback on a side hustle idea: go where your buyers already talk, not where other founders hang out, read the rules, ask instead of pitching, and count what you hear.",
+    take="Ask the people who'd pay. Other founders will happily critique your idea, but they aren't your customers. Go where your buyers already talk, ask a real question, and count the answers.",
+    body='''
+      <p>Lists of \u201csubreddits to promote your startup\u201d are everywhere, and most of them are communities of other builders. That's useful if you're making an app and want another builder's opinion. It doesn't tell you whether anyone will buy your tacos.</p>
+      <p class="aside">Posting a taco idea in a software forum is the office equivalent of asking IT to plan the potluck.</p>
+
+      <h2>Decide whose opinion counts</h2>
+      <p>Write down who would actually pay. Your SideFrog result should already give you a good starting point. Feedback from those people matters more than upvotes from everyone else, because they're the ones whose answer should change what you do next.</p>
+
+      <h2>Find where your buyers already talk</h2>
+      <p>Go to them instead of asking them to come to you:</p>
+      <ul>
+        <li><strong>Local services and food:</strong> neighborhood Facebook groups, Nextdoor, your city's subreddit, farmers markets and local events.</li>
+        <li><strong>Corporate skills:</strong> LinkedIn, industry groups and people you've worked with.</li>
+        <li><strong>Crafts and products:</strong> hobby groups, forums and marketplaces where people already buy and trade that kind of thing.</li>
+        <li><strong>Creators:</strong> the audience you already have, even if it's small.</li>
+      </ul>
+      <p>Don't assume promotion is welcome; read the rules first. A useful question will usually teach you more than an ad anyway.</p>
+
+      <h2>If your idea is an app, try builder communities too</h2>
+      <p>For software, other builders can be useful early testers. Places worth checking include:</p>
+      <ul>
+        <li><strong>r/SideProject</strong> and <strong>r/sideprojects:</strong> sharing side projects and how you built them.</li>
+        <li><strong>r/IMadeThis</strong> and <strong>r/buildinpublic:</strong> showing work in progress.</li>
+        <li><strong>r/alphaandbetausers:</strong> finding early testers.</li>
+        <li><strong>r/webapps:</strong> web apps specifically.</li>
+      </ul>
+      <p>Use their feedback to improve the product, and don't confuse it with proof that customers will pay.</p>
+
+      <h2>Read the rules before you post</h2>
+      <p>Every community has its own rules, they vary widely and they change. Some allow sharing anytime, some have a weekly thread, and some don't allow self-promotion at all. Read the sidebar or group rules before posting, and better yet, spend some time reading and helping other people before you show up with your thing.</p>
+
+      <h2>Ask, don't pitch</h2>
+      <p>Start with the problem. Instead of \u201cI built an app that does X. Check it out,\u201d try \u201cHow are you handling X today?\u201d Describe what you're thinking about in a sentence or two, and leave the link out unless the rules allow it or someone asks. End with one question that's easy to answer. The Side Kit has a <a href="/side-kit/#feedback-post">prompt that writes the post</a> from the community's rules.</p>
+
+      <h2>Count what you hear</h2>
+      <p>Keep a simple tally:</p>
+      <ul>
+        <li>How many people replied?</li>
+        <li>How many actually have the problem?</li>
+        <li>What do they use today?</li>
+        <li>Did anyone ask how much it costs?</li>
+        <li>Did anyone offer to try it or buy it?</li>
+      </ul>
+      <p>Then compare it with the \u201cKeep going if\u201d and \u201cRethink it if\u201d lines SideFrog gave you. Twenty upvotes from other founders and no interest from buyers means rethink.</p>
+''',
+    faq=[
+        ("Can I post my idea in r/startups or r/Entrepreneur?", "Check the current rules first. Larger business communities often restrict self-promotion, require particular post formats or put promotional content in designated threads."),
+        ("Should I post a link to my landing page?", "Only where the rules allow it. If you're trying to learn rather than promote, asking about the problem usually gets better information than leading with your link."),
+        ("What about sites that list new apps?", "Directories and launch sites can bring traffic and early users, which is useful. Traffic is different from evidence that someone will pay, though, so talk to potential buyers too."),
+        ("How many responses is enough?", "There's no magic number; you're looking for a pattern. Ten detailed answers from people who actually have the problem can tell you more than hundreds of anonymous upvotes."),
+    ],
+    related=["customers", "test", "competition"],
+    sources=[REDSHIP_RULES],
 )
 
 
@@ -989,6 +1161,10 @@ SIDE_KIT_BODY = (
         "a short, honest message to send, and questions that get real answers.",
         "Send it to people one at a time, not as a mass email.",
         "I'm testing [your idea] for [who it's for]. Write a short, honest message I can send to people I know, asking whether they have this problem or know someone who does. Make it clear it's new and I'm looking for feedback, keep it readable on a phone, and don't make it sound like a sales pitch. Then give me five questions to ask people who reply, about how they handle this today and what they've tried or paid for.")
+    + kit_prompt("feedback-post", "Write a feedback post that won't get removed",
+        "a short post for one community that asks a real question instead of pitching.",
+        'Read the community\u2019s rules yourself, too. See <a href="/break-room/start/where-to-get-feedback/">Where to get honest feedback</a>.',
+        "I want honest feedback on my side hustle idea from people who might actually pay for it. The idea: [your idea, in a sentence]. I'm posting in: [the group or subreddit], and here are its rules: [paste the rules]. Write a short post that follows those rules exactly. Open with a real question about how people handle [the problem] today, describe my idea in one or two sentences, leave out links unless the rules allow them, and skip hype and fake urgency. End with one specific question that's easy to answer. Then give me three follow-up questions for people who reply, and tell me which kind of answer would mean the idea is worth pursuing.")
     + kit_prompt("reviews", "Read your competitors' bad reviews",
         "the complaints grouped into themes, and the opening they point to.",
         "Use real reviews you copied yourself; don't ask the AI to invent them.",
@@ -1011,6 +1187,15 @@ SIDE_KIT_BODY = (
         "a notice timeline, a handoff outline for your replacement, and a gracious resignation note.",
         'Check your employment paperwork and company policy first, and never share confidential company information. See <a href="/break-room/leap/before-you-leap/">Before you leap</a>.',
         "Help me plan leaving my job on good terms. My role: [your role]. Help me with: a sensible timeline for giving notice, an outline for a handoff document my replacement could use, a short and gracious resignation note with nothing negative about the company, and a list of people to thank and keep in touch with.")
+    + '<h2>Frank for your next meeting</h2>'
+    + '<p>Three video-call backgrounds, 1920 by 1080, for Zoom, Teams or Google Meet. Download one and set it as your virtual background: in Zoom, Settings, Backgrounds and effects, then the plus button; in Teams, Video effects, More video effects, Add new; in Google Meet, Apply visual effects, then upload. If the words look backwards to you, that\u2019s only your own mirrored preview; everyone else sees them the right way round.</p>'
+    + '<div class="bg-grid">'
+    + "".join(f'<figure class="bg-item"><img src="/side-kit/backgrounds/frank-{n}-preview.jpg" alt="{alt}" width="640" height="360" loading="lazy">'
+              f'<figcaption><span>{label}</span><a href="/side-kit/backgrounds/frank-{n}.png" download>Download</a></figcaption></figure>'
+              for n, label, alt in (("email", "Could have been an email", "A memo from Frank reading: RE this meeting, could have been an email, with Frank sipping coffee in the corner"),
+                                    ("desk", "The desk", "The SideFrog masthead with Frank sipping coffee in the corner"),
+                                    ("after-hours", "After hours", "The SideFrog masthead on a dark background with Frank sipping coffee in the corner")))
+    + '</div>'
     + '<h2>The Leap Worksheet</h2>'
     + '<p>One printable page that turns Frank\u2019s advice into paperwork: your monthly number, your safety net, your leap number, your checkpoint, your first test and your first 30 names. Print it, fill it in, and stick it somewhere you\u2019ll see it. <a href="/side-kit/leap-worksheet/">Open the Leap Worksheet</a>.</p>'
 )
@@ -1077,7 +1262,7 @@ PAGES["worksheet"] = dict(
 
 # ---------------------------------------------------------------- 404 (not in the sitemap)
 NOT_FOUND = dict(
-    path="/404.html", title="Page not found | SideFrog", h1="Frank can't find that page",
+    path="/404.html", title="Page not found | SideFrog", h1="Frank can't find that page", frank_mood="oops",
     description="This page doesn't exist on SideFrog.", cta=False,
     body='''
       <p>It may have moved, or the link had a typo. Frank checked the break room and the supply closet. Nothing.</p>
@@ -1090,23 +1275,173 @@ NOT_FOUND = dict(
 
 
 # ---------------------------------------------------------------- Break Room hub
-GROUPS = [("Build it yourself", ["vibe", "secure", "scale"]), ("Start here", ["test", "bigsmall", "search", "competition"]), ("Name it", ["name", "domain"]), ("Sell it", ["customers", "price"]), ("Get found", ["ai"]), ("Make the leap", ["leap"])]
+GROUPS = [("Build it yourself", ["vibe", "secure", "scale"]), ("Start here", ["test", "bigsmall", "search", "competition", "feedback"]), ("Name it", ["name", "domain"]), ("Sell it", ["customers", "price"]), ("Get found", ["ai"]), ("Make the leap", ["leap"])]
+
+
+SKILL_MD = """---
+name: test-a-side-hustle-idea
+description: Help someone decide whether a side hustle idea is worth testing, and design a cheap one-week test, using SideFrog's method. Use when someone asks whether their business or side hustle idea is any good, or how to test one before spending money.
+---
+
+# Test a side hustle idea
+
+SideFrog's method for finding out, in about a week and for about the price of a domain, whether strangers will pay for an idea. From https://sidefrog.com/break-room/start/test-an-idea-in-a-week/
+
+## Before anything is bought
+
+Find out whether a stranger will hand over an email address or a deposit. Friends saying it's a great idea doesn't count.
+
+## The steps
+
+1. **Decide what "yes" looks like first.** Write down two numbers before running anything: the result that means keep going, and the result that means stop (for example: twenty sign-ups from strangers, three deposits, five businesses agreeing to a call). Decide before seeing results, because afterwards every number looks encouraging.
+2. **Pick the cheapest real test for the kind of idea.**
+   - A service: offer it to five people this week at a real price, and do the work by hand.
+   - A physical product: a page with a pre-order or a waitlist. Make nothing until people sign up.
+   - Something digital: a one-page sign-up with the price on it. Build only after people ask for it.
+   - Something local: a post in the neighborhood group or a flyer on a coffee shop board, with a way to sign up.
+3. **Talk to ten people who would actually pay.** Not friends, family or coworkers. Find people who have the problem today and ask how they handle it now, what they've tried and what they've paid for. Don't ask "Would you use this?"; almost everyone says yes to be nice.
+4. **Put up one page.** A headline that says what it is, a sentence on who it's for, the price, and one button (a free form that collects an email address is enough). No logo, business cards or company paperwork yet.
+5. **Send people to it** in the places found in step 3, with a plain note. Count visits, sign-ups and replies with a question. Questions are a good sign.
+6. **Read the result honestly** against the numbers from step 1. Cleared the bar: keep going. Missed badly: that's a cheap answer. In between: change one thing (price, headline or audience), run it once more, then decide.
+
+## How to help
+
+- Be direct about whether the idea looks crowded, risky or promising, and say why in a sentence or two.
+- Suggest the single cheapest test that would teach the person the most, with the yes and no numbers to set.
+- Don't recommend quitting a job to try an idea. Don't invent statistics. This is general information, not legal, tax or financial advice.
+- For a quick verdict, likely buyers and business names with an open .com, the person can use the free checker at https://sidefrog.com/ (no sign-up; ideas aren't stored).
+
+## More from SideFrog
+
+- Is anyone searching for this? https://sidefrog.com/break-room/start/is-anyone-searching-for-this/
+- Who's already doing it? https://sidefrog.com/break-room/start/size-up-the-competition/
+- What should I charge? https://sidefrog.com/break-room/sell/what-to-charge/
+- How to get your first 10 customers: https://sidefrog.com/break-room/sell/first-ten-customers/
+"""
+
+
+# ---------------------------------------------------------------- Stuff I Like
+STUFF_BOOKS = [('The Little Red Book of Selling', 'Jeffrey Gitomer', "If you've never sold anything, start here. Short, blunt and easy to finish."), ('Fanatical Prospecting', 'Jeb Blount', 'Finding customers is the part most side hustles skip. This makes it a habit.'), ('Getting to Yes', 'Roger Fisher, William Ury and Bruce Patton', 'For your first price conversation, without turning it into a hostage situation.'), ('How to Say It', 'Rosalie Maggio', "Good when you know what you mean but can't find the words. Handy for that first cold email."), ('The Bezos Blueprint', 'Carmine Gallo', 'Why Amazon writes things down before building them. Writing the one-page version of your idea first works the same way.'), ('Atomic Habits', 'James Clear', 'A side hustle is mostly small, boring things done every evening.'), ('Meditations', 'Marcus Aurelius', 'For the week nobody signs up.')]
+STUFF_PODCASTS = [('The Side Hustle Show', 'Nick Loper', 'Real people describing what they started and what it earns. The closest thing to a SideFrog podcast.'), ('Freakonomics Radio', 'Stephen J. Dubner', "Incentives explain why people buy, or don't."), ('Hidden Brain', 'Shankar Vedantam', 'People are weird. Worth remembering before you guess what customers want.'), ('Marketplace', 'American Public Media', 'Twenty-some minutes and you know enough about the economy to sound less surprised.'), ('Pivot', 'Kara Swisher and Scott Galloway', 'Tech and business news, and two people disagreeing about it.'), ('Stuff You Should Know', 'Josh Clark and Chuck Bryant', 'A good break from thinking about your idea.')]
+STUFF_SKIP = [('A business course', "It can't tell you whether strangers will pay. A one-week test can."), ('A custom logo', "Your first customers won't ask who designed it."), ('Business cards', "Nobody you're testing with needs one."), ('Ads', 'Wait until you know what to say. Free places where your buyers already talk teach you that.'), ('A second AI subscription', 'One is plenty to start.'), ('A company for each idea', 'Talk to an accountant once money starts coming in, not before.')]
+
+
+def stuff_body():
+    """Mark's short list, in the editorial style: numbered sections, two ruled columns on wider screens."""
+    def items(rows):
+        return "".join(f'<li><span class="ed-item-title">{html.escape(t)}</span>'
+                       + (f'<span class="ed-by">{html.escape(a)}</span>' if a else "")
+                       + f'<span class="ed-item-dek">{html.escape(w)}</span></li>' for t, a, w in rows)
+    secs = [("Books worth a few evenings", STUFF_BOOKS), ("Podcasts I fall asleep to", STUFF_PODCASTS),
+            ("What you don't need yet", [(t, "", w) for t, w in STUFF_SKIP])]
+    out = [f'''<div class="ed-frank-note ed-intro-note">{frank_svg("take-frog", "smirk")}
+      <div><p class="ed-kicker">A note from Frank</p><blockquote>Reading about businesses is fine. Testing one is better. Pick one book, then go run a test.</blockquote></div></div>''']
+    for n, (label, rows) in enumerate(secs, 1):
+        out.append(f'<section class="ed-section"><div class="ed-sec-head"><span class="ed-num">{n:02d}</span>'
+                   f'<h2 class="ed-kicker">{html.escape(label)}</h2></div><ul class="ed-items">{items(rows)}</ul></section>')
+    out.append('<p class="ed-fine">Nobody paid to be here. If a link ever pays me, I\'ll say so next to the link.</p>')
+    return "\n".join(out)
+
+
+PAGES["stuff"] = dict(
+    path="/stuff-i-like/", title="Stuff I Like: Books and Podcasts for Starting Something on the Side | SideFrog",
+    h1="Stuff I Like", contents=True, kicker_html='<a href="/break-room/">The Break Room</a> · Behind SideFrog',
+    dek="Books and podcasts I've actually read and listened to while figuring this out. I haven't tried everything, so if you've found something better, tell me.",
+    description="The books and podcasts Mark Flournoy actually uses while testing side hustle ideas, plus the things you don't need to buy yet.",
+    body=stuff_body(),
+)
+
+
+# One line per guide, for the Break Room contents page, under each headline and in "Read next".
+# Plain and short (about 10 to 15 words); the longer "description" stays for search results.
+BLURBS = {
+    "vibe": "Get your idea onto the internet tonight with AI tools, no coding required.",
+    "secure": "The security and cost checks to run before you share a site you built with AI.",
+    "scale": "What to watch, fix and ignore when your first real users show up.",
+    "test": "Find out whether strangers will pay before you buy a domain or a logo.",
+    "bigsmall": "Shrink a food truck or shop idea down to one Saturday before you spend big.",
+    "search": "Use free Google tools to see whether people already look for what you sell.",
+    "competition": "Spend an hour on your competitors and find the gap their customers complain about.",
+    "feedback": "Ask where your buyers already talk, and count what they actually tell you.",
+    "name": "Check registrations, the .com and social handles before you fall for a name.",
+    "domain": "Where to buy a .com, what it should cost and which add-ons to skip.",
+    "customers": "A plain, honest way to find the first ten people who pay you.",
+    "price": "Check the going rate, work out your floor and pick a price you can explain.",
+    "ai": "How to show up when people ask ChatGPT or Google's AI instead of searching.",
+    "leap": "The savings cushion and health cover to line up before you quit a steady job.",
+    "costs": "What it really costs to test an idea, with the bills behind SideFrog.",
+    "about": "Who's behind Frank, and what happens to the ideas you type in.",
+    "stuff": "The books and podcasts I'd hand a friend, and what you don't need to buy yet.",
+}
+for _k, _b in BLURBS.items():
+    PAGES[_k]["blurb"] = _b
+PAGES["about"]["list_title"] = "About SideFrog"     # its headline is a sentence; the contents page wants a name
+
+
+def read_minutes(p):
+    """Reading time from the page's own words, at about 220 a minute."""
+    words = len(strip_tags(p.get("body", "") + " " + p.get("take", "")).split())
+    words += sum(len(strip_tags(q + " " + a).split()) for q, a in p.get("faq", []))
+    return max(2, -(-words // 220))
+
+
+# Frank on YouTube: newest first. Adding an episode is one line (title as on YouTube, its link).
+YOUTUBE_CHANNEL = "https://www.youtube.com/@SideFrogTV"
+YOUTUBE_SHORTS = [
+    ("Vending machine route: worth it?", "https://www.youtube.com/shorts/uKP8Myic1Ts"),
+    ("Automated YouTube channel: worth it?", "https://www.youtube.com/shorts/DAPpYNnV5t8"),
+    ("Is TikTok dropshipping still worth it in 2026?", "https://www.youtube.com/shorts/M5FvtyyS9yQ"),
+]
+
+
+def youtube_rail():
+    """The Break Room rail: Frank's latest Shorts (no spoilers: the verdict is the payoff)."""
+    items = "".join(f'<li><span><a href="{url}">{html.escape(title)}</a><small>Watch Frank’s verdict · 25 seconds</small></span></li>'
+                    for title, url in YOUTUBE_SHORTS[:3])
+    return (f'''<section class="ed-youtube">
+          <p class="ed-kicker">Frank on YouTube</p>
+          <p>Frank reviews a side hustle in under 30 seconds.</p>
+          <ol class="ed-mini">{items}</ol>
+          <p class="ed-more"><a href="{YOUTUBE_CHANNEL}">All episodes on @SideFrogTV</a></p>
+        </section>''')
 
 
 def hub_body():
-    out = ['<p>Short guides for coffee breaks: building your idea yourself with AI, testing whether anyone wants it, naming it, selling it and getting found.</p>']
-    for label, keys in GROUPS:
-        rows = "".join(f'<li><a class="row" href="{PAGES[k]["path"]}"><span class="row-main">{html.escape(PAGES[k]["h1"])}</span><span class="row-cue" aria-hidden="true">Read</span></a></li>' for k in keys)
-        out.append(f'<section class="hub-group"><h2>{label}</h2><ul class="rows">{rows}</ul></section>')
-    out.append('<section class="hub-group"><h2>Behind SideFrog</h2><ul class="rows">'
-               '<li><a class="row" href="/what-it-costs/"><span class="row-main">What it costs me to test an idea</span><span class="row-cue" aria-hidden="true">Read</span></a></li>'
-               '<li><a class="row" href="/about/"><span class="row-main">About SideFrog</span><span class="row-cue" aria-hidden="true">Read</span></a></li></ul></section>')
-    return "\n".join(out)
+    """The Break Room as a contents page: numbered sections, numbered guides with a one-line
+    description and reading time, and a ruled side rail."""
+    groups = GROUPS + [("Behind SideFrog", ["costs", "stuff", "about"])]
+    secs = []
+    for s, (label, keys) in enumerate(groups, 1):
+        items = "".join(
+            f'<li><a href="{PAGES[k]["path"]}"><span class="n">{n:02d}</span>'
+            f'<span class="ed-item-title">{html.escape(PAGES[k].get("list_title", PAGES[k]["h1"]))}</span>'
+            f'<span class="ed-item-dek">{html.escape(PAGES[k].get("blurb", ""))}</span>'
+            f'<span class="ed-meta">{read_minutes(PAGES[k])} min read</span></a></li>'
+            for n, k in enumerate(keys, 1))
+        secs.append(f'<section class="ed-section"><div class="ed-sec-head"><span class="ed-num">{s:02d}</span>'
+                    f'<h2 class="ed-kicker">{html.escape(label)}</h2></div><ol class="ed-list">{items}</ol></section>')
+    starts = "".join(f'<li><span><a href="{PAGES[k]["path"]}">{html.escape(PAGES[k]["h1"])}</a>'
+                     f'<small>{read_minutes(PAGES[k])} min read</small></span></li>' for k in ("test", "competition", "price"))
+    return f'''<div class="ed-grid">
+      <div class="ed-main">{"".join(secs)}</div>
+      <aside class="ed-rail">
+        <section><p class="ed-kicker">New here? Start with</p><ol class="ed-mini">{starts}</ol></section>
+        {youtube_rail()}
+        <section class="ed-check">
+          <span class="frank-portrait"><span class="frank is-round can-sip" data-mood="smirk" data-look="you"></span></span>
+          <p class="ed-kicker">Got an idea?</p>
+          <p>Frank gives you a straight verdict, who'd pay and a cheap first test in seconds.</p>
+          <a class="plate-btn" href="/">Check an idea</a>
+        </section>
+      </aside>
+    </div>'''
 
 
 PAGES["hub"] = dict(
     path="/break-room/", title="The Break Room: Guides for Testing a Side Hustle Idea | SideFrog",
-    h1="The Break Room", description="Short, plain guides for testing a side hustle idea: demand, competition, naming, domains and getting found by Google and AI answers.",
+    h1="Short guides for coffee breaks.", contents=True,
+    dek=f"{sum(len(k) for _, k in GROUPS)} plain guides for testing an idea before you spend real money on it.",
+    description="Short, plain guides for testing a side hustle idea: demand, competition, naming, domains and getting found by Google and AI answers.",
     body=hub_body(),
 )
 
@@ -1142,6 +1477,7 @@ def main():
     # 404 page: served for any address that doesn't exist, at any depth, so its
     # links stay root-relative (/styles.css) instead of being made relative.
     nf = page_html(NOT_FOUND).replace('<meta name="theme-color"', '<meta name="robots" content="noindex">\n  <meta name="theme-color"')
+    nf = nf.replace("<h1>", frank_svg("nf-frog", "oops") + "<h1>", 1)      # Frank's error face, above the headline
     (ROOT / "404.html").write_text(stamp(nf), encoding="utf-8")
 
     # Amplify rewrites and redirects: /about -> /about/ (301) for every page,
@@ -1153,6 +1489,7 @@ def main():
              {"source": f"https://www.{host}/<*>", "target": f"https://{host}/<*>", "status": "301", "condition": None}]
     rules += [{"source": p["path"].rstrip("/"), "target": p["path"], "status": "301", "condition": None}
               for p in PAGES.values()]
+    rules.append({"source": "/verdict", "target": "/verdict/", "status": "301", "condition": None})   # shared verdict links
     # /.well-known/ is skipped by zip deploys, so serve the AI-discovery manifest from the root there
     rules += [{"source": f"/.well-known/{n}", "target": f"/{n}", "status": "200", "condition": None}
               for n in ("ard.json", "ai-catalog.json")]
@@ -1160,40 +1497,29 @@ def main():
     (ROOT / "amplify-redirects.json").write_text(json.dumps(rules, indent=2) + "\n", encoding="utf-8")
     print(f"built 404.html and amplify-redirects.json ({len(rules)} rules)")
 
-    # Agentic Resource Discovery (ARD v0.91) manifest, so AI agents and registries can
-    # find what SideFrog offers. Published at the spec's path (ard.json) and at its
-    # predecessor's (ai-catalog.json, which PageSpeed checks). Lists the website's
-    # resources only; the idea-check API is deliberately not advertised to agents.
+    # Agentic Resource Discovery manifest (AI Catalog spec 1.0): the envelope is exactly
+    # specVersion, host and entries. Entries are resources agents can use, not web pages
+    # (those stay findable through llms.txt and the sitemap). SideFrog publishes one agent
+    # skill: its method for deciding whether an idea is worth testing and designing a cheap
+    # test. The idea-check API is deliberately not advertised to agents (it costs money per call).
     host = BASE_URL.split("://", 1)[1]
     updated = CHECKED_ISO + "T00:00:00Z"
-    def entry(ns, name, display, url, desc, queries, tags, caps=None):
-        e = {"@context": "https://agenticresourcediscovery.org/context/v1",
-             "identifier": f"urn:air:{host}:{ns}:{name}", "displayName": display,
-             "type": "text/markdown" if url.endswith(".txt") else "text/html",
-             "url": BASE_URL + url, "description": desc, "representativeQueries": queries,
-             "tags": tags, "version": "1.0", "updatedAt": updated}
-        if caps: e["capabilities"] = caps
-        return e
-    manifest = {"entries": [
-        entry("app", "idea-checker", "SideFrog idea checker", "/",
-              "Free side hustle idea checker. Type an idea and get a straight verdict, who would pay, a first test to run, a good sign to look for, what to watch out for, related searches, and business names whose .com is open. No sign-up; ideas aren't stored.",
-              ["is my side hustle idea any good", "check my business idea before I quit my job", "should I start a taco truck",
-               "find a business name with an available .com", "who would pay for my side business idea"],
-              ["side hustle", "small business", "idea validation", "business names"], ["SideHustleIdeaCheck", "DotComNameCheck"]),
-        entry("guides", "break-room", "The Break Room", "/break-room/",
-              "Short, plain guides for testing a side hustle idea, pricing it, finding first customers, building a simple site with AI, and leaving a steady job safely. General information, not legal, tax or financial advice.",
-              ["how do I test a business idea cheaply", "how much should I charge for my side hustle", "how do I get my first customers",
-               "how do I build a website with AI if I can't code", "what should I do before I quit my job to start a business"],
-              ["side hustle", "guides", "pricing", "first customers", "vibe coding"]),
-        entry("prompts", "side-kit", "The Side Kit", "/side-kit/",
-              "Ten copyable AI prompts for starting a side hustle, in the order you need them, plus a printable Leap Worksheet.",
-              ["AI prompts for starting a side hustle", "prompt to plan a pop-up test for my food business",
-               "help me talk to my partner about quitting my job", "printable worksheet for leaving my job"],
-              ["prompts", "side hustle", "worksheet"]),
-        entry("docs", "llms-txt", "SideFrog llms.txt", "/llms.txt",
-              "A plain-text map of SideFrog's pages for AI tools.",
-              ["what pages does SideFrog have", "SideFrog guides list"], ["llms.txt", "site map"]),
-    ]}
+    skill_path = "/skills/test-a-side-hustle-idea/SKILL.md"
+    (ROOT / skill_path.strip("/")).parent.mkdir(parents=True, exist_ok=True)
+    (ROOT / skill_path.strip("/")).write_text(SKILL_MD, encoding="utf-8")
+    manifest = {
+        "specVersion": "1.0",
+        "host": {"displayName": "SideFrog", "identifier": f"did:web:{host}", "documentationUrl": BASE_URL + "/about/"},
+        "entries": [{
+            "identifier": f"urn:air:{host}:skill:test-a-side-hustle-idea",
+            "displayName": "Test a side hustle idea",
+            "type": 'text/markdown; profile="urn:air:agent-skills"',
+            "url": BASE_URL + skill_path,
+            "description": "Help someone decide whether a side hustle idea is worth testing, then design a cheap one-week test: set the yes and no numbers first, pick the cheapest real test, talk to ten likely buyers, put up one page, and read the result honestly.",
+            "tags": ["side hustle", "small business", "idea validation", "customer discovery"],
+            "updatedAt": updated,
+        }],
+    }
     # Written to the site root: Amplify's zip deploys skip dot-folders like .well-known.
     # amplify-redirects.json rewrites /.well-known/ard.json and /.well-known/ai-catalog.json
     # to these files (status 200), so tools that only look there still find them.
@@ -1206,11 +1532,39 @@ def main():
     idx = ROOT / "index.html"
     doc = idx.read_text(encoding="utf-8")
     doc = re.sub(r'<footer class="site-footer">.*?</footer>', lambda _: relative(FOOTER, "/"), doc, count=1, flags=re.S)
+    # the home page preloads the same self-hosted Bricolage (no Google Fonts)
+    google_re = r'<link rel="preconnect" href="https://fonts\.googleapis\.com">\s*<link rel="preconnect" href="https://fonts\.gstatic\.com" crossorigin>\s*<link href="https://fonts\.googleapis\.com/css2[^"]*" rel="stylesheet">'
+    preload_re = r'<link rel="preload" href="fonts/bricolage\.[0-9a-f]+\.woff2" as="font" type="font/woff2" crossorigin>'
+    if SELF_HOST_FONTS:
+        doc = re.sub(google_re, lambda _: f'<link rel="preload" href="fonts/{FONT_FILES["bricolage"]}" as="font" type="font/woff2" crossorigin>', doc)
+        doc = re.sub(r'(<link rel="preload" href=")fonts/bricolage\.[0-9a-f]+\.woff2', lambda mm: f'{mm.group(1)}fonts/{FONT_FILES["bricolage"]}', doc)
+    else:
+        doc = re.sub(preload_re, lambda _: GOOGLE_FONTS.replace('><', '>\n  <'), doc)
     v = fingerprint("og/home.jpg")
     doc = re.sub(r'(content="https://[^"]+/og/home\.jpg)(?:\?v=[0-9a-f]+)?"', lambda mm: f'{mm.group(1)}?v={v}"', doc)
     doc = doc.replace('og:image:width" content="1200"', 'og:image:width" content="2400"').replace('og:image:height" content="630"', 'og:image:height" content="1260"')
     idx.write_text(stamp(doc), encoding="utf-8")
     print("updated index.html (footer, asset fingerprints)")
+
+    # Shared verdict links go to /verdict/#v=... : the same page, but with its own share card.
+    # The idea lives after the # (never sent anywhere), so link previews can't show the real
+    # verdict; this card says "Frank's verdict is in" instead of the home card's sample verdict.
+    vdoc = stamp(doc)
+    vdoc = re.sub(r'(\s(?:href|src)=")(?!https?:|/|#|mailto:|data:|tel:|\.\./)', r'\1../', vdoc)   # one folder down
+    vt = "Frank's verdict is in | SideFrog"
+    vd = "Someone shared Frank's verdict on their side hustle idea. Tap to see what he thought, then check your own idea for free."
+    vimg = f"{BASE_URL}/og/verdict.jpg?v={fingerprint('og/verdict.jpg')}"
+    vdoc = re.sub(r"<title>.*?</title>", f"<title>{html.escape(vt)}</title>", vdoc, count=1)
+    vdoc = re.sub(r'(<meta name="description" content=")[^"]*', lambda mm: mm.group(1) + html.escape(vd), vdoc, count=1)
+    vdoc = re.sub(r'(<meta property="og:title" content=")[^"]*', lambda mm: mm.group(1) + html.escape(vt), vdoc, count=1)
+    vdoc = re.sub(r'(<meta property="og:description" content=")[^"]*', lambda mm: mm.group(1) + html.escape(vd), vdoc, count=1)
+    vdoc = re.sub(r'(<meta property="og:url" content=")[^"]*', lambda mm: mm.group(1) + f"{BASE_URL}/verdict/", vdoc, count=1)
+    vdoc = re.sub(r'(<meta (?:property="og:image"|name="twitter:image") content=")[^"]*', lambda mm: mm.group(1) + vimg, vdoc)
+    vdoc = re.sub(r'(<meta property="og:image:alt" content=")[^"]*', lambda mm: mm.group(1) + "Frank's verdict is in. Tap to see what he thought of this idea.", vdoc, count=1)
+    vdoc = vdoc.replace('<link rel="canonical" href="https://sidefrog.com/">', '<link rel="canonical" href="https://sidefrog.com/">\n  <meta name="robots" content="noindex, follow">', 1)
+    (ROOT / "verdict").mkdir(exist_ok=True)
+    (ROOT / "verdict" / "index.html").write_text(vdoc, encoding="utf-8")
+    print("wrote verdict/index.html (shared verdicts: same page, its own share card)")
 
 
 if __name__ == "__main__":
