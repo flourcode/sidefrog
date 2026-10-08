@@ -13,12 +13,12 @@
   <link rel="canonical" href="https://sidefrog.com/">
   <meta name="robots" content="noindex, follow">
   <meta property="og:site_name" content="SideFrog">
-  <meta property="og:image" content="https://sidefrog.com/og/verdict.jpg?v=779756db">
+  <meta property="og:image" content="https://sidefrog.com/og/verdict.jpg?v=ad1b1294">
   <meta property="og:image:width" content="2400">
   <meta property="og:image:height" content="1260">
   <meta property="og:image:alt" content="Frank's verdict is in. Tap to see what he thought of this idea.">
   <meta name="twitter:card" content="summary_large_image">
-  <meta name="twitter:image" content="https://sidefrog.com/og/verdict.jpg?v=779756db">
+  <meta name="twitter:image" content="https://sidefrog.com/og/verdict.jpg?v=ad1b1294">
   <link rel="icon" type="image/png" sizes="32x32" href="../favicon-32.png?v=d2faaaf0">
   <link rel="icon" href="../favicon.ico?v=0635c039" sizes="any">
   <link rel="apple-touch-icon" href="../apple-touch-icon.png?v=a66055c2">
@@ -27,7 +27,7 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,400..800&family=Source+Serif+4:ital,wght@1,400&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="../styles.css?v=21d4f61f">
+  <link rel="stylesheet" href="../styles.css?v=668f59d0">
   <script type="application/ld+json">{"@context": "https://schema.org", "@type": "WebApplication", "name": "SideFrog", "url": "https://sidefrog.com/", "description": "A free side hustle idea checker: type an idea and get a straight verdict, who would pay, a first test to run, related searches and business names with an open .com.", "applicationCategory": "BusinessApplication", "operatingSystem": "Any", "browserRequirements": "Requires JavaScript", "offers": {"@type": "Offer", "price": "0", "priceCurrency": "USD"}, "creator": {"@type": "Person", "name": "Mark Flournoy", "url": "https://sidefrog.com/about/", "sameAs": ["https://www.linkedin.com/in/markflournoy/"]}}</script>
 </head>
 <body>
@@ -69,7 +69,7 @@
           <span class="frog frank sticker-frog can-sip" data-mood="nah" data-look="left" aria-hidden="true"></span>
         </div>
       </div>
-      <p class="example-foot">Every answer says how easy it is to start, how soon a first dollar could come, and what a cheap first test costs. If the idea survives, we’ll help with names too.</p>
+      <p class="example-foot">Every answer comes with a launch kit: a name with an open .com, where to build it, how to find your first ten customers, and a test for this week.</p>
     </section>
 
     <section class="result" id="result" hidden aria-labelledby="verdict">
@@ -86,34 +86,53 @@
 
       <dl class="scorecard" id="scorecard" hidden></dl>
 
-      <dl class="facts" id="facts"></dl>
+      <section class="launch" id="launch-part" aria-labelledby="launch-title">
+        <h3 class="launch-title" id="launch-title">Launch it</h3>
+        <p class="launch-what" id="launch-what"></p>
+
+        <div class="part" id="yours-part" hidden>
+          <h3>The name you picked</h3>
+          <div class="yours" id="yours"></div>
+          <p class="note" id="yours-note"></p>
+        </div>
+
+        <div class="part" id="names-part">
+          <h3 id="names-title">Your name, with an open .com</h3>
+          <ul class="rows" id="names"></ul>
+          <p class="note" id="names-note"></p>
+        </div>
+
+        <div class="part" id="build-part" hidden>
+          <h3>Where to build it</h3>
+          <div class="build" id="build"></div>
+        </div>
+
+        <div class="part" id="customers-part" hidden>
+          <h3>Your first 10 customers</h3>
+          <dl class="customers" id="customers"></dl>
+        </div>
+
+        <div class="part" id="week-part">
+          <h3 id="week-title">Your first week</h3>
+          <dl class="facts" id="facts"></dl>
+        </div>
+      </section>
 
       <p class="js-nudge" id="js-nudge" hidden>Not this one? Tell Frank about you, and he'll find three side hustles that fit. <a href="../jumpstart/">The Jumpstart, $39</a></p>
 
-      <div class="part" id="yours-part" hidden>
-        <h3>The name you picked</h3>
-        <div class="yours" id="yours"></div>
-        <p class="note" id="yours-note"></p>
-      </div>
-
-      <div class="part" id="names-part">
-        <h3 id="names-title">Names with an open .com</h3>
-        <ul class="rows" id="names"></ul>
-        <p class="note" id="names-note"></p>
+      <div class="part" id="alts-part">
+        <h3 id="alts-title">Or launch one of these instead</h3>
+        <ul class="alt-cards" id="alts" aria-labelledby="alts-title"></ul>
       </div>
 
       <div class="part" id="keywords-part">
-        <h3>See what's already out there</h3>
+        <h3>Words your customers use</h3>
+        <p class="note">Use them on your page and in your posts. Tap one to see who you're up against.</p>
         <ul class="rows rows-grid" id="keywords"></ul>
       </div>
 
-      <div class="part" id="alts-part">
-        <h3 id="alts-title">Try one of these instead</h3>
-        <ul class="rows" id="alts" aria-labelledby="alts-title"></ul>
-      </div>
-
       <div class="part" id="kit-part" hidden>
-        <h3 id="kit-title">Hand it to your AI</h3>
+        <h3 id="kit-title">Build it with AI</h3>
         <p class="note kit-lede">Paste any of these into Claude, ChatGPT or Gemini. Each one already has your idea in it.</p>
         <ul class="rows" id="kit" aria-labelledby="kit-title"></ul>
         <p class="note read-next" id="read-next"></p>
@@ -122,6 +141,8 @@
           <p><strong>Want help building it?</strong> Mark helps people vibe code their first site with AI. <a href="https://calendly.com/markflournoy/vibe-code?utm_source=sidefrog&amp;utm_medium=answer" target="_blank" rel="noopener">Pick a time with Mark</a> or <a href="https://www.linkedin.com/in/markflournoy/" target="_blank" rel="noopener">message him on LinkedIn</a>.</p>
         </div>
       </div>
+
+      <p class="note aff-note" id="aff-note" hidden>Some links pay SideFrog a small fee. Frank recommends what fits your business either way.</p>
 
       <button type="button" class="again-btn" id="again">Check another idea</button>
     </section>
@@ -163,8 +184,8 @@
   </footer>
 
   <p class="sr-only" id="announce" aria-live="polite"></p>
-  <script src="../analytics.js?v=1a480a36" defer></script>
-  <script src="../app.js?v=3cf851e6" defer></script>
+  <script src="../analytics.js?v=d1825f56" defer></script>
+  <script src="../app.js?v=9b132a21" defer></script>
   <script src="../frank.js?v=47d893cf" defer></script>
   <script src="../local-links.js?v=85c61427" defer></script>
 </body>

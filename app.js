@@ -11,6 +11,7 @@ const CONFIG = {
   // Plain, non-affiliate links.
   // Porkbun, no affiliate. Check that ?q= pre-fills their search; if not, it still lands on Porkbun's search page.
   registrarUrl: (domain) => `https://porkbun.com/checkout/search?q=${encodeURIComponent(domain)}`,
+  registrarAffiliate: false,   // set true once registrarUrl is an affiliate link (turns on the disclosure note)
   searchUrl: (q) => `https://www.google.com/search?q=${encodeURIComponent(q)}`,
 };
 
@@ -263,10 +264,9 @@ function render(r) {
   const watchOut = r.watchOut && !/^nothing obvious/i.test(r.watchOut.trim()) ? r.watchOut : "";
   // The cheap test leads, then its pass/fail pair (when to keep going, when to rethink),
   // then context. An older Lambda without rethinkIf just skips that row.
-  for (const [label, value, role] of [["Cheap test", r.firstMove, "fact-lead"],
+  for (const [label, value, role] of [["This week's test", r.firstMove, "fact-lead"],
                                       ["Keep going if", r.goodSign, "fact-signal"], ["Rethink it if", r.rethinkIf, "fact-signal"],
-                                      ["Watch out for", watchOut, "fact-minor"],
-                                      ["Who pays", r.whoPays, "fact-minor"], ["Sharper version", r.sharpenedIdea, "fact-minor"]]) {
+                                      ["Watch out for", watchOut, "fact-minor"], ["Who pays", r.whoPays, "fact-minor"]]) {
     if (!value) continue;
     const row = el("div", { className: role });
     row.append(el("dt", {}, label), el("dd", {}, value));
@@ -277,9 +277,10 @@ function render(r) {
   const nudge = $("#js-nudge");
   if (nudge) nudge.hidden = r.verdict !== "nah";
 
+  renderLaunch(r);
   renderYours(r.yourName);
   renderNames(Array.isArray(r.names) ? r.names : [], r.verdict);
-  $("#names-title").textContent = r.yourName ? "Other names with an open .com" : "Names with an open .com";
+  $("#names-title").textContent = r.yourName ? "Other names with an open .com" : "Your name, with an open .com";
 
   // Related searches: open Google so people can see the competition themselves
   const kws = r.verdict === "cant_help" || !Array.isArray(r.keywords) ? [] : r.keywords;
@@ -291,19 +292,10 @@ function render(r) {
   }));
   $("#keywords-part").hidden = kws.length === 0;
 
-  // Other ideas: one click checks the next one
-  const alts = Array.isArray(r.alternatives) ? r.alternatives : [];
-  $("#alts").replaceChildren(...alts.map((text) => {
-    const li = el("li");
-    const btn = row("button", { type: "button", "aria-label": `Check this idea: ${text}` }, [document.createTextNode(text)], "Check");
-    btn.addEventListener("click", () => tryIdea(text));
-    li.append(btn);
-    return li;
-  }));
-  $("#alts-title").textContent = r.verdict === "cant_help" ? "Ideas we can help with" : "Try one of these instead";
-  $("#alts-part").hidden = alts.length === 0;
-
+  renderAlts(r);
   renderKit(r);
+  // The disclosure shows only when a link on this card actually pays SideFrog
+  $("#aff-note").hidden = !$("#result").querySelector("a[data-affiliate='1']");
 
   card.hidden = false;
   const example = $("#example");
@@ -312,6 +304,134 @@ function render(r) {
   const heading = $("#verdict");
   card.scrollIntoView({ behavior: reducedMotion() ? "auto" : "smooth", block: "start" });
   heading.focus({ preventScroll: true });
+}
+
+// ---------------------------------------------------------------------------
+// The launch kit: what to launch, a name, where to build it, the first 10
+// customers and this week's test. All from the one answer: no extra requests.
+// ---------------------------------------------------------------------------
+
+// Where to build it, by the kind of business Frank says it is. EDIT HERE when you join an
+// affiliate program: replace a link's url with your affiliate link and set affiliate: true
+// (that also turns on the "Some links pay SideFrog" note). Recommend what fits, never who pays.
+const BUILD = {
+  local_service: { title: "A Google Business Profile and a one-page site",
+    why: "Most people find a local service on Google Maps first. The page is where they see your price and book.",
+    cost: "The profile is free. A one-page site costs a few dollars a month or less.",
+    links: [{ label: "Google Business Profile", url: "https://www.google.com/business/", affiliate: false },
+            { label: "Carrd, for one-page sites", url: "https://carrd.co/", affiliate: false }] },
+  online_service: { title: "A simple site with a booking link",
+    why: "Clients want to see what you do and book a call in one place. Nothing else is needed at the start.",
+    cost: "A website builder plan is a monthly fee. Booking links have free plans.",
+    links: [{ label: "Squarespace", url: "https://www.squarespace.com/", affiliate: false },
+            { label: "Calendly, for booking", url: "https://calendly.com/", affiliate: false }] },
+  physical_product: { title: "Etsy first, your own shop later",
+    why: "Etsy brings buyers on day one. Move to your own shop once you know what sells.",
+    cost: "Etsy charges a small fee per listing and a cut of each sale. Your own shop is a monthly plan.",
+    links: [{ label: "Sell on Etsy", url: "https://www.etsy.com/sell", affiliate: false },
+            { label: "Shopify, for later", url: "https://www.shopify.com/", affiliate: false }] },
+  digital_product: { title: "A simple storefront for the file",
+    why: "You don't need a website to sell a download. A storefront handles payment and delivery.",
+    cost: "Free to start. They take a cut of each sale.",
+    links: [{ label: "Gumroad", url: "https://gumroad.com/", affiliate: false },
+            { label: "Lemon Squeezy", url: "https://www.lemonsqueezy.com/", affiliate: false }] },
+  marketplace_gig: { title: "Start on the marketplace, not a website",
+    why: "Rover, TaskRabbit, Thumbtack and Fiverr bring the customers. A site can wait until you have reviews.",
+    cost: "Free to join. The platform takes a share of each job.",
+    links: [{ label: "Thumbtack for pros", url: "https://www.thumbtack.com/pro", affiliate: false },
+            { label: "TaskRabbit taskers", url: "https://www.taskrabbit.com/become-a-tasker", affiliate: false }] },
+  content: { title: "A free newsletter or channel first",
+    why: "Build an audience before you build a product. Charge once people keep showing up.",
+    cost: "Free to start. Paid plans take a cut if you charge readers.",
+    links: [{ label: "Substack", url: "https://substack.com/", affiliate: false },
+            { label: "beehiiv", url: "https://www.beehiiv.com/", affiliate: false }] },
+};
+
+function renderLaunch(r) {
+  const part = $("#launch-part");
+  part.hidden = r.verdict === "cant_help";
+  if (part.hidden) return;
+  const nah = r.verdict === "nah";
+  // After "Keep your day job" Frank doesn't push a launch: just the cheap test, in case you still want to try
+  $("#launch-title").textContent = nah ? "If you still want to try it" : "Launch it";
+  const what = $("#launch-what");
+  what.replaceChildren();
+  if (r.sharpenedIdea && !nah) what.append(el("span", { className: "label-caps" }, "What to launch"), el("span", {}, r.sharpenedIdea));
+  what.hidden = !what.childNodes.length;
+  $("#week-title").textContent = nah ? "A cheap way to find out" : "Your first week";
+
+  // Where to build it
+  const b = !nah && BUILD[r.buildType];
+  const build = $("#build");
+  build.replaceChildren();
+  $("#build-part").hidden = !b;
+  if (b) {
+    build.append(el("p", { className: "build-title" }, b.title), el("p", { className: "build-why" }, b.why),
+                 el("p", { className: "build-cost" }, b.cost));
+    const links = el("p", { className: "build-links" });
+    b.links.forEach((l, i) => {
+      if (i) links.append(el("span", { className: "dot", "aria-hidden": "true" }, " · "));
+      const a = el("a", { href: l.url, target: "_blank", rel: l.affiliate ? "noopener sponsored" : "noopener",
+                          "data-affiliate": l.affiliate ? "1" : "0", "aria-label": `${l.label}${NEW_TAB}` }, `${l.label} ↗`);
+      a.addEventListener("click", () => track("build_click", { type: r.buildType, link: l.label }));
+      links.append(a);
+    });
+    build.append(links);
+  }
+
+  // Your first 10 customers
+  const c = !nah && r.firstCustomers;
+  const list = $("#customers");
+  list.replaceChildren();
+  $("#customers-part").hidden = !(c && (c.where || c.say || c.offer));
+  if (c) {
+    for (const [label, value] of [["Where they are", c.where], ["Your first offer", c.offer]]) {
+      if (!value) continue;
+      const row = el("div");
+      row.append(el("dt", {}, label), el("dd", {}, value));
+      list.append(row);
+    }
+    if (c.say) {
+      const row = el("div", { className: "customers-say" });
+      const dd = el("dd");
+      const btn = el("button", { type: "button", className: "text-btn say-copy" }, "Copy the message");
+      btn.addEventListener("click", () => {
+        const done = () => { btn.textContent = "Copied"; setTimeout(() => { btn.textContent = "Copy the message"; }, 2000); };
+        if (navigator.clipboard && window.isSecureContext) navigator.clipboard.writeText(c.say).then(done, () => {});
+        track("customers_copy");
+      });
+      dd.append(el("q", {}, c.say), btn);
+      row.append(el("dt", {}, "What to say"), dd);
+      list.append(row);
+    }
+  }
+}
+
+// Or launch one of these instead: each with a name whose .com was open when checked
+function renderAlts(r) {
+  const alts = (Array.isArray(r.alternatives) ? r.alternatives : [])
+    .map((a) => typeof a === "string" ? { idea: a, why: "", names: [] } : a).filter((a) => a && a.idea);
+  $("#alts-title").textContent = r.verdict === "cant_help" ? "Ideas we can help with" : "Or launch one of these instead";
+  $("#alts-part").hidden = alts.length === 0;
+  $("#alts").replaceChildren(...alts.map((a) => {
+    const li = el("li", { className: "alt-card" });
+    li.append(el("p", { className: "alt-idea" }, a.idea));
+    if (a.why) li.append(el("p", { className: "alt-why" }, a.why));
+    const open = (a.names || []).find((n) => n.status === "likely_available");
+    if (open) {
+      const p = el("p", { className: "alt-name" });
+      p.append(el("span", { className: "name-word" }, open.name), " ", el("span", { className: "name-domain" }, open.domain), " ");
+      p.append(el("a", { href: CONFIG.registrarUrl(open.domain), target: "_blank", rel: CONFIG.registrarAffiliate ? "noopener sponsored" : "noopener",
+                         "data-affiliate": CONFIG.registrarAffiliate ? "1" : "0", "data-where": "alternative",
+                         "aria-label": `Register ${open.domain}${NEW_TAB}` }, "Register ↗"));
+      li.append(p);
+    }
+    const btn = el("button", { type: "button", className: "alt-go" }, "Get the launch plan");
+    btn.setAttribute("aria-label", `Get the launch plan for: ${a.idea}`);
+    btn.addEventListener("click", () => { track("alt_launch_click"); tryIdea(a.idea); });
+    li.append(btn);
+    return li;
+  }));
 }
 
 // The name the person typed or mentioned, checked live: always shown, open or not.
@@ -337,7 +457,8 @@ function renderYours(y) {
     el("span", { className: "sr-only" }, ", "),
   );
   if (y.status === "likely_available") {
-    box.append(el("a", { href: CONFIG.registrarUrl(y.domain), target: "_blank", rel: "noopener", "aria-label": `Register ${y.domain}${NEW_TAB}` }, "Register it ↗"));
+    box.append(el("a", { href: CONFIG.registrarUrl(y.domain), target: "_blank", rel: CONFIG.registrarAffiliate ? "noopener sponsored" : "noopener",
+                         "data-affiliate": CONFIG.registrarAffiliate ? "1" : "0", "data-where": "yours", "aria-label": `Register ${y.domain}${NEW_TAB}` }, "Register it ↗"));
   } else if (y.status === "taken") {
     box.append(el("a", { href: `https://${y.domain}`, target: "_blank", rel: "noopener nofollow", "aria-label": `See who has ${y.domain}${NEW_TAB}` }, "See who has it ↗"));
   } else {
@@ -571,7 +692,8 @@ function renderNames(names, verdict) {
     if (buyable) {
       const action = open.length ? "Register" : "Look it up";
       li.append(row("a",
-        { href: CONFIG.registrarUrl(n.domain), target: "_blank", rel: "noopener", "aria-label": `${action} ${n.domain}${NEW_TAB}` },
+        { href: CONFIG.registrarUrl(n.domain), target: "_blank", rel: CONFIG.registrarAffiliate ? "noopener sponsored" : "noopener",
+          "data-affiliate": CONFIG.registrarAffiliate ? "1" : "0", "data-where": "names", "aria-label": `${action} ${n.domain}${NEW_TAB}` },
         parts, `${action} ↗`));
     } else {
       const plain = el("div", { className: "row row-static" });
