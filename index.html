@@ -12,12 +12,12 @@
   <meta name="theme-color" content="#FBF7EF">
   <link rel="canonical" href="https://sidefrog.com/">
   <meta property="og:site_name" content="SideFrog">
-  <meta property="og:image" content="https://sidefrog.com/og/home.jpg?v=08027dc7">
+  <meta property="og:image" content="https://sidefrog.com/og/home.jpg?v=ad1af578">
   <meta property="og:image:width" content="2400">
   <meta property="og:image:height" content="1260">
   <meta property="og:image:alt" content="SideFrog: Thinking about making the leap from your 9-to-5? Frank's verdict on an example idea: Keep your day job.">
   <meta name="twitter:card" content="summary_large_image">
-  <meta name="twitter:image" content="https://sidefrog.com/og/home.jpg?v=08027dc7">
+  <meta name="twitter:image" content="https://sidefrog.com/og/home.jpg?v=ad1af578">
   <link rel="icon" type="image/png" sizes="32x32" href="favicon-32.png?v=d2faaaf0">
   <link rel="icon" href="favicon.ico?v=0635c039" sizes="any">
   <link rel="apple-touch-icon" href="apple-touch-icon.png?v=a66055c2">
@@ -26,7 +26,7 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,400..800&family=Source+Serif+4:ital,wght@1,400&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="styles.css?v=44519df1">
+  <link rel="stylesheet" href="styles.css?v=21d4f61f">
   <script type="application/ld+json">{"@context": "https://schema.org", "@type": "WebApplication", "name": "SideFrog", "url": "https://sidefrog.com/", "description": "A free side hustle idea checker: type an idea and get a straight verdict, who would pay, a first test to run, related searches and business names with an open .com.", "applicationCategory": "BusinessApplication", "operatingSystem": "Any", "browserRequirements": "Requires JavaScript", "offers": {"@type": "Offer", "price": "0", "priceCurrency": "USD"}, "creator": {"@type": "Person", "name": "Mark Flournoy", "url": "https://sidefrog.com/about/", "sameAs": ["https://www.linkedin.com/in/markflournoy/"]}}</script>
 </head>
 <body>
@@ -68,7 +68,7 @@
           <span class="frog frank sticker-frog can-sip" data-mood="nah" data-look="left" aria-hidden="true"></span>
         </div>
       </div>
-      <p class="example-foot">Every answer gives you a cheap first test, who might pay, and what to watch out for. If the idea survives, we’ll help with names too.</p>
+      <p class="example-foot">Every answer says how easy it is to start, how soon a first dollar could come, and what a cheap first test costs. If the idea survives, we’ll help with names too.</p>
     </section>
 
     <section class="result" id="result" hidden aria-labelledby="verdict">
@@ -83,7 +83,11 @@
 
       <p class="share-row" id="share-row" hidden><button type="button" class="text-btn" id="share-verdict">Share Frank’s verdict</button><span class="dot" aria-hidden="true">·</span><button type="button" class="text-btn" id="copy-verdict-link">Copy link</button></p>
 
+      <dl class="scorecard" id="scorecard" hidden></dl>
+
       <dl class="facts" id="facts"></dl>
+
+      <p class="js-nudge" id="js-nudge" hidden>Not this one? Tell Frank about you, and he'll find three side hustles that fit. <a href="jumpstart/">The Jumpstart, $39</a></p>
 
       <div class="part" id="yours-part" hidden>
         <h3>The name you picked</h3>
@@ -121,6 +125,12 @@
       <button type="button" class="again-btn" id="again">Check another idea</button>
     </section>
 
+    <aside class="js-home" aria-labelledby="js-home-title">
+      <p class="label-caps" id="js-home-title">Don't have an idea yet?</p>
+      <p>Tell Frank what you're good at, how much time you have and what you'd spend. He'll find three side hustles that fit you, ranked, with the cheapest way to test each one.</p>
+      <p><a class="js-home-link" href="jumpstart/">Get a Jumpstart · $39</a> <span class="js-home-small">One time. No course, no coaching call.</span></p>
+    </aside>
+
     <!-- franks-latest -->
     <section class="guides franks-latest" aria-labelledby="latest-title">
       <h2 id="latest-title">Frank's latest</h2>
@@ -152,8 +162,8 @@
   </footer>
 
   <p class="sr-only" id="announce" aria-live="polite"></p>
-  <script src="analytics.js?v=15597f0a" defer></script>
-  <script src="app.js?v=051d950c" defer></script>
+  <script src="analytics.js?v=1a480a36" defer></script>
+  <script src="app.js?v=3cf851e6" defer></script>
   <script src="frank.js?v=47d893cf" defer></script>
   <script src="local-links.js?v=85c61427" defer></script>
 </body>

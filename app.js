@@ -211,6 +211,25 @@ function setBusy(on) {
 // Render the answer card
 // ---------------------------------------------------------------------------
 
+// Three plain answers people want first: how hard is it to start, how soon could money
+// come in, and what does the test cost. An older Lambda without these just hides the row.
+const EASE_LABEL = { easy: "Easy", some_setup: "Some setup", hard: "Hard" };
+const capFirst = (t) => t.charAt(0).toUpperCase() + t.slice(1);
+function renderScorecard(r) {
+  const box = $("#scorecard");
+  if (!box) return;
+  const items = [["Easy to start?", EASE_LABEL[r.easyToStart] || "", r.easyToStart || ""],
+                 ["First dollar in", r.firstDollar ? capFirst(r.firstDollar) : "", ""],
+                 ["The test costs", r.testCost ? capFirst(r.testCost) : "", ""]].filter(([, v]) => v);
+  box.replaceChildren(...items.map(([label, value, ease]) => {
+    const d = el("div", { className: "score" });
+    if (ease) d.dataset.ease = ease;
+    d.append(el("dt", {}, label), el("dd", {}, value));
+    return d;
+  }));
+  box.hidden = r.verdict === "cant_help" || items.length === 0;
+}
+
 function render(r) {
   const card = $("#result");
   card.dataset.verdict = r.verdict;
@@ -235,6 +254,8 @@ function render(r) {
   if (!reducedMotion()) sticker.classList.add("is-sipping");
   $("#reason").textContent = r.verdictReason || "";
 
+  renderScorecard(r);
+
   // Quick facts: the sharper version, who pays, the first move
   const facts = $("#facts");
   facts.replaceChildren();
@@ -251,6 +272,10 @@ function render(r) {
     row.append(el("dt", {}, label), el("dd", {}, value));
     facts.append(row);
   }
+
+  // The Jumpstart: offered only when Frank says "Keep your day job", the moment someone needs a different idea
+  const nudge = $("#js-nudge");
+  if (nudge) nudge.hidden = r.verdict !== "nah";
 
   renderYours(r.yourName);
   renderNames(Array.isArray(r.names) ? r.names : [], r.verdict);

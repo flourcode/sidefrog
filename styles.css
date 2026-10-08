@@ -624,7 +624,8 @@ button.row .row-cue { color: var(--deep); }
   main > #example { grid-area: example; align-self: start; margin-top: 0; }   /* top edge on the idea box's line */
   main > #result { grid-area: result; max-width: 50rem; }
   main > .guides { grid-area: guides; max-width: 50rem; }
-  main > .franks-latest { grid-area: latest; }      /* its own row: it shares the guides' look, not their slot */
+  main > .franks-latest { grid-area: latest; }
+  main > .js-home { grid-area: chips; margin-top: 1.4rem; }      /* its own row: it shares the guides' look, not their slot */
   /* In the narrow column the example uses the stacked layout: frog over the verdict */
   #example .card-head {
     grid-template-areas:
@@ -849,6 +850,7 @@ button.row .row-cue { color: var(--deep); }
 .result.is-loading .verdict:not(.loading-verdict),
 .result.is-loading .reason,
 .result.is-loading .facts,
+.result.is-loading .scorecard,
 .result.is-loading .part,
 .result.is-loading .again-btn,
 .result.is-loading .example-foot { display: none; }
@@ -1268,3 +1270,47 @@ body.page main.ed { max-width: 70rem; }
 .fv-end { max-width: 46rem; margin-top: 1.8rem; padding-top: 1.2rem; border-top: 2px solid var(--ink); }
 .fv-end p { margin: 0.3rem 0 0.9rem; }
 .franks-latest .row-main .fv-verdict { margin-left: 0.2rem; }
+
+/* Scorecard: three quick answers between the verdict and the facts */
+.scorecard {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  margin: 1.1rem 0 0;
+  border-top: 1px solid var(--rule);
+}
+.scorecard[hidden] { display: none; }
+.scorecard .score { padding: 0.6rem 0.75rem 0.65rem; min-width: 0; }
+.scorecard .score + .score { border-left: 1px solid var(--rule); }
+.scorecard .score:first-child { padding-left: 0; }
+.scorecard dt { font-size: 0.72rem; font-weight: 800; letter-spacing: 0.08em; text-transform: uppercase; color: var(--muted); }
+.scorecard dd { margin: 0.2rem 0 0; font-size: 1.12rem; font-weight: 700; line-height: 1.2; color: var(--ink); }
+.scorecard [data-ease="easy"] dd { color: var(--deep); }
+.scorecard [data-ease="hard"] dd { color: var(--accent-text); }
+@media (max-width: 420px) {
+  .scorecard .score { padding: 0.55rem 0.5rem; }
+  .scorecard dd { font-size: 1rem; }
+  .scorecard dt { font-size: 0.66rem; letter-spacing: 0.05em; }
+}
+
+/* The Jumpstart ($39): the home offer, the nudge on "Keep your day job" answers, and its page */
+.js-home { margin: 1.6rem 0 0; padding: 1rem 1.15rem; border: 1.5px solid var(--line); border-radius: 14px; max-width: 34rem; }
+.js-home p { margin: 0 0 0.45rem; }
+.js-home p:last-child { margin: 0; }
+.js-home-link { font-weight: 800; color: var(--deep); }
+.js-home-small { color: var(--muted); font-size: 0.9rem; margin-left: 0.4rem; }
+.js-nudge { margin: 1.2rem 0 0; padding: 0.8rem 1rem; border-left: 4px solid var(--accent-text); background: var(--paper, transparent); font-size: 1.02rem; }
+.js-nudge a { font-weight: 800; white-space: nowrap; }
+.js-nudge[hidden] { display: none; }
+.js-lede { font-size: 1.25rem; line-height: 1.45; }
+.js-offer { margin: 1.4rem 0 2rem; }
+.js-offer .plate-btn { display: inline-block; text-decoration: none; }
+.js-promise { margin: 0.7rem 0 0; color: var(--muted); font-size: 0.98rem; }
+.js-list, .js-steps { padding-left: 1.2rem; } .js-list li, .js-steps li { margin: 0.35rem 0; }
+.js-sample { list-style: none; padding: 0; margin: 1rem 0; display: grid; gap: 1rem; }
+.js-card { border: 1.5px solid var(--line); border-radius: 14px; padding: 1rem 1.15rem; }
+.js-card h3 { margin: 0 0 0.4rem; font-size: 1.25rem; }
+.js-card p { margin: 0 0 0.5rem; }
+.js-n { font-weight: 800; color: var(--frog); font-size: 1.4rem; line-height: 1; margin: 0 0 0.3rem; }
+.js-test .ed-kicker { display: block; margin-bottom: 0.15rem; }
+.js-meta { color: var(--muted); font-size: 0.92rem; margin: 0; }
+.js-offer-end { margin-top: 2rem; }
