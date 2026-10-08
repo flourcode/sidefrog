@@ -275,7 +275,7 @@ function render(r) {
 
   // The Jumpstart: offered only when Frank says "Keep your day job", the moment someone needs a different idea
   const nudge = $("#js-nudge");
-  if (nudge) nudge.hidden = r.verdict !== "nah";
+  if (nudge) nudge.hidden = r.verdict !== "nah" || nudge.dataset.off === "1";   // off until the Jumpstart is live
 
   renderLaunch(r);
   renderYours(r.yourName);

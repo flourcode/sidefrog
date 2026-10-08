@@ -1354,3 +1354,4 @@ body.page main.ed { max-width: 70rem; }
 #week-part .facts { margin-top: 0.2rem; padding-top: 0; border-top: 0; }
 .part-guide { margin: 0.7rem 0 0; font-size: 0.92rem; color: var(--muted); }
 .part-guide a { font-weight: 700; }
+.js-home[hidden] { display: none; }
