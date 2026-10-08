@@ -358,7 +358,7 @@ function renderLaunch(r) {
   what.replaceChildren();
   if (r.sharpenedIdea && !nah) what.append(el("span", { className: "label-caps" }, "What to launch"), el("span", {}, r.sharpenedIdea));
   what.hidden = !what.childNodes.length;
-  $("#week-title").textContent = nah ? "A cheap way to find out" : "Your first week";
+  $("#week-title").textContent = nah ? "A cheap way to find out" : "Your first hop";
 
   // Where to build it
   const b = !nah && BUILD[r.buildType];
@@ -685,6 +685,8 @@ function renderNames(names, verdict) {
   // Frank doesn't sell a domain for an idea he just told you not to pursue:
   // on "Keep your day job" the names are shown for reference, with no registrar link.
   const buyable = verdict !== "nah";
+  const guide = part.querySelector(".part-guide");
+  if (guide) guide.hidden = !buyable;          // no "how to buy a domain" after "Keep your day job"
   list.hidden = shown.length === 0;   // no empty list (and no stray bullet) when nothing is open
   for (const n of shown) {
     const li = el("li", { "data-status": n.status });

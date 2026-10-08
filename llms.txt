@@ -6,9 +6,6 @@
 - [Check an idea](https://sidefrog.com/): the idea checker
 
 ## Guides
-- [Vibe coding 101: vibe a site tonight](https://sidefrog.com/break-room/build/vibe-coding-101/): A plain-English guide to getting your weird idea onto the internet before you talk yourself out of it. Eight steps for people who don't code, using AI tools like Claude, ChatGPT or Gemini.
-- [Before you put it on the internet](https://sidefrog.com/break-room/build/before-you-put-it-online/): The security and cost basics to check before you share a vibe-coded site: secret keys, spending limits, rate limits, user input, privacy and backups.
-- [Six people use it. Now what?](https://sidefrog.com/break-room/build/six-users-now-what/): What to watch, what to fix and what to ignore when a small vibe-coded project gets its first real users, without rebuilding everything too early.
 - [Test a side hustle idea in a week](https://sidefrog.com/break-room/start/test-an-idea-in-a-week/): A cheap, one-week way to find out if strangers will pay for your side hustle idea, before you buy a domain, a logo or anything else.
 - [Test a big idea small](https://sidefrog.com/break-room/start/test-a-big-idea-small/): How to test a food truck, shop or other in-person business before you buy anything big: shrink it to one Saturday, check what your health department requires, rent before you buy, sell where the crowd already is, and count everything.
 - [Is anyone searching for this?](https://sidefrog.com/break-room/start/is-anyone-searching-for-this/): How to check whether people search for what you want to sell, using Google autocomplete, Google Trends and the free Keyword Planner.
@@ -16,8 +13,11 @@
 - [Where to get honest feedback](https://sidefrog.com/break-room/start/where-to-get-feedback/): Where to ask for honest feedback on a side hustle idea: go where your buyers already talk, not where other founders hang out, read the rules, ask instead of pitching, and count what you hear.
 - [How to check if a business name is taken](https://sidefrog.com/break-room/name/check-if-a-business-name-is-taken/): Where business names get registered, and how to check the domain, your state's business records, DBA filings and federal trademarks in about fifteen minutes.
 - [How to buy a domain](https://sidefrog.com/break-room/name/how-to-buy-a-domain/): Where to buy a .com, what it should cost, which checkout add-ons to skip, and what to do with the domain once you have it.
+- [Vibe coding 101: vibe a site tonight](https://sidefrog.com/break-room/build/vibe-coding-101/): A plain-English guide to getting your weird idea onto the internet before you talk yourself out of it. Eight steps for people who don't code, using AI tools like Claude, ChatGPT or Gemini.
+- [Before you put it on the internet](https://sidefrog.com/break-room/build/before-you-put-it-online/): The security and cost basics to check before you share a vibe-coded site: secret keys, spending limits, rate limits, user input, privacy and backups.
 - [How to get your first 10 customers](https://sidefrog.com/break-room/sell/first-ten-customers/): A plain, honest way to find the first ten paying customers for a side hustle: start with people you know, send short messages, ask clearly, follow up and do the work by hand.
 - [What should I charge?](https://sidefrog.com/break-room/sell/what-to-charge/): A plain way to price a side hustle: check the going rate, work out the lowest price that covers your costs and time, think about what it's worth to the customer, and say the number without apologizing.
+- [Six people use it. Now what?](https://sidefrog.com/break-room/build/six-users-now-what/): What to watch, what to fix and what to ignore when a small vibe-coded project gets its first real users, without rebuilding everything too early.
 - [Getting found when people ask AI instead of Google](https://sidefrog.com/break-room/launch/getting-found-by-ai-answers/): What zero-click searches and AI answers mean for a small business, and plain steps to become the name an AI summary mentions.
 - [Before you leap](https://sidefrog.com/break-room/leap/before-you-leap/): What to line up before you quit a steady job for a side hustle: a cash cushion, what your job quietly pays for, proof the business works, the people it affects, a checkpoint, and leaving on good terms.
 
