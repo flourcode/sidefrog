@@ -90,6 +90,9 @@ def page_card(p):
         label = "Shared with you"
     elif path == "/stuff-i-like/":
         label = "Behind SideFrog"
+    elif path.startswith("/jumpstart/"):
+        label = "The Jumpstart · $39"
+        p = dict(p, dek=p.get("dek") or "Tell Frank what you're good at. Get three side hustles that fit you, each with a cheap test and a 7-day plan.")
     else:
         label = "The Break Room"
     if path.startswith("/break-room/"):
@@ -98,6 +101,8 @@ def page_card(p):
         where = "From the Side Kit. Prompts and a printable worksheet."
     elif path == "/verdict/":
         where = "Free idea checks. No sign-up."
+    elif path.startswith("/jumpstart/"):
+        where = "One time. No course, no coaching call."
     else:
         where = "Made by Mark Flournoy. Free, no sign-up."
     title = html.escape(p["h1"])

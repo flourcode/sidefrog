@@ -86,6 +86,12 @@ FOOTER = '''<footer class="site-footer">
   </footer>'''
 
 CALENDLY = "https://calendly.com/markflournoy/vibe-code?utm_source=sidefrog&amp;utm_medium="
+# The Jumpstart ($39): replace these two placeholders with your real links, then rebuild.
+#   JUMPSTART_PAY:  your Stripe Payment Link (set its "after payment" page to https://sidefrog.com/jumpstart/thanks/)
+#   JUMPSTART_FORM: your Tally or Google form (questions in README, "The Jumpstart")
+JUMPSTART_PAY = "https://buy.stripe.com/REPLACE-WITH-YOUR-PAYMENT-LINK"
+JUMPSTART_FORM = "https://tally.so/r/REPLACE-WITH-YOUR-FORM"
+JUMPSTART_PRICE = "$39"
 LINKEDIN = "https://www.linkedin.com/in/markflournoy/"
 
 # Viewing from your desktop (file://): folder links open their index.html. Does nothing on the live site.
@@ -634,7 +640,7 @@ PAGES["about"] = dict(
     body='''
       <span class="who who-frank">''' + frank_round_html() + '''</span>
       <p>Frank is the frog. Type in an idea and he gives you a straight answer in seconds.</p>
-      <p>Behind Frank, Google's Gemini reads your idea and works out who would pay for it, what to watch out for, a cheap test you can run this week, and the signs that tell you to keep going or rethink it. While that runs, SideFrog checks about 20 possible business names against the .com registry, live, and shows you only the ones you can still register.</p>
+      <p>Behind Frank, Google's Gemini reads your idea and works out who would pay for it, how easy it is to start, how soon a first dollar could come, what to watch out for, and a cheap test you can run this week (with what it costs and the signs that tell you to keep going or rethink it). While that runs, SideFrog checks about 20 possible business names against the .com registry, live, and shows you only the ones you can still register.</p>
       <p>Frank likes ideas you can test cheaply and ideas people will actually pay for. He's skeptical of passive income promises and of anything that needs investors or a team before it can make its first sale.</p>
       <p><a class="plate-btn" href="/">Check an idea with Frank</a></p>
 
@@ -644,10 +650,11 @@ PAGES["about"] = dict(
       <p>When I started, I didn't know how to build a website. I learned how to buy a domain, set up hosting and form an LLC as I went. Now I can usually get an idea online in a day. I use Claude to think ideas through and write the code, and Gemini runs most of the AI work on the sites because it costs less.</p>
       <p>SideFrog is the checklist I use before I put money into an idea, turned into something you can use too. Most of my ideas cost about $16 for the domain and very little to run. Here's <a href="/what-it-costs/">what it actually costs me</a>.</p>
       <p>I also mentor salespeople and build sales tools at <a href="https://quotabird.com/">QuotaBird</a>. I recently moved to California after 15 years in Northern Virginia.</p>
-      <p>Nothing on SideFrog pays me. If that ever changes, the page with the link will say so.</p>
+      <p>The one thing SideFrog sells is the <a href="/jumpstart/">Jumpstart</a>: $39 for three side hustles picked for you. Everything else here is free, and nothing else on the site pays me.</p>
 
       <h2>Who it's for</h2>
       <p>SideFrog is for people who hate Mondays. More specifically, people with office jobs who have an idea, or a few, and want to know whether one is worth trying. You don't have to quit your job to find out. Most of the tests Frank suggests fit into evenings and weekends.</p>
+      <p>If Monday feels heavier than it used to, you're in the right place. Everybody tells you what a side hustle could make. SideFrog tells you whether it's worth doing, and how to find out for the price of a weekend. You don't need a big plan to start. You need one idea and a cheap way to test it.</p>
 
       <h2>What happens to your idea</h2>
       <p>Your idea goes to Google's Gemini to write the verdict. SideFrog doesn't store what you type.</p>
@@ -1388,10 +1395,77 @@ def read_minutes(p):
 # Frank on YouTube: newest first. Adding an episode is one line (title as on YouTube, its link).
 YOUTUBE_CHANNEL = "https://www.youtube.com/@SideFrogTV"
 YOUTUBE_SHORTS = [
+    ("Can you actually make money with a print on demand store?", "https://www.youtube.com/shorts/uB3j_3Xcsws"),
+    ("Can you actually make money with a TikTok Shop affiliate store?", "https://www.youtube.com/shorts/zGJn2eZbQcE"),
+    ("Can you actually make money with a Depop clothing resale shop?", "https://www.youtube.com/shorts/zqguTV5r9kI"),
+    ("Mobile car wash side hustle: worth it?", "https://www.youtube.com/shorts/a8rZfcOx-gw"),
+    ("Amazon KDP low-content publishing: worth it?", "https://www.youtube.com/shorts/OuxUoZTJoLQ"),
     ("Vending machine route: worth it?", "https://www.youtube.com/shorts/uKP8Myic1Ts"),
     ("Automated YouTube channel: worth it?", "https://www.youtube.com/shorts/DAPpYNnV5t8"),
     ("Is TikTok dropshipping still worth it in 2026?", "https://www.youtube.com/shorts/M5FvtyyS9yQ"),
 ]
+
+
+# Frank's verdicts: Shorts from October 6, 2026 on, each with SideFrog's real verdict, reason and cheap
+# test (from the episode). Only public: True entries appear on the site; flip it when a Short goes Public.
+VERDICT_LABELS = {"great": "Surprisingly, yes", "worth_a_shot": "This could work", "crowded": "Crowded pond",
+                  "nah": "Keep your day job", "cant_help": "Can't help"}
+FRANK_VERDICTS = [   # newest first
+    dict(number=8, idea="Depop clothing resale shop", verdict="crowded", posted="2026-10-06", video="zqguTV5r9kI", public=True,
+         reason="Everyone under twenty is already doing this, so you need a very specific aesthetic to stand out on the feed.",
+         test="Photograph and list ten items you already own or source this weekend with detailed measurements."),
+    dict(number=3, idea="Mobile car wash", verdict="worth_a_shot", posted="2026-10-06", video="a8rZfcOx-gw", public=True,
+         reason="High local demand if you target office parks or apartment complexes instead of driving all over town.",
+         test="Print 50 simple flyers and put them on windshields in one specific corporate parking lot on Tuesday."),
+    dict(number=9, idea="TikTok Shop affiliate store", verdict="crowded", posted="2026-10-06", video="zGJn2eZbQcE", public=True,
+         reason="Everyone is trying to flip wholesale goods through short videos before the algorithm shifts again.",
+         test="Source five items from a local supplier, film ten review clips, and post them over five days."),
+    dict(number=10, idea="Print-on-demand store", verdict="crowded", posted="2026-10-06", video="uB3j_3Xcsws", public=True,
+         reason="Low margins after platform fees and ad costs.",   # Frank's "catch" note (the episode's reason field only said "Crowded pond")
+         test="Post three design mockups in three developer Slack communities and see if five people pre-order."),
+]
+LIVE_VERDICTS = sorted((v for v in FRANK_VERDICTS if v["public"]), key=lambda v: (v["posted"], v["number"]), reverse=True)
+
+
+def verdict_date(v):
+    import datetime
+    d = datetime.date.fromisoformat(v["posted"])
+    return f"{d.strftime('%b')} {d.day}, {d.year}"
+
+
+def verdicts_body():
+    """The Frank's verdicts page: one entry per public Short, newest first."""
+    if not LIVE_VERDICTS:
+        items = "<p>Frank\u2019s first reviews are on their way. Check your own idea in the meantime.</p>"
+    else:
+        items = '<ol class="fv-list">' + "".join(
+            f'''<li class="fv" id="no-{v['number']:03d}">
+          <p class="fv-meta">No. {v['number']:03d} · {verdict_date(v)}</p>
+          <h2 class="fv-idea">{html.escape(v['idea'])} <span class="fv-verdict fv-{v['verdict']}">{VERDICT_LABELS[v['verdict']]}</span></h2>
+          {f'<p class="fv-reason">{html.escape(v["reason"])}</p>' if v["reason"] else ""}
+          <p class="fv-test"><span class="ed-kicker">Cheap test</span> {html.escape(v['test'])}</p>
+          <p class="fv-watch"><a href="https://www.youtube.com/shorts/{v['video']}">Watch Frank's take</a> <span class="fv-len">26 seconds</span></p>
+        </li>''' for v in LIVE_VERDICTS) + "</ol>"
+    return f'''{items}
+      <div class="fv-end">
+        <p class="ed-kicker">Got your own?</p>
+        <p>Frank gives you a straight verdict, who'd pay and a cheap first test in seconds. Free, no sign-up.</p>
+        <a class="plate-btn" href="/">Check your idea</a>
+        <p class="ed-more"><a href="{YOUTUBE_CHANNEL}">More of Frank on YouTube: @SideFrogTV</a></p>
+      </div>'''
+
+
+def franks_latest_html(prefix=""):
+    """The home page's "Frank's latest": the newest three public verdicts, linking to their entries."""
+    if not LIVE_VERDICTS:
+        return ""
+    rows = "".join(f'''<li><a class="row" href="{prefix}break-room/franks-verdicts/#no-{v['number']:03d}"><span class="row-main">{html.escape(v['idea'])} <span class="fv-verdict fv-{v['verdict']}">{VERDICT_LABELS[v['verdict']]}</span></span><span class="row-cue" aria-hidden="true">Why</span></a></li>'''
+                   for v in LIVE_VERDICTS[:3])
+    return f'''<section class="guides franks-latest" aria-labelledby="latest-title">
+      <h2 id="latest-title">Frank's latest</h2>
+      <ul class="rows">{rows}</ul>
+      <p class="guides-more"><a href="{prefix}break-room/franks-verdicts/">All of Frank's verdicts</a> · <a href="{YOUTUBE_CHANNEL}">Watch on YouTube</a></p>
+    </section>'''
 
 
 def youtube_rail():
@@ -1402,14 +1476,14 @@ def youtube_rail():
           <p class="ed-kicker">Frank on YouTube</p>
           <p>Frank reviews a side hustle in under 30 seconds.</p>
           <ol class="ed-mini">{items}</ol>
-          <p class="ed-more"><a href="{YOUTUBE_CHANNEL}">All episodes on @SideFrogTV</a></p>
+          <p class="ed-more"><a href="/break-room/franks-verdicts/">All of Frank's verdicts</a> · <a href="{YOUTUBE_CHANNEL}">@SideFrogTV</a></p>
         </section>''')
 
 
 def hub_body():
     """The Break Room as a contents page: numbered sections, numbered guides with a one-line
     description and reading time, and a ruled side rail."""
-    groups = GROUPS + [("Behind SideFrog", ["costs", "stuff", "about"])]
+    groups = [("Frank on YouTube", ["verdicts"])] + GROUPS + [("Behind SideFrog", ["costs", "stuff", "about"])]
     secs = []
     for s, (label, keys) in enumerate(groups, 1):
         items = "".join(
@@ -1437,6 +1511,15 @@ def hub_body():
     </div>'''
 
 
+PAGES["verdicts"] = dict(
+    path="/break-room/franks-verdicts/", title="Frank's Verdicts: Side Hustles Reviewed, With a Cheap Test for Each | SideFrog",
+    h1="Frank's verdicts", contents=True, kicker_html='<a href="/break-room/">The Break Room</a> · Frank on YouTube',
+    dek="Side hustles Frank has reviewed on YouTube, newest first. Each verdict is SideFrog's real answer, with a cheap way to test the idea yourself.",
+    description="Can you actually make money with it? Frank's verdicts on popular side hustles, from SideFrog's YouTube Shorts, each with the reason and a cheap test.",
+    body=verdicts_body(), blurb="Side hustles Frank has reviewed on YouTube, with his verdict and a cheap test for each.",
+)
+
+
 PAGES["hub"] = dict(
     path="/break-room/", title="The Break Room: Guides for Testing a Side Hustle Idea | SideFrog",
     h1="Short guides for coffee breaks.", contents=True,
@@ -1446,16 +1529,103 @@ PAGES["hub"] = dict(
 )
 
 
+# ---------------------------------------------------------------- The Jumpstart ($39)
+JS_SAMPLE = [   # a sample made for Mark from his own background; replace it with a real run from the Jumpstart Desk any time
+    dict(idea="One-day websites for local trades", verdict="Surprisingly, yes",
+         why="You already build a site in a day for your own ideas, and most plumbers and landscapers still don't have one that works on a phone.",
+         test="Build one for a tradesperson you know, free, in exchange for an honest answer: would they have paid $300 for it?",
+         cost="$16 for the domain", first="2 to 4 weeks"),
+    dict(idea="Sales pipeline cleanups for small teams", verdict="This could work",
+         why="Years of sales management plus the mentoring you already do means you can spot a messy pipeline in ten minutes.",
+         test="Offer three small business owners a free 30-minute pipeline review and ask one to pay for the full cleanup.",
+         cost="$0", first="about a month"),
+    dict(idea="Practice sales interviews", verdict="This could work",
+         why="People in your network already ask you how to get into sales, and a mock interview is an hour of something you do well.",
+         test="Post once on LinkedIn offering three practice interviews at $40 and see who books.",
+         cost="$0", first="1 to 2 weeks"),
+]
+
+
+def jumpstart_body():
+    cards = "".join(f'''<li class="js-card">
+          <p class="js-n">{k + 1:02d}</p>
+          <h3>{html.escape(x["idea"])} <span class="fv-verdict fv-{'great' if x['verdict'] == 'Surprisingly, yes' else 'worth_a_shot'}">{x["verdict"]}</span></h3>
+          <p>{html.escape(x["why"])}</p>
+          <p class="js-test"><span class="ed-kicker">The cheap test · {html.escape(x["cost"])}</span> {html.escape(x["test"])}</p>
+          <p class="js-meta">First dollar in {html.escape(x["first"])}</p>
+        </li>''' for k, x in enumerate(JS_SAMPLE))
+    buy = f'<a class="plate-btn js-buy" href="{JUMPSTART_PAY}">Get my Jumpstart · {JUMPSTART_PRICE}</a>'
+    return f'''
+      <p class="js-lede">Tell SideFrog what you're good at, how much time you have, what you'd spend and what you won't do. You get back three side hustles that fit you, ranked, with the cheapest way to test each one and a plan for your first week.</p>
+      <div class="js-offer">
+        {buy}
+        <p class="js-promise">{JUMPSTART_PRICE} once. In your inbox within 24 hours. If it doesn't help, reply to the email and I'll refund you.</p>
+      </div>
+
+      <h2>What you get</h2>
+      <ul class="js-list">
+        <li>Three side hustles that fit you, best fit first, and why each one suits you</li>
+        <li>Who pays, what it costs to start, and how soon a first dollar could come</li>
+        <li>The cheapest test for each one, with the result that tells you to keep going or stop</li>
+        <li>A day-by-day plan for your first seven days</li>
+        <li>If you give a monthly goal, the plain math of how many sales it takes (math, not a promise)</li>
+      </ul>
+      <p>No course, no coaching call and nothing else to buy. It's a PDF you can print and stick on the fridge.</p>
+
+      <h2>How it works</h2>
+      <ol class="js-steps">
+        <li><b>Pay {JUMPSTART_PRICE}.</b> Checkout is through Stripe.</li>
+        <li><b>Answer seven short questions.</b> About five minutes: what you're good at, what people ask you for, your hours, your budget, online or local, what you won't do, and a goal if you have one.</li>
+        <li><b>Get your Jumpstart.</b> Frank drafts it and I read every one before it goes out. It arrives within 24 hours.</li>
+      </ol>
+
+      <h2>A sample</h2>
+      <p>This one was made for me, from my own background: retired from Amazon, builds small websites, mentors salespeople.</p>
+      <ol class="js-sample">{cards}</ol>
+      <div class="take js-take">{frank_svg("take-frog", "smirk")}<div><p class="take-label">Mark's take</p><blockquote>I'd start with the websites. I already do it for fun, and the first customer is probably someone I know.</blockquote></div></div>
+
+      <div class="js-offer js-offer-end">
+        {buy}
+        <p class="js-promise">Already have an idea? <a href="/">Check it free</a> instead.</p>
+      </div>'''
+
+
+PAGES["jumpstart"] = dict(
+    path="/jumpstart/", title="The SideFrog Jumpstart: Three Side Hustles That Fit You | SideFrog", eyebrow="The Jumpstart",
+    h1="No idea yet? Frank will find three that fit you.",
+    description="Tell SideFrog what you're good at, your hours, budget and what you won't do. Get three side hustles that fit you, ranked, with a cheap test and a 7-day plan for each. $39.",
+    cta=False, body=jumpstart_body(),
+    faq=[("Is this written by AI?", "Frank's part is drafted with Google's Gemini, the same way the free checker works. I read and edit every Jumpstart before it's sent."),
+         ("Will it tell me how much I'll make?", "No. Nobody can honestly promise that. If you give a goal, it shows the plain math of how many sales it would take, so you can judge it yourself."),
+         ("What happens to my answers?", "I use them to make your Jumpstart and to answer any follow-up questions. I don't sell them or share them."),
+         ("What if it doesn't help?", "Reply to the email it came in and I'll refund you."),
+         ("I already have an idea.", 'Then you don\'t need this. <a href="/">Check it free</a> with Frank.')],
+)
+
+PAGES["jumpstart-thanks"] = dict(
+    path="/jumpstart/thanks/", title="Thanks: One More Step | SideFrog", eyebrow="The Jumpstart",
+    h1="Thanks. One more step.", noindex=True,
+    description="Answer seven short questions so Frank can find three side hustles that fit you.",
+    cta=False, body=f'''
+      <p class="js-lede">Answer seven short questions. It takes about five minutes. Use the same email you paid with, so I can match them up.</p>
+      <div class="js-offer"><a class="plate-btn js-form" href="{JUMPSTART_FORM}">Answer the questions</a>
+        <p class="js-promise">Your Jumpstart arrives within 24 hours of your answers. Questions? Reply to your Stripe receipt.</p></div>''',
+)
+
+
 def main():
     for key, p in PAGES.items():
         out = ROOT / p["path"].strip("/") / "index.html"
         out.parent.mkdir(parents=True, exist_ok=True)
-        out.write_text(stamp(relative(page_html(p), p["path"])), encoding="utf-8")
+        doc = page_html(p)
+        if p.get("noindex"):
+            doc = doc.replace('<meta name="theme-color"', '<meta name="robots" content="noindex">\n  <meta name="theme-color"', 1)
+        out.write_text(stamp(relative(doc, p["path"])), encoding="utf-8")
         print("built", p["path"])
 
     # lastmod = when a page's content last changed (its "updated" field), not
     # when the site was rebuilt. Bump a page's "updated" when you edit its copy.
-    urls = [("/", HOME_UPDATED)] + [(p["path"], p.get("updated", CHECKED_ISO)) for p in PAGES.values()]
+    urls = [("/", HOME_UPDATED)] + [(p["path"], p.get("updated", CHECKED_ISO)) for p in PAGES.values() if not p.get("noindex")]
     (ROOT / "sitemap.xml").write_text(
         '<?xml version="1.0" encoding="UTF-8"?>\n<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n'
         + "".join(f"  <url><loc>{BASE_URL}{u}</loc><lastmod>{d}</lastmod></url>\n" for u, d in urls)
@@ -1470,7 +1640,8 @@ def main():
         for k in keys:
             lines.append(f"- [{PAGES[k]['h1']}]({BASE_URL}{PAGES[k]['path']}): {PAGES[k]['description']}")
     lines += ["", "## About", f"- [About SideFrog]({BASE_URL}/about/): {PAGES['about']['description']}",
-              f"- [What it costs]({BASE_URL}/what-it-costs/): {PAGES['costs']['description']}", ""]
+              f"- [What it costs]({BASE_URL}/what-it-costs/): {PAGES['costs']['description']}",
+              "", "## Paid", f"- [The Jumpstart]({BASE_URL}/jumpstart/): {PAGES['jumpstart']['description']}", ""]
     (ROOT / "llms.txt").write_text("\n".join(lines), encoding="utf-8")
     print("built sitemap.xml, robots.txt, llms.txt")
 
@@ -1540,6 +1711,12 @@ def main():
         doc = re.sub(r'(<link rel="preload" href=")fonts/bricolage\.[0-9a-f]+\.woff2', lambda mm: f'{mm.group(1)}fonts/{FONT_FILES["bricolage"]}', doc)
     else:
         doc = re.sub(preload_re, lambda _: GOOGLE_FONTS.replace('><', '>\n  <'), doc)
+    # Frank's latest, above the guides (refreshed each build from FRANK_VERDICTS)
+    latest = franks_latest_html()
+    doc = re.sub(r"\s*<!-- franks-latest -->.*?<!-- /franks-latest -->", "", doc, flags=re.S)
+    if latest:
+        doc = doc.replace('    <section class="guides" aria-labelledby="guides-title">',
+                          f'    <!-- franks-latest -->\n    {latest}\n    <!-- /franks-latest -->\n\n    <section class="guides" aria-labelledby="guides-title">', 1)
     v = fingerprint("og/home.jpg")
     doc = re.sub(r'(content="https://[^"]+/og/home\.jpg)(?:\?v=[0-9a-f]+)?"', lambda mm: f'{mm.group(1)}?v={v}"', doc)
     doc = doc.replace('og:image:width" content="1200"', 'og:image:width" content="2400"').replace('og:image:height" content="630"', 'og:image:height" content="1260"')

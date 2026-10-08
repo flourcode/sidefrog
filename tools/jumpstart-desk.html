@@ -1,0 +1,257 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex, nofollow">
+<title>Jumpstart Desk (private)</title>
+<!-- PRIVATE TOOL: not part of the site. Open it the same way as the Short Studio (tools\start-studio.bat).
+     Paste a customer's form answers -> Ask Frank -> read and edit -> Print / Save as PDF -> email it. -->
+<style>
+  @font-face { font-family: "Bricolage Grotesque"; src: url("../fonts/src/Bricolage.ttf"); font-weight: 200 800; }
+  :root { --paper: #FBF7EF; --card: #FFFDF9; --ink: #1F241F; --muted: #5A5A4A; --deep: #4A5C34; --frog: #8DAA3F;
+          --accent: #A4501F; --line: #E2D8C6; --rule: #A89B84; --warn: #B4531D; }
+  * { box-sizing: border-box; }
+  body { margin: 0; background: var(--paper); color: var(--ink); font: 16px/1.45 "Bricolage Grotesque", system-ui, sans-serif; }
+  main { max-width: 64rem; margin: 0 auto; padding: 2rem 1.5rem 4rem; }
+  h1 { font-size: 2.2rem; letter-spacing: -0.03em; margin: 0 0 0.2rem; }
+  .sub { color: var(--muted); margin: 0 0 1.6rem; }
+  .kicker { font-size: 0.72rem; font-weight: 800; letter-spacing: 0.16em; text-transform: uppercase; color: var(--deep); margin: 0 0 0.5rem; }
+  section.box { background: var(--card); border: 2px solid var(--ink); border-radius: 18px; box-shadow: 6px 6px 0 var(--ink); padding: 1.3rem 1.4rem; margin: 0 0 1.6rem; }
+  label { display: block; font-weight: 700; font-size: 0.9rem; margin: 0.8rem 0 0.25rem; }
+  input, textarea, select { width: 100%; font: inherit; color: var(--ink); background: #fff; border: 1.5px solid var(--rule); border-radius: 10px; padding: 0.5rem 0.65rem; }
+  textarea { resize: vertical; }
+  button { font: inherit; font-weight: 800; background: #97AE43; color: var(--ink); border: 2px solid var(--ink); border-radius: 12px; padding: 0.6rem 1.1rem; box-shadow: 3px 3px 0 var(--ink); cursor: pointer; }
+  button.quiet { background: var(--card); }
+  button:disabled { opacity: 0.6; cursor: progress; }
+  .grid2 { display: grid; grid-template-columns: 1fr 1fr; gap: 0 1rem; }
+  .grid3 { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 0 1rem; }
+  .row { display: flex; gap: 0.8rem; flex-wrap: wrap; margin-top: 1rem; }
+  .status { margin: 0.8rem 0 0; font-weight: 700; } .status.error { color: var(--warn); }
+  .count { font-size: 0.8rem; color: var(--muted); margin-top: 0.2rem; } .count.over { color: var(--warn); font-weight: 700; }
+  details summary { cursor: pointer; font-weight: 700; margin-top: 0.6rem; }
+  .ideabox { border-top: 2px solid var(--line); margin-top: 1.2rem; padding-top: 0.6rem; }
+  .ideabox h3 { margin: 0.2rem 0; }
+
+  /* ---------- the Jumpstart itself (what gets printed) ---------- */
+  #doc { margin-top: 2rem; }
+  .pg { width: 8.5in; min-height: 11in; margin: 0 auto 0.3in; padding: 0.75in 0.8in 0.9in; background: var(--card); position: relative;
+        box-shadow: 0 2px 12px rgba(0,0,0,0.15); break-after: page; page-break-after: always; font-size: 11.5pt; }
+  .pg .k { margin: 0 0 0.08in; font-size: 8.5pt; font-weight: 800; letter-spacing: 0.14em; text-transform: uppercase; color: var(--deep); }
+  .pg h2 { font-size: 30pt; line-height: 1.02; letter-spacing: -0.03em; margin: 0 0 0.16in; }
+  .pg h3 { font-size: 15pt; margin: 0.2in 0 0.06in; }
+  .pg p { margin: 0 0 0.1in; }
+  .pg .lede { font-size: 14pt; line-height: 1.4; }
+  .pg .head { display: grid; grid-template-columns: 1fr 1.5in; gap: 0.2in; align-items: start; }
+  .pg .head img { width: 1.5in; }
+  .pg .pill { display: inline-block; padding: 0.04in 0.14in; border-radius: 99px; background: var(--frog); font-size: 9.5pt; font-weight: 800; letter-spacing: 0.08em; text-transform: uppercase; }
+  .pg .score { display: grid; grid-template-columns: repeat(4, 1fr); border-top: 1px solid var(--rule); border-bottom: 1px solid var(--rule); margin: 0.16in 0 0.18in; }
+  .pg .score div { padding: 0.09in 0.12in; } .pg .score div:first-child { padding-left: 0; } .pg .score div + div { border-left: 1px solid var(--rule); }
+  .pg dt { font-size: 7.5pt; font-weight: 800; letter-spacing: 0.11em; text-transform: uppercase; color: var(--muted); }
+  .pg dd { margin: 0.03in 0 0; font-weight: 800; font-size: 12pt; line-height: 1.2; }
+  .pg .test { border-left: 4px solid var(--frog); padding: 0.02in 0 0.02in 0.16in; margin-bottom: 0.16in; }
+  .pg .test p:last-child { font-size: 13pt; font-weight: 500; margin: 0; }
+  .pg .pair { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 0.18in; margin-bottom: 0.14in; } .pg .pair dd { font-weight: 500; font-size: 10.5pt; }
+  .pg .week { list-style: none; padding: 0; margin: 0.06in 0 0; columns: 1; }
+  .pg .week li { display: grid; grid-template-columns: 0.55in 1fr; padding: 0.05in 0; border-top: 1px solid var(--line); font-size: 10.5pt; }
+  .pg .week b { color: var(--deep); }
+  .pg .math { background: var(--paper); border-radius: 10px; padding: 0.1in 0.14in; font-size: 10.5pt; }
+  .pg .overview { list-style: none; padding: 0; margin: 0.12in 0 0.2in; }
+  .pg .overview li { display: grid; grid-template-columns: 0.45in 1fr; padding: 0.1in 0; border-top: 1px solid var(--line); }
+  .pg .overview .n { font-size: 20pt; font-weight: 800; color: var(--frog); line-height: 1; }
+  .pg .take { margin-top: 0.2in; padding: 0.16in 0.2in; background: var(--paper); border: 2px solid var(--ink); border-radius: 14px; box-shadow: 4px 4px 0 var(--ink); }
+  .pg .take p:last-child { margin: 0; font-size: 13pt; font-weight: 600; }
+  .pg .foot { position: absolute; left: 0.8in; right: 0.8in; bottom: 0.45in; display: flex; justify-content: space-between; border-top: 1px solid var(--line); padding-top: 0.08in; font-size: 8.5pt; color: var(--muted); }
+  .pg .fine { font-size: 8.5pt; color: var(--muted); margin-top: 0.2in; }
+  @page { size: Letter; margin: 0; }
+  @media print {
+    body { background: none; } main > *:not(#doc) { display: none !important; } main { padding: 0; max-width: none; }
+    #doc { margin: 0; } .pg { margin: 0; box-shadow: none; }
+    * { -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+  }
+</style>
+</head>
+<body>
+<main>
+  <p class="kicker">Private · not on the site</p>
+  <h1>Jumpstart Desk</h1>
+  <p class="sub">Paste a customer's answers, ask Frank, read and fix anything that's off, then print it to PDF and email it. About ten minutes an order.</p>
+
+  <section class="box">
+    <p class="kicker">1 · The customer's answers</p>
+    <label for="paste">Paste the whole form response here (from Tally's email or the Google sheet), then click "Fill in"</label>
+    <textarea id="paste" rows="5" placeholder="Your first name&#10;Dana&#10;What do you do, and what are you good at?&#10;..."></textarea>
+    <div class="row"><button class="quiet" id="fill">Fill in</button></div>
+    <div class="grid2">
+      <div><label for="f_name">First name</label><input id="f_name"></div>
+      <div><label for="f_email">Email (for your records; not printed)</label><input id="f_email"></div>
+    </div>
+    <label for="f_goodAt">What do you do, and what are you good at?</label><textarea id="f_goodAt" rows="2"></textarea>
+    <label for="f_askedFor">What do people already ask you for help with?</label><textarea id="f_askedFor" rows="2"></textarea>
+    <div class="grid3">
+      <div><label for="f_hours">Hours a week</label><input id="f_hours"></div>
+      <div><label for="f_budget">Most they'd spend to start</label><input id="f_budget"></div>
+      <div><label for="f_where">Online, local or either</label><input id="f_where"></div>
+    </div>
+    <label for="f_refuse">Anything they won't do</label><textarea id="f_refuse" rows="2"></textarea>
+    <label for="f_goal">Monthly income goal (optional)</label><input id="f_goal">
+    <div class="row"><button id="ask">Ask Frank</button></div>
+    <details><summary>Or paste Frank's answer (JSON)</summary><textarea id="json" rows="5"></textarea>
+      <div class="row"><button class="quiet" id="usejson">Use this JSON</button></div></details>
+    <p class="status" id="status"></p>
+  </section>
+
+  <section class="box" id="editor" hidden>
+    <p class="kicker">2 · Read it and fix anything that's off</p>
+    <p class="count">Check every idea against what they said they won't do, and that each cheap test costs well under their budget. The take is yours: change it if you'd say it differently.</p>
+    <label for="e_summary">What stands out about them (two sentences)</label><textarea id="e_summary" rows="2"></textarea>
+    <label for="e_take">Mark's take (which one to start with)</label><textarea id="e_take" rows="2"></textarea>
+    <div id="ideas"></div>
+    <div class="row">
+      <button id="print">Print / Save as PDF</button>
+      <button class="quiet" id="saveOrder">Save order file</button>
+    </div>
+    <p class="count">In the print box: Destination "Save as PDF", Paper size Letter, Margins None, Background graphics on. The file name is already set to the customer's name.</p>
+    <p class="status" id="status2"></p>
+  </section>
+
+  <div id="doc"></div>
+</main>
+
+<script>
+const API = "https://4s7uc7iyyeh7p4sknfpo6agllq0ahdff.lambda-url.us-east-1.on.aws/";
+const $ = (id) => document.getElementById(id);
+const status = (msg, el = "status", err = false) => { $(el).textContent = msg; $(el).className = "status" + (err ? " error" : ""); };
+const esc = (s) => String(s || "").replace(/[&<>"]/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" }[c]));
+const cap = (s) => (s = String(s || "").trim()) ? s[0].toUpperCase() + s.slice(1) : s;
+const FIELDS = ["name", "email", "goodAt", "askedFor", "hours", "budget", "where", "refuse", "goal"];
+// which form question each answer belongs to (matched loosely, so Tally or Google wording both work)
+const MATCH = { email: /e-?mail/i, name: /first name|your name/i, goodAt: /good at|what do you do/i, askedFor: /ask you for|ask you to help|asks? you for help/i,
+                hours: /hours/i, budget: /spend|budget/i, where: /online|local/i, refuse: /won.?t do|refuse|not willing/i, goal: /goal/i };
+const VERDICT = { great: ["Surprisingly, yes", 0], worth_a_shot: ["This could work", 1] };
+const EASE = { easy: "Easy", some_setup: "Some setup", hard: "Hard" };
+let js = null;
+
+// ---------- 1. the answers
+$("fill").onclick = () => {
+  const lines = $("paste").value.split(/\r?\n/).map((l) => l.trim());
+  const found = {}; let cur = null;
+  for (const line of lines) {
+    if (!line) continue;
+    const key = Object.keys(MATCH).find((k) => MATCH[k].test(line) && /\?|:$|^\d+\.|your |anything|hours|goal|email/i.test(line) && line.length < 90 && !found[k]);
+    if (key && (line.endsWith("?") || line.endsWith(":") || line.length < 70)) {
+      cur = key; found[key] = "";
+      const after = line.split(/[?:]\s+/).slice(1).join(": ").trim();   // "Question: answer" on one line
+      if (after) found[key] = after;
+      continue;
+    }
+    if (cur) found[cur] = (found[cur] ? found[cur] + " " : "") + line;
+  }
+  let n = 0;
+  for (const k of FIELDS) if (found[k]) { $("f_" + k).value = found[k]; n++; }
+  status(n ? `Filled in ${n} answers. Check them, then Ask Frank.` : "Couldn't match the questions: copy each answer into its box instead.", "status", !n);
+};
+const answers = () => Object.fromEntries(FIELDS.map((k) => [k, $("f_" + k).value.trim()]));
+
+$("ask").onclick = async () => {
+  const a = answers();
+  if (!a.goodAt) return status("Fill in what they're good at, at least.", "status", true);
+  $("ask").disabled = true; status("Frank is working on it (about 15 seconds)…");
+  try {
+    const res = await fetch(API, { method: "POST", headers: { "Content-Type": "text/plain;charset=UTF-8" },
+                                   body: JSON.stringify({ kind: "jumpstart", answers: a }) });
+    const data = await res.json().catch(() => null);
+    if (!res.ok || !data || !data.jumpstart) throw new Error((data && data.error) || `Frank's service answered ${res.status}`);
+    load(data.jumpstart); status("Frank's draft is in. Read it below.");
+  } catch (e) {
+    status(`Couldn't reach Frank: ${e.message}. Open this page through tools\\start-studio.bat (like the Short Studio), or paste the JSON.`, "status", true);
+  } finally { $("ask").disabled = false; }
+};
+$("usejson").onclick = () => {
+  try { let j = JSON.parse($("json").value); if (j.jumpstart) j = j.jumpstart; load(j); status("Using the pasted answer."); }
+  catch (e) { status("That isn't valid JSON: " + e.message, "status", true); }
+};
+
+// ---------- 2. the editor
+const IDEA_FIELDS = [["idea", "The idea", 1], ["whyYou", "Why it fits them", 2], ["whoPays", "Who pays", 1], ["startCost", "Costs to start", 1],
+  ["firstDollar", "First dollar in", 1], ["test", "The cheap test", 2], ["testCost", "The test costs", 1], ["goodSign", "Keep going if", 1],
+  ["rethinkIf", "Rethink it if", 1], ["watchOut", "Watch out for", 1], ["goalMath", "Goal math (leave empty if no goal)", 1]];
+function load(j) {
+  js = j;
+  $("e_summary").value = j.summary || ""; $("e_take").value = j.take || "";
+  $("ideas").innerHTML = (j.ideas || []).slice(0, 3).map((x, i) => `
+    <div class="ideabox"><h3>${String(i + 1).padStart(2, "0")}</h3>
+      <div class="grid2">
+        <div><label>Verdict</label><select data-i="${i}" data-k="verdict"><option value="great">Surprisingly, yes</option><option value="worth_a_shot">This could work</option></select></div>
+        <div><label>Easy to start?</label><select data-i="${i}" data-k="easyToStart"><option value="easy">Easy</option><option value="some_setup">Some setup</option><option value="hard">Hard</option></select></div>
+      </div>
+      ${IDEA_FIELDS.map(([k, label, rows]) => `<label>${label}</label>${rows > 1 ? `<textarea rows="${rows}" data-i="${i}" data-k="${k}"></textarea>` : `<input data-i="${i}" data-k="${k}">`}`).join("")}
+      <label>The first seven days (one per line)</label><textarea rows="7" data-i="${i}" data-k="week"></textarea>
+    </div>`).join("");
+  document.querySelectorAll("[data-i]").forEach((el) => {
+    const x = js.ideas[el.dataset.i], k = el.dataset.k;
+    el.value = k === "week" ? (x.week || []).join("\n") : (x[k] || "");
+  });
+  $("editor").hidden = false; render();
+}
+function current() {
+  const j = { summary: $("e_summary").value.trim(), take: $("e_take").value.trim(), ideas: js.ideas.map((x) => ({ ...x })) };
+  document.querySelectorAll("[data-i]").forEach((el) => {
+    const x = j.ideas[el.dataset.i], k = el.dataset.k;
+    x[k] = k === "week" ? el.value.split("\n").map((s) => s.trim()).filter(Boolean) : el.value.trim();
+  });
+  return j;
+}
+document.addEventListener("input", (e) => { if (js && e.target.closest("#editor")) render(); });
+document.addEventListener("change", (e) => { if (js && e.target.closest("#editor")) render(); });
+
+// ---------- 3. the Jumpstart itself
+function render() {
+  const j = current(), a = answers(), name = a.name || "you";
+  const today = new Date().toLocaleDateString("en-US", { month: "long", day: "numeric", year: "numeric" });
+  const foot = (n) => `<div class="foot"><span>SideFrog Jumpstart for ${esc(name)}</span><span>sidefrog.com</span><span>${n}</span></div>`;
+  const cover = `<section class="pg">
+    <p class="k">SideFrog Jumpstart · ${esc(today)}</p>
+    <div class="head"><div><h2>Three side hustles that fit ${esc(name)}</h2></div><img src="../video/frames/round-504-12.png" alt=""></div>
+    <p class="lede">${esc(j.summary)}</p>
+    <ol class="overview">${j.ideas.map((x, i) => `<li><span class="n">${i + 1}</span><div><b>${esc(x.idea)}</b> <span class="pill">${esc(VERDICT[x.verdict]?.[0] || "")}</span><br>${esc(x.whyYou)}</div></li>`).join("")}</ol>
+    <div class="take"><p class="k">Mark's take</p><p>${esc(j.take)}</p></div>
+    <p class="fine">Frank's part is an AI-assisted read from SideFrog, checked by Mark. It's not market research, legal or financial advice, or a promise of income. Check local permits before you start anything in person.</p>
+    ${foot(1)}</section>`;
+  const pages = j.ideas.map((x, i) => {
+    const [label, face] = VERDICT[x.verdict] || VERDICT.worth_a_shot;
+    const score = [["Easy to start?", EASE[x.easyToStart]], ["Costs to start", cap(x.startCost)], ["The test costs", cap(x.testCost)], ["First dollar in", cap(x.firstDollar)]]
+      .filter(([, v]) => v).map(([k, v]) => `<div><dt>${k}</dt><dd>${esc(v)}</dd></div>`).join("");
+    const pair = [["Keep going if", x.goodSign], ["Rethink it if", x.rethinkIf], ["Watch out for", x.watchOut]]
+      .filter(([, v]) => v).map(([k, v]) => `<div><dt>${k}</dt><dd>${esc(cap(v))}</dd></div>`).join("");
+    return `<section class="pg">
+      <p class="k">Idea ${i + 1} of 3</p>
+      <div class="head"><div><h2>${esc(x.idea)}</h2><span class="pill">${esc(label)}</span></div><img src="../video/frames/round-504-${String(face).padStart(2, "0")}.png" alt=""></div>
+      <p class="lede" style="margin-top:0.14in">${esc(x.whyYou)}</p>
+      ${x.whoPays ? `<p><b>Who pays:</b> ${esc(x.whoPays)}</p>` : ""}
+      <dl class="score">${score}</dl>
+      <div class="test"><p class="k">The cheap test${x.testCost ? " · " + esc(x.testCost) : ""}</p><p>${esc(x.test)}</p></div>
+      <dl class="pair">${pair}</dl>
+      ${x.goalMath ? `<p class="math"><b>Your goal, as math:</b> ${esc(x.goalMath)} That's arithmetic, not a promise.</p>` : ""}
+      <h3>Your first seven days</h3>
+      <ol class="week">${(x.week || []).slice(0, 7).map((d, k) => `<li><b>Day ${k + 1}</b><span>${esc(d)}</span></li>`).join("")}</ol>
+      ${foot(i + 2)}</section>`;
+  }).join("");
+  $("doc").innerHTML = cover + pages;
+  document.title = `SideFrog Jumpstart - ${a.name || "customer"}`;    // the PDF's file name
+}
+$("print").onclick = async () => {        // wait for Frank's pictures, or the PDF comes out without them
+  render();
+  await Promise.all([...document.querySelectorAll("#doc img")].map((img) => img.complete ? null : new Promise((ok) => { img.onload = img.onerror = ok; })));
+  window.print();
+};
+$("saveOrder").onclick = () => {
+  const a = answers(), order = { date: new Date().toISOString().slice(0, 10), answers: a, jumpstart: current() };
+  const el = document.createElement("a");
+  el.href = URL.createObjectURL(new Blob([JSON.stringify(order, null, 2)], { type: "application/json" }));
+  el.download = `jumpstart-${order.date}-${(a.name || "customer").toLowerCase().replace(/[^a-z0-9]+/g, "-")}.json`; el.click();
+  status("Saved. Keep these: they show what people ask for, which is research for the playbook.", "status2");
+};
+</script>
+</body>
+</html>

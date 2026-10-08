@@ -1,0 +1,59 @@
+THE SIDEFROG JUMPSTART ($39): SETUP AND THE FIRST FIVE DAYS
+
+ONE-TIME SETUP (about 30 minutes)
+
+1. Stripe Payment Link
+   Stripe dashboard > Payment Links > New. Product: "SideFrog Jumpstart", one-time, $39.
+   After payment: "Don't show confirmation page" > redirect to https://sidefrog.com/jumpstart/thanks/
+   Copy the link (https://buy.stripe.com/...).
+
+2. The form (Tally or Google Forms). Ask these, in this order, word for word, so the Jumpstart
+   Desk can read the answers when you paste them:
+     Your email (the one you paid with)
+     Your first name
+     What do you do, and what are you good at?
+     What do people already ask you for help with?
+     How many hours a week could you give this?
+     What's the most you'd spend to get started?
+     Online, local, or either?
+     Anything you won't do?
+     A monthly income goal, if you have one (optional)
+   Turn on email notifications for new responses. Copy the form's share link.
+
+3. Put both links in make_pages.py (JUMPSTART_PAY and JUMPSTART_FORM, near the top),
+   run python make_pages.py, zip and upload the site as usual.
+
+4. Deploy the new Lambda (version 3.4.0). The Desk needs its "jumpstart" request.
+
+FILLING AN ORDER (about 10 minutes)
+   Stripe emails you the sale, and the form emails you the answers.
+   Double-click tools\start-jumpstart-desk.bat, paste the form response, click Fill in, then Ask Frank.
+   Read it: nothing they said they won't do, tests well under their budget, the take sounds like you.
+   Print / Save as PDF (Letter, Margins None, Background graphics on). Email it with a short note.
+   Click "Save order file" and keep them in SideFrog\jumpstarts\. They're research for the playbook.
+   Refunds: Stripe dashboard > the payment > Refund. No questions.
+
+THE FIRST FIVE DAYS (goal: three orders by Sunday)
+   Day 1  Set up the links. Make one Jumpstart for yourself in the Desk and read it like a customer.
+   Day 2  Post on LinkedIn (draft below).
+   Day 3  A Short or a post showing your own Jumpstart: "I ran it on myself. Here's what Frank picked."
+   Day 4  If someone bought and says yes, share theirs without their name. If not, answer a question
+          people asked about it.
+   Day 5  One last post: why you built it.
+   Count: page visits (GA jumpstart_click), checkouts started (jumpstart_checkout) and orders.
+   Three orders: it works, keep going. Visits but no checkouts: the page or the price. No visits:
+   the posts, not the product.
+
+LINKEDIN POST (Day 2)
+
+I built SideFrog as a free way to check a side hustle idea before you spend money on it.
+
+The most common thing people tell me is that they don't have an idea to check.
+
+So I'm trying something. Tell SideFrog what you're good at, how many hours you have, what you'd spend and what you won't do. You get back three side hustles that fit you, ranked, each with the cheapest way to test it and a plan for the first seven days.
+
+It's $39, one time. No course and no coaching call. Frank, the frog, drafts it and I read every one before it goes out. If it doesn't help, I'll refund you.
+
+I'm testing it with a handful of people this week.
+
+sidefrog.com/jumpstart

@@ -1,0 +1,704 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex, nofollow">
+<title>Frank Short Studio (private)</title>
+<!-- PRIVATE TOOL: not part of the site. Open this file in Chrome on your desktop.
+     Ask Frank (or paste his JSON) -> edit the episode -> download episode-NNN.json ->
+     python video\make_short.py "...\episode-NNN.json" -->
+<style>
+  @font-face { font-family: "Bricolage Grotesque"; src: url("../fonts/src/Bricolage.ttf"); font-weight: 200 800; }
+  :root { --paper: #FBF7EF; --card: #FFFDF9; --ink: #1F241F; --muted: #5A5A4A; --deep: #4A5C34; --frog: #8DAA3F;
+          --accent: #A4501F; --line: #E2D8C6; --rule: #A89B84; --warn: #B4531D; }
+  * { box-sizing: border-box; }
+  body { margin: 0; background: var(--paper); color: var(--ink); font: 16px/1.45 "Bricolage Grotesque", system-ui, sans-serif; }
+  main { max-width: 64rem; margin: 0 auto; padding: 2rem 1.5rem 4rem; }
+  h1 { font-size: 2.2rem; letter-spacing: -0.03em; margin: 0 0 0.2rem; }
+  .sub { color: var(--muted); margin: 0 0 1.6rem; }
+  .kicker { font-size: 0.72rem; font-weight: 800; letter-spacing: 0.16em; text-transform: uppercase; color: var(--deep); margin: 0 0 0.5rem; }
+  section { background: var(--card); border: 2px solid var(--ink); border-radius: 18px; box-shadow: 6px 6px 0 var(--ink); padding: 1.3rem 1.4rem; margin: 0 0 1.6rem; }
+  label { display: block; font-weight: 700; font-size: 0.9rem; margin: 0.8rem 0 0.25rem; }
+  input, textarea, select { width: 100%; font: inherit; color: var(--ink); background: #fff; border: 1.5px solid var(--rule); border-radius: 10px; padding: 0.55rem 0.7rem; }
+  textarea { resize: vertical; }
+  button { font: inherit; font-weight: 800; background: #97AE43; color: var(--ink); border: 2px solid var(--ink); border-radius: 12px; padding: 0.6rem 1.1rem; box-shadow: 3px 3px 0 var(--ink); cursor: pointer; }
+  button.quiet { background: var(--card); }
+  button:disabled { opacity: 0.6; cursor: progress; }
+  .row { display: flex; gap: 0.8rem; align-items: end; flex-wrap: wrap; }
+  .row > * { flex: 1; }
+  .row > .narrow { flex: 0 0 9rem; }
+  .note { display: grid; grid-template-columns: 12rem 1fr 13rem; gap: 0.6rem; align-items: start; padding: 0.6rem 0; border-top: 1px solid var(--line); }
+  .note:first-of-type { border-top: 0; }
+  .count { font-size: 0.78rem; color: var(--muted); margin-top: 0.2rem; }
+  .count.over { color: var(--warn); font-weight: 700; }
+  .status { margin: 0.8rem 0 0; font-weight: 700; }
+  .status.error { color: var(--warn); }
+  pre { background: #F4EFE3; border-radius: 10px; padding: 0.8rem; overflow: auto; font-size: 0.82rem; white-space: pre-wrap; }
+  details summary { cursor: pointer; font-weight: 700; margin-top: 0.6rem; }
+  code { background: #F4EFE3; padding: 0.1rem 0.35rem; border-radius: 6px; }
+  .meta { display: grid; grid-template-columns: 1fr 1fr; gap: 0 1rem; }
+  .meta .wide { grid-column: 1 / -1; }
+  .copyrow { display: flex; gap: 0.5rem; align-items: start; }
+  .copyrow > input, .copyrow > textarea { flex: 1; }
+  .chips { display: flex; flex-wrap: wrap; gap: 0.4rem; }
+  .chips button { font-weight: 600; font-size: 0.88rem; padding: 0.3rem 0.7rem; box-shadow: none; background: var(--card); border-width: 1.5px; }
+  .chips button.done { opacity: 0.45; text-decoration: line-through; }
+  .copyrow > button { flex: 0 0 auto; padding: 0.45rem 0.8rem; box-shadow: 2px 2px 0 var(--ink); }
+</style>
+</head>
+<body>
+<main>
+  <p class="kicker">Private · not on the site</p>
+  <h1>Frank Short Studio</h1>
+  <p class="sub">Ask Frank about an idea (or paste his answer), shape it into a 30-second episode, then render it with <code>make_short.py</code>.</p>
+
+  <section>
+    <p class="kicker">1 · Get Frank's verdict</p>
+    <div class="row">
+      <div><label for="idea">The idea</label><input id="idea" placeholder="e.g. mobile car wash"></div>
+      <div class="narrow"><button id="ask">Ask Frank</button></div>
+    </div>
+    <details>
+      <summary>Or paste Frank's results (JSON)</summary>
+      <textarea id="json" rows="6" placeholder='{"verdict": "crowded", "subject": "Mobile car wash", ...}'></textarea>
+      <p><button class="quiet" id="usejson">Use this JSON</button></p>
+    </details>
+    <details>
+      <summary>Ideas people already want checked</summary>
+      <p class="count" style="margin:0.4rem 0">Topics that do well on other side-hustle channels and that Frank hasn't checked yet. Click one to put it in the box, then Ask Frank.</p>
+      <div class="chips" id="backlog"></div>
+    </details>
+    <p class="status" id="status"></p>
+  </section>
+
+  <section>
+    <p class="kicker">2 · Shape the episode</p>
+    <div class="row">
+      <div class="narrow"><label for="number">Episode No.</label><input id="number" type="number" min="1" value="1"></div>
+      <div><label for="re">RE line (the memo's subject)</label><input id="re" data-max="40"><div class="count" data-for="re"></div></div>
+    </div>
+    <div class="row">
+      <div><label for="question">Hook question (rotates each episode, so no two in a row look alike)</label><select id="question"></select></div>
+      <div id="customQWrap" hidden><label for="customQ">Your own question</label><input id="customQ" data-max="34"><div class="count" data-for="customQ"></div></div>
+    </div>
+    <label for="hook">Hook: the idea in 1 to 4 short lines (one per line, about 14 characters each)</label>
+    <textarea id="hook" rows="3" data-max-line="14"></textarea><div class="count" data-for="hook"></div>
+
+    <label>Frank's three notes (heading, one line, his face)</label>
+    <div id="notes"></div>
+
+    <div class="row">
+      <div><label for="verdict">Verdict</label><select id="verdict"></select>
+        <div class="count" id="vlock">No answer from SideFrog yet: pick the verdict by hand.</div>
+        <label style="font-weight:500;margin-top:0.3rem"><input type="checkbox" id="voverride" style="width:auto"> Override SideFrog's verdict</label></div>
+      <div><label for="vface">Frank's face on the verdict card</label><select id="vface"></select></div>
+    </div>
+    <label for="reason">Reason (on the verdict card)</label>
+    <textarea id="reason" rows="2" data-max="150"></textarea><div class="count" data-for="reason"></div>
+    <label for="test">The cheap test</label>
+    <textarea id="test" rows="2" data-max="130"></textarea><div class="count" data-for="test"></div>
+    <div class="row">
+      <div><label for="ease">Easy to start?</label><select id="ease"><option value="">(leave off)</option><option value="easy">Easy</option><option value="some_setup">Some setup</option><option value="hard">Hard</option></select></div>
+      <div><label for="firstDollar">First dollar in</label><input id="firstDollar" placeholder="e.g. 2 to 4 weeks" data-max="18"><div class="count" data-for="firstDollar"></div></div>
+      <div><label for="testCost">The test costs</label><input id="testCost" placeholder="e.g. about $40" data-max="14"><div class="count" data-for="testCost"></div></div>
+    </div>
+    <label for="take">Frank's take: one line of advice in your own words (required)</label>
+    <textarea id="take" rows="2" data-max="110" placeholder="e.g. Don't buy ten tables. List two, take a deposit, then buy the rest."></textarea><div class="count" data-for="take"></div>
+    <div class="row">
+      <div><label for="category">Playbook chapter</label><select id="category">
+        <option>Local services</option><option>Selling things</option><option>Skills from home</option><option>Other ideas</option></select>
+        <div class="count">"Keep your day job" ideas go in "Ones Frank says to skip" automatically.</div></div>
+      <div></div>
+    </div>
+    <div class="count">This is the part only you can write: what you'd actually tell a friend. It gets its own screen after the cheap test, and it's what shows YouTube (and viewers) a real person's judgment behind every episode.</div>
+    <div class="count">Frank's scorecard: shown under the verdict, one per beat. The cost also goes in the cheap test's label and the "A $40 Test" title. Leave any of them empty to skip it.</div>
+  </section>
+
+  <section>
+    <p class="kicker">3 · Make the Short</p>
+    <div class="row">
+      <div><button id="download">Download episode file</button></div>
+      <div><button class="quiet" id="copy">Copy EPISODE block</button></div>
+      <div><button class="quiet" id="savePlaybook">Save for the playbook</button></div>
+    </div>
+    <p class="count">The episode file now carries Frank's full answer, so every episode becomes a playbook page. "Save for the playbook" is for ideas you won't film: it saves just the page.</p>
+    <p>Then in PowerShell, in your SideFrog folder:</p>
+    <pre id="command"></pre>
+    <details><summary>The EPISODE block (to paste into make_short.py instead)</summary><pre id="block"></pre></details>
+    <details><summary>Frank's full answer</summary><pre id="raw">Nothing yet.</pre></details>
+    <p class="status" id="status2"></p>
+  </section>
+
+  <section>
+    <p class="kicker">4 · YouTube upload package</p>
+    <p class="sub" style="margin:0 0 0.4rem">Made from the episode above (the same rules as the Episode Desk). Edit freely; "Regenerate" rebuilds it from the episode.</p>
+    <div class="meta">
+      <div class="wide"><label for="ytMoney">Make-money title ("Can you actually make money with…")</label><div class="copyrow"><input id="ytMoney" data-title><button class="quiet" data-copy="ytMoney">Copy</button></div><div class="count" data-tcount="ytMoney"></div></div>
+      <div class="wide"><label for="ytRecommended">Recommended title</label><div class="copyrow"><input id="ytRecommended" data-title><button class="quiet" data-copy="ytRecommended">Copy</button></div><div class="count" data-tcount="ytRecommended"></div></div>
+      <div class="wide"><label for="ytHook">Hook-first title</label><div class="copyrow"><input id="ytHook" data-title><button class="quiet" data-copy="ytHook">Copy</button></div><div class="count" data-tcount="ytHook"></div></div>
+      <div class="wide"><label for="ytCost">Test-cost title (an honest dollar figure: what the test costs)</label><div class="copyrow"><input id="ytCost" data-title><button class="quiet" data-copy="ytCost">Copy</button></div><div class="count" data-tcount="ytCost"></div></div>
+      <div class="wide"><label for="ytBoring">"Boring" title (for plain, practical work: skip it for flashy ideas)</label><div class="copyrow"><input id="ytBoring" data-title><button class="quiet" data-copy="ytBoring">Copy</button></div><div class="count" data-tcount="ytBoring"></div></div>
+      <div class="wide"><label for="ytSearch">Search-first title</label><div class="copyrow"><input id="ytSearch" data-title><button class="quiet" data-copy="ytSearch">Copy</button></div><div class="count" data-tcount="ytSearch"></div></div>
+      <div class="wide"><label for="ytFrank">Frank-first title</label><div class="copyrow"><input id="ytFrank" data-title><button class="quiet" data-copy="ytFrank">Copy</button></div><div class="count" data-tcount="ytFrank"></div></div>
+      <div class="wide"><label for="ytDesc">Description</label><div class="copyrow"><textarea id="ytDesc" rows="6"></textarea><button class="quiet" data-copy="ytDesc">Copy</button></div></div>
+      <div class="wide"><label for="ytHashtags">Hashtags</label><div class="copyrow"><input id="ytHashtags"><button class="quiet" data-copy="ytHashtags">Copy</button></div></div>
+      <div class="wide"><label for="ytTags">Tags</label><div class="copyrow"><textarea id="ytTags" rows="2"></textarea><button class="quiet" data-copy="ytTags">Copy</button></div></div>
+      <div><label for="ytThumb1">Thumbnail text, option 1</label><div class="copyrow"><input id="ytThumb1"><button class="quiet" data-copy="ytThumb1">Copy</button></div></div>
+      <div><label for="ytThumb2">Thumbnail text, option 2</label><div class="copyrow"><input id="ytThumb2"><button class="quiet" data-copy="ytThumb2">Copy</button></div></div>
+      <div class="wide"><label for="ytPinned">Pinned comment</label><div class="copyrow"><textarea id="ytPinned" rows="2"></textarea><button class="quiet" data-copy="ytPinned">Copy</button></div></div>
+      <div><label for="ytCategory">Category</label><div class="copyrow"><input id="ytCategory" value="People & Blogs"><button class="quiet" data-copy="ytCategory">Copy</button></div></div>
+      <div><label for="ytFilename">File name</label><div class="copyrow"><input id="ytFilename"><button class="quiet" data-copy="ytFilename">Copy</button></div></div>
+    </div>
+    <div class="row" style="margin-top:1rem">
+      <div><button class="quiet" id="ytRegen">Regenerate from episode</button></div>
+      <div><button class="quiet" id="ytCopyAll">Copy the whole package</button></div>
+      <div><button id="ytSave">Save package (.txt)</button></div>
+    </div>
+    <p class="status" id="status3"></p>
+  </section>
+
+  <section>
+    <p class="kicker">5 · Other platforms</p>
+    <p class="sub" style="margin:0 0 0.4rem">Post the original video file to each (never a downloaded copy with another platform's watermark). Each caption carries its own tagged link, so Google Analytics shows which platform sends visitors.</p>
+    <div class="meta">
+      <div class="wide"><label for="soTikTok">TikTok caption</label><div class="copyrow"><textarea id="soTikTok" rows="3"></textarea><button class="quiet" data-copy="soTikTok">Copy</button></div>
+        <div class="count">Links in TikTok captions aren't clickable: put sidefrog.com/?utm_source=tiktok in your TikTok bio.</div></div>
+      <div class="wide"><label for="soInstagram">Instagram Reels caption</label><div class="copyrow"><textarea id="soInstagram" rows="9"></textarea><button class="quiet" data-copy="soInstagram">Copy</button></div>
+        <div class="count">Upload the episode's -cover.png as the Reel's cover. Put sidefrog.com/?utm_source=instagram in your Instagram bio.</div></div>
+      <div class="wide"><label for="soThreads">Threads post</label><div class="copyrow"><textarea id="soThreads" rows="4"></textarea><button class="quiet" data-copy="soThreads">Copy</button></div></div>
+      <div class="wide"><label for="soLinkedIn">LinkedIn post</label><div class="copyrow"><textarea id="soLinkedIn" rows="9"></textarea><button class="quiet" data-copy="soLinkedIn">Copy</button></div></div>
+    </div>
+  </section>
+</main>
+
+<script>
+// Frank's service (the same one the site uses)
+const API = "https://4s7uc7iyyeh7p4sknfpo6agllq0ahdff.lambda-url.us-east-1.on.aws/";
+const VERDICTS = {
+  great:        { label: "Surprisingly, yes", lines: ["SURPRISINGLY,", "YES"], face: 0 },
+  worth_a_shot: { label: "This could work",   lines: ["THIS COULD", "WORK"],   face: 1 },
+  crowded:      { label: "Crowded pond",      lines: ["CROWDED", "POND"],      face: 2 },
+  nah:          { label: "Keep your day job", lines: ["KEEP YOUR", "DAY JOB"], face: 2 },
+  cant_help:    { label: "Can't help",        lines: ["CAN'T HELP", "WITH THAT ONE"], face: 3 },
+};
+const FACES = { 0: 'surprised "o"', 1: "smile, looking left", 2: "heavy lids (unimpressed)", 3: "puzzled", 4: "skeptical frown", 12: "looking at you" };
+const $ = (id) => document.getElementById(id);
+const status = (msg, el = "status", err = false) => { $(el).textContent = msg; $(el).className = "status" + (err ? " error" : ""); };
+
+// ---------- the form
+for (const [k, v] of Object.entries(VERDICTS)) $("verdict").add(new Option(v.label, k));
+for (const [k, v] of Object.entries(FACES)) $("vface").add(new Option(`${k} · ${v}`, k));
+const notesEl = $("notes");
+for (let n = 0; n < 3; n++) {
+  const row = document.createElement("div"); row.className = "note";
+  row.innerHTML = `<div><input id="nh${n}" placeholder="Heading" data-max="22"><div class="count" data-for="nh${n}"></div></div>
+    <div><textarea id="nl${n}" rows="2" placeholder="One line" data-max="85"></textarea><div class="count" data-for="nl${n}"></div></div>
+    <div><select id="nf${n}"></select></div>`;
+  notesEl.appendChild(row);
+  for (const [k, v] of Object.entries(FACES)) $(`nf${n}`).add(new Option(`${k} · ${v}`, k));
+}
+try { $("number").value = localStorage.getItem("studio-next-number") || 1; } catch {}
+
+// ---------- the hook question rotates, so episodes don't all open the same way
+const QUESTIONS = ["Can this actually make money?", "Sounds great until\u2026", "Who actually pays for this?",
+                   "Good idea. Terrible side hustle?", "Would Frank spend his own money on this?"];
+QUESTIONS.forEach((q, i) => $("question").add(new Option(q, String(i))));
+$("question").add(new Option("Your own question\u2026", "custom"));
+function nextQuestion() {
+  let last = -1; try { last = Number(localStorage.getItem("studio-last-question") ?? -1); } catch {}
+  $("question").value = String((last + 1) % QUESTIONS.length);
+  $("customQWrap").hidden = true;
+}
+$("question").onchange = () => { $("customQWrap").hidden = $("question").value !== "custom"; update(); };
+function questionText() {
+  return $("question").value === "custom" ? $("customQ").value.trim() : QUESTIONS[Number($("question").value)] || QUESTIONS[0];
+}
+nextQuestion();
+
+// ---------- Frank's take has to be yours: flag a line that mostly repeats Frank's AI answer
+let lastReport = null;
+const words = (t) => new Set(String(t || "").toLowerCase().match(/[a-z0-9$']{4,}/g) || []);
+function copiedFromFrank(take) {
+  if (!lastReport || !take.trim()) return false;
+  const mine = words(take); if (mine.size < 3) return false;
+  const r = lastReport;
+  return [r.verdictReason, r.firstMove, r.sharpenedIdea, r.whoPays, r.goodSign, r.rethinkIf, r.watchOut, ...(r.alternatives || [])]
+    .some((src) => { const theirs = words(src); let same = 0; mine.forEach((w) => { if (theirs.has(w)) same++; }); return same / mine.size >= 0.6; });
+}
+
+// ---------- Frank's answer -> a draft episode
+const first = (s) => String(s || "").trim().split(/(?<=[.!?])\s+/)[0] || "";
+const cap = (s) => (s ? s[0].toUpperCase() + s.slice(1) : s);
+// Title Case for the RE line, like Mark's episodes ("Vending Machine Route", "Mobile Car Wash")
+const SMALL = new Set(["a", "an", "and", "as", "at", "but", "by", "for", "in", "of", "on", "or", "the", "to", "vs", "with"]);
+const titleCase = (s) => String(s || "").trim().split(/\s+/).map((w, i) =>
+  (i > 0 && SMALL.has(w.toLowerCase())) ? w.toLowerCase() : (/[A-Z].*[A-Z]/.test(w) ? w : w.charAt(0).toUpperCase() + w.slice(1))).join(" ");
+const sentence = (s) => { s = cap(String(s || "").trim()); return s && !/[.!?]$/.test(s) ? s + "." : s; };
+function hookLines(subject) {                       // greedy lines of about 12 characters, up to 3, ending in "?"
+  const words = String(subject || "").replace(/[?.!]+$/, "").split(/\s+/).filter(Boolean);
+  const lines = []; let cur = "";
+  for (const w of words) {
+    if (cur && (cur + " " + w).length > 12 && lines.length < 2) { lines.push(cur); cur = w; }
+    else cur = cur ? cur + " " + w : w;
+  }
+  if (cur) lines.push(cur);
+  lines[lines.length - 1] += "?";
+  return lines;
+}
+function draft(r) {
+  const v = VERDICTS[r.verdict] ? r.verdict : "crowded";
+  const good = v === "great" || v === "worth_a_shot";
+  const subject = r.subject || r.idea || $("idea").value;
+  $("re").value = titleCase(subject);
+  $("hook").value = hookLines(cap(subject)).join("\n");
+  const notes = good
+    ? [["Who pays?", r.whoPays, 1], ["Watch out", r.watchOut, 4], ["Keep going if", r.goodSign, 0]]
+    : [["Who pays?", r.whoPays, 2], ["The catch", r.watchOut, 4], ["Rethink it if", r.rethinkIf, 3]];
+  notes.forEach(([h, l, f], n) => { $(`nh${n}`).value = h; $(`nl${n}`).value = sentence(first(l)); $(`nf${n}`).value = f; });
+  lockVerdict(VERDICTS[r.verdict] ? r.verdict : null);
+  $("vface").value = VERDICTS[$("verdict").value].face;
+  $("reason").value = r.verdictReason || "";
+  $("test").value = sentence(r.firstMove || "");
+  $("ease").value = ["easy", "some_setup", "hard"].includes(r.easyToStart) ? r.easyToStart : "";
+  $("firstDollar").value = r.firstDollar || "";
+  $("testCost").value = r.testCost || "";
+  markDone(r.idea || $("idea").value);
+  $("raw").textContent = JSON.stringify(r, null, 2);
+  lastReport = r;
+  $("take").value = "";                                              // a fresh take for every idea: yours to write
+  nextQuestion();
+  $("ytFilename").value = ""; $("ytFilename").dataset.edited = "";   // a fresh file name for this idea
+  update(); fillYoutube();
+}
+
+// ---------- the verdict is SideFrog's real answer: locked unless you deliberately override it
+let lockedVerdict = null;
+function lockVerdict(v) {
+  lockedVerdict = v;
+  $("voverride").checked = false;
+  if (v) {
+    $("verdict").value = v; $("verdict").disabled = true;
+    $("vlock").textContent = `Verdict from SideFrog: ${VERDICTS[v].label}. Locked so the Short matches the real result.`;
+    $("vlock").className = "count";
+  } else {
+    $("verdict").disabled = false;
+    $("vlock").textContent = "SideFrog's answer had no verdict I recognize: check it and pick by hand.";
+    $("vlock").className = "count over";
+  }
+}
+$("voverride").onchange = () => {
+  if (!lockedVerdict) { $("voverride").checked = false; return; }
+  $("verdict").disabled = !$("voverride").checked;
+  if (!$("voverride").checked) $("verdict").value = lockedVerdict;
+  $("vlock").textContent = $("voverride").checked
+    ? `Overriding SideFrog's verdict (${VERDICTS[lockedVerdict].label}). The Short won't match the real result.`
+    : `Verdict from SideFrog: ${VERDICTS[lockedVerdict].label}. Locked so the Short matches the real result.`;
+  $("vlock").className = "count" + ($("voverride").checked ? " over" : "");
+  update();
+};
+
+// ---------- ask Frank, or use pasted JSON
+$("ask").onclick = async () => {
+  const idea = $("idea").value.trim();
+  if (idea.length < 3) return status("Type an idea first.", "status", true);
+  $("ask").disabled = true; status("Frank is sipping on it…");
+  try {
+    const res = await fetch(API, { method: "POST", headers: { "Content-Type": "text/plain;charset=UTF-8" },
+                                   body: JSON.stringify({ kind: "idea", idea }) });
+    const data = await res.json().catch(() => null);
+    if (!res.ok || !data || !data.idea) throw new Error((data && data.error) || `Frank's service answered ${res.status}`);
+    draft({ ...data.idea, idea });
+    status("Frank's answer is in. Edit the episode below.");
+  } catch (e) {
+    status(`Couldn't reach Frank: ${e.message}. If you've locked the service to sidefrog.com, open this page through the local launcher, or paste the JSON instead.`, "status", true);
+  } finally { $("ask").disabled = false; }
+};
+$("usejson").onclick = () => {
+  try {
+    let r = JSON.parse($("json").value);
+    if (r.idea && typeof r.idea === "object") r = r.idea;          // the service's full reply works too
+    draft(r); status("Using the pasted results. Edit the episode below.");
+  } catch (e) { status("That isn't valid JSON: " + e.message, "status", true); }
+};
+
+// ---------- YouTube package (ported from the SideFrog Episode Desk v5.1, same rules)
+const slugify = (s) => (s || "side-hustle").toLowerCase().replace(/&/g, " and ").replace(/[^a-z0-9]+/g, "-").replace(/^-+|-+$/g, "").slice(0, 42) || "side-hustle";
+function cleanTopicName(name) { let t = (name || "Side hustle").trim(); t = t.replace(/\bautomated\b/ig, "").replace(/\s+/g, " ").trim(); return t || "Side hustle"; }
+function shortTopic(name) { const t = cleanTopicName(name); return t.length <= 42 ? t : t.slice(0, 42).replace(/\s+\S*$/, "").trim(); }
+function safeTitle(s) { s = (s || "").replace(/\s+/g, " ").trim(); return s.length <= 99 ? s : s.slice(0, 96).replace(/\s+\S*$/, "").trim() + "\u2026"; }
+function reasonSignals(reason) {
+  const r = (reason || "").toLowerCase();
+  return { passive: /passive|automated|hands[- ]?off/.test(r), crowded: /crowd|saturat|competition|competitive|commodit/.test(r),
+    expensive: /expens|equipment|startup cost|upfront|capital|inventory/.test(r), labor: /manual|labor|hours|time[- ]?consum|job|workload|driving|route/.test(r),
+    location: /location|placement|foot traffic|territory/.test(r), margin: /margin|profit|pennies|ad revenue|economics|low pay/.test(r),
+    logistics: /logistic|delivery|restock|shipping|storage/.test(r), demand: /demand|customer|buyer|paying|willing to pay/.test(r) };
+}
+function makeHookTitle(topic, v, reason) {
+  const s = reasonSignals(reason); v = (v || "").toUpperCase();
+  if (s.passive && s.labor) return safeTitle("This \u201cPassive\u201d Side Hustle Is Basically a Job");
+  if (s.passive) return safeTitle("This \u201cPassive Income\u201d Side Hustle Has a Catch");
+  if (s.location) return safeTitle(`The Part Nobody Mentions About ${topic}`);
+  if (s.expensive) return safeTitle("This Side Hustle Has an Expensive Catch");
+  if (s.crowded) return safeTitle("This Side Hustle Is More Crowded Than It Looks");
+  if (s.margin) return safeTitle("The Math on This Side Hustle Gets Ugly Fast");
+  if (s.logistics) return safeTitle("This Side Hustle Sounds Easier Than It Is");
+  if (v.includes("SURPRISINGLY")) return safeTitle(`${topic}: Better Than It Sounds`);
+  if (v.includes("THIS COULD")) return safeTitle("This Side Hustle Might Actually Work");
+  if (v.includes("CROWDED")) return safeTitle(`${topic}: Everyone Had the Same Idea`);
+  if (v.includes("KEEP YOUR")) return safeTitle("This Side Hustle Sounds Better Than It Is");
+  return safeTitle(`The Part Nobody Mentions About ${topic}`);
+}
+function makeSearchTitle(topic) {
+  const t = shortTopic(topic), lower = t.toLowerCase();
+  if (lower.includes("side hustle")) return safeTitle(`${t}: Worth It?`);
+  if (lower.includes("youtube")) return safeTitle(`${t} Side Hustle: Does It Work?`);
+  if (lower.includes("etsy")) return safeTitle(`${t}: Is It Still Worth It?`);
+  if (lower.includes("doordash")) return safeTitle(`${t} Side Hustle: Is It Worth It?`);
+  return safeTitle(`${t} Side Hustle: Worth It?`);
+}
+function makeFrankTitle(topic, v, reason) {
+  v = (v || "").toUpperCase(); const s = reasonSignals(reason), t = shortTopic(topic);
+  if (v.includes("SURPRISINGLY")) return safeTitle(`Frank Didn't Expect ${t} to Work`);
+  if (v.includes("THIS COULD")) return safeTitle(`Frank Thinks ${t} Might Actually Work`);
+  if (v.includes("CROWDED")) return safeTitle(`Frank Thinks ${t} Is a Crowded Pond`);
+  if (v.includes("KEEP YOUR")) {
+    if (s.expensive) return safeTitle(`Frank Wouldn't Spend the Money on ${t} Yet`);
+    if (s.passive || s.labor) return safeTitle(`Frank Thinks ${t} Is Basically Another Job`);
+    return safeTitle(`Frank Found the Catch With ${t}`);
+  }
+  return safeTitle(`Frank Has Questions About ${t}`);
+}
+function chooseRecommendedTitle(hook, search, frank) {
+  const vague = ["This Side Hustle Sounds Better Than It Is", "This Side Hustle Might Actually Work", "This Side Hustle Has an Expensive Catch",
+    "This Side Hustle Is More Crowded Than It Looks", "The Math on This Side Hustle Gets Ugly Fast", "This Side Hustle Sounds Easier Than It Is"];
+  return vague.includes(hook) ? search : (hook || search || frank);
+}
+function thumbnailOptions(v, reason) {
+  const s = reasonSignals(reason); v = (v || "").toUpperCase();
+  let one = "WORTH IT?", two = v || "FRANK SAYS\u2026";
+  if (s.passive && s.labor) { one = "PASSIVE? REALLY?"; two = "ANOTHER JOB?"; }
+  else if (s.location) { one = "LOCATION MATTERS"; two = "BAD SPOT = DEAD"; }
+  else if (s.expensive) { one = "EXPENSIVE CATCH"; two = "BUY IT YET?"; }
+  else if (s.crowded) { one = "CROWDED POND"; two = "TOO LATE?"; }
+  else if (s.margin) { one = "BAD MATH"; two = "WHERE'S PROFIT?"; }
+  else if (s.logistics) { one = "NOT SO EASY"; two = "THE HIDDEN WORK"; }
+  else if (v.includes("SURPRISINGLY")) { one = "SURPRISINGLY, YES"; two = "THIS WORKS?"; }
+  else if (v.includes("THIS COULD")) { one = "COULD WORK"; two = "WORTH A TEST"; }
+  else if (v.includes("KEEP YOUR")) { one = "KEEP YOUR JOB"; two = "WHAT'S THE CATCH?"; }
+  return [one.slice(0, 24), two.slice(0, 24)];
+}
+function topicHashtag(topic) {
+  const words = cleanTopicName(topic).replace(/[^A-Za-z0-9 ]+/g, " ").trim().split(/\s+/).filter(Boolean).slice(0, 3);
+  return "#" + words.map((w) => w.charAt(0).toUpperCase() + w.slice(1)).join("");
+}
+function broaderHashtag(topic) {
+  const t = (topic || "").toLowerCase();
+  if (t.includes("youtube")) return "#YouTube";
+  if (t.includes("ai") || t.includes("automated")) return "#AI";
+  if (t.includes("etsy")) return "#Etsy";
+  if (t.includes("ebay") || t.includes("resell") || t.includes("thrift")) return "#Reselling";
+  if (t.includes("doordash") || t.includes("delivery")) return "#GigEconomy";
+  if (t.includes("pressure") || t.includes("detail") || t.includes("clean")) return "#LocalBusiness";
+  if (t.includes("vending")) return "#PassiveIncome";
+  if (t.includes("dog") || t.includes("pet")) return "#PetBusiness";
+  if (t.includes("app") || t.includes("software") || t.includes("saas")) return "#OnlineBusiness";
+  return "#BusinessIdeas";
+}
+function buildTags(topic) {
+  const t = cleanTopicName(topic).toLowerCase();
+  const words = t.replace(/[^a-z0-9 ]+/g, " ").split(/\s+/).filter((w) => w.length > 2);
+  const tags = ["side hustle", "side hustle ideas", "small business ideas", "business ideas", "extra income", "weekend side hustle", "side business", "SideFrog",
+    t, `${t} side hustle`, `${t} business`, `${t} for beginners`];
+  if (t.includes("vending")) tags.push("vending machine route", "vending machine business");
+  if (t.includes("youtube")) tags.push("youtube side hustle", "faceless youtube", "youtube automation");
+  if (t.includes("etsy")) tags.push("etsy side hustle", "etsy business");
+  if (t.includes("doordash")) tags.push("doordash side hustle", "gig economy");
+  if (t.includes("pressure")) tags.push("pressure washing business", "pressure washing side hustle");
+  if (t.includes("resell") || t.includes("thrift")) tags.push("reselling side hustle", "flipping for profit");
+  words.slice(0, 3).forEach((w) => tags.push(w));
+  return [...new Set(tags.map((x) => x.trim()).filter(Boolean))].slice(0, 15);
+}
+// "Can You Actually Make Money With …?": the main noun decides the "a" (the part before "for", "on"…):
+// none before plurals, "-ing" activities, one-word brand names (Depop, Etsy) or service words
+// (removal, help, coaching); "a"/"an" before a single thing. Topics that start with an action
+// ("Selling vintage clothes on Depop") read "Can You Actually Make Money Selling …?" (no "With").
+const MASS = new Set(["help", "coaching", "consulting", "tutoring", "bookkeeping", "removal", "delivery", "care", "cleaning", "repair",
+  "advice", "design", "photography", "writing", "editing", "detailing", "washing", "flipping", "reselling", "dropshipping", "babysitting",
+  "landscaping", "catering", "training", "management", "marketing", "lessons", "services", "automation", "content", "ai", "art",
+  "installation", "arbitrage", "rental", "rentals", "storage", "hauling", "moving", "staging", "organizing", "printing", "tech", "software",
+  "fba", "kdp", "affiliate", "freelancing", "trading", "investing", "ecommerce", "e-commerce", "merch", "print-on-demand"]);
+const ACTION = /^(selling|running|starting|buying|flipping|renting|teaching|walking|driving|cleaning|reselling|making|building|hosting|doing|offering|hauling|tutoring|coaching)\b/i;
+const NAMES = { depop: "Depop", etsy: "Etsy", ebay: "eBay", amazon: "Amazon", airbnb: "Airbnb", youtube: "YouTube", tiktok: "TikTok",
+  instagram: "Instagram", facebook: "Facebook", linkedin: "LinkedIn", uber: "Uber", doordash: "DoorDash", shopify: "Shopify", google: "Google",
+  christmas: "Christmas", halloween: "Halloween", ai: "AI", fba: "FBA", kdp: "KDP", turo: "Turo", fiverr: "Fiverr", upwork: "Upwork", rover: "Rover" };
+const sentenceWords = (t) => t.split(" ").map((w) => NAMES[w.toLowerCase().replace(/[^a-z]/g, "")] ? w.replace(/[A-Za-z]+/, NAMES[w.toLowerCase().replace(/[^a-z]/g, "")]) : w.toLowerCase()).join(" ");
+function moneyParts(topic) {
+  topic = topic.trim();
+  if (ACTION.test(topic)) return { joiner: "", phrase: topic };
+  const head = topic.split(/\s+(?:for|on|in|at|with|to|from|near|around)\s+/i)[0];
+  const words = head.split(/\s+/), last = words[words.length - 1].toLowerCase().replace(/[^a-z]/g, "");
+  const plural = /s$/.test(last) && !/(ss|us|is)$/.test(last);
+  const oneBrand = topic.split(/\s+/).length === 1 && /^[A-Z]/.test(topic);
+  if (plural || /ing$/.test(last) || MASS.has(last) || oneBrand) return { joiner: "With ", phrase: topic };
+  return { joiner: "With ", phrase: (/^[aeiou]/i.test(topic) ? "an " : "a ") + topic };
+}
+const moneyTitle = (topic) => { const m = moneyParts(topic); return safeTitle(`Can You Actually Make Money ${m.joiner}${m.phrase}?`); };
+const moneySentence = (topic) => { const m = moneyParts(topic); return `Can you actually make money ${m.joiner.toLowerCase()}${sentenceWords(m.phrase)}?`; };
+
+// One plain line for whoever's watching: her best line, in SideFrog's voice
+const AUDIENCE = "Everybody tells you what a side hustle could make. SideFrog tells you whether it's worth doing. For people who hate Mondays.";
+const EASE_LABEL = { easy: "Easy", some_setup: "Some setup", hard: "Hard" };
+function scoreLine(e) {
+  const parts = [e.ease && `Easy to start: ${EASE_LABEL[e.ease]}`, e.first_dollar && `First dollar in: ${e.first_dollar}`, e.test_cost && `The test costs: ${e.test_cost}`].filter(Boolean);
+  return parts.join(" · ");
+}
+// "A $40 Test: Can You Make Money With a Mobile Car Wash?" The only dollar figure in a title is what the
+// test costs (never what it might earn), so it's always honest. No cost given: no title.
+function costTitle(topic, cost) {
+  const m = String(cost || "").match(/\$\s?([\d,]+)/);
+  if (!m) return "";
+  const n = m[1].replace(/,/g, ""), under = /under|less than/i.test(cost);
+  const what = n === "0" ? "A Free Test" : under ? `An Under-$${n} Test` : `${/^8/.test(n) || /^1[18](\d{3})?$/.test(n) ? "An" : "A"} $${n} Test`;
+  const p = moneyParts(topic);
+  return safeTitle(`${what}: Can You Make Money ${p.joiner}${p.phrase}?`);
+}
+function youtubeFor(e) {
+  const topic = cleanTopicName(e.re || "Side hustle"), reason = e.reason, cheap = e.cheap_test;
+  const v = (e.verdict || []).join(" ").replace(/\s+/g, " ").trim() || "WORTH IT?";
+  const hook = makeHookTitle(topic, v, reason), search = makeSearchTitle(topic), frank = makeFrankTitle(topic, v, reason);
+  const thumbs = thumbnailOptions(v, reason);
+  const card = scoreLine(e);
+  const description = [`${moneySentence(topic)} Frank looks at what the pitch leaves out.`,
+    reason || "The idea can work, but the details matter more than the pitch.",
+    card, cheap ? `Cheap test${e.test_cost ? ` (${e.test_cost})` : ""}: ${cheap}` : "",
+    e.take ? `Frank's take: ${e.take}` : "",
+    "Would you try it? Yes or no in the comments.", AUDIENCE].filter(Boolean).join("\n\n");
+  let hashtags = [...new Set(["#SideFrog", "#SideHustle", topicHashtag(topic), broaderHashtag(topic)])];
+  while (hashtags.length < 4) hashtags = [...new Set([...hashtags, "#BusinessIdeas", "#SmallBusiness"])];
+  return { money: moneyTitle(topic), recommended: moneyTitle(topic), hook, search, frank, description,
+    cost: costTitle(topic, e.test_cost), boring: safeTitle(`Boring Side Hustle Check: ${shortTopic(topic)}`),
+    hashtags: hashtags.slice(0, 4).join(" "), tags: buildTags(topic).join(", "), thumb1: thumbs[0], thumb2: thumbs[1],
+    pinned: `Would you try ${sentenceWords(moneyParts(topic).phrase)}? Yes or no. (If you've actually done it: is Frank being too harsh?)`,
+    category: "People & Blogs", filename: `sidefrog-${pad(e.number)}-short-${slugify(topic)}.mp4` };
+}
+// ---------- other platforms: same episode, each platform's style, each with its own tagged link
+function tagged(platform, number) {
+  return `https://sidefrog.com/?utm_source=${platform}&utm_medium=social&utm_campaign=episode-${pad(number)}`;
+}
+function socialFor(e) {
+  const topic = cleanTopicName(e.re || "Side hustle");
+  const key = Object.keys(VERDICTS).find((k) => JSON.stringify(VERDICTS[k].lines) === JSON.stringify(e.verdict)) || "crowded";
+  const label = VERDICTS[key].label, q = moneySentence(topic);
+  const reason = e.reason, test = e.cheap_test;
+  const tags = ["#sidehustle", "#sidehustleideas", "#businessideas", topicHashtag(topic).toLowerCase(), "#sidefrog"];
+  return {
+    tiktok: `${q} Frank's verdict: ${label.toLowerCase()}. The cheap test is at the end. Would you try it? ${[...new Set(tags)].join(" ")}`,
+    instagram: [q, `Frank's verdict: ${label}. ${reason}`, scoreLine(e), `Cheap test: ${test}`, e.take ? `Frank's take: ${e.take}` : "",
+                "Would you try it? Yes or no in the comments.", "Check your own idea free: link in bio.",
+                [...new Set(tags)].join(" ")].filter(Boolean).join("\n\n"),
+    threads: `${q} Frank says ${label.toLowerCase()}: ${reason.charAt(0).toLowerCase() + reason.slice(1)} Would you try it? Check your own idea free: ${tagged("threads", e.number)}`,
+    linkedin: [q, `Frank's verdict: ${label}. ${reason}`, scoreLine(e), `The cheapest way to find out for yourself: ${test}`, e.take ? `My take: ${e.take}` : "",
+               `If you're sitting on a side hustle idea, SideFrog checks it free, no sign-up: ${tagged("linkedin", e.number)}`,
+               "#sidehustle #entrepreneurship #smallbusiness"].filter(Boolean).join("\n\n"),
+  };
+}
+const SO = { tiktok: "soTikTok", instagram: "soInstagram", threads: "soThreads", linkedin: "soLinkedIn" };
+function fillSocial() { const so = socialFor(episode()); for (const [k, id] of Object.entries(SO)) $(id).value = so[k]; }
+
+const YT = { money: "ytMoney", recommended: "ytRecommended", cost: "ytCost", boring: "ytBoring", hook: "ytHook", search: "ytSearch", frank: "ytFrank", description: "ytDesc", hashtags: "ytHashtags",
+             tags: "ytTags", thumb1: "ytThumb1", thumb2: "ytThumb2", pinned: "ytPinned", category: "ytCategory", filename: "ytFilename" };
+function fillYoutube() { const y = youtubeFor(episode()); for (const [k, id] of Object.entries(YT)) $(id).value = y[k]; fillSocial(); titleCounts(); update(); }
+function titleCounts() {
+  document.querySelectorAll("[data-tcount]").forEach((c) => {
+    const n = $(c.dataset.tcount).value.length;
+    c.textContent = `${n} / 100 characters` + (n > 100 ? " · too long for YouTube" : "");
+    c.className = "count" + (n > 100 ? " over" : "");
+  });
+}
+function packageText() {
+  const f = (label, id) => `${label}\n${$(id).value}`;
+  return [f("MAKE-MONEY TITLE", "ytMoney"), f("RECOMMENDED TITLE", "ytRecommended"), f("TEST-COST TITLE", "ytCost"), f("BORING TITLE", "ytBoring"), f("HOOK-FIRST TITLE", "ytHook"), f("SEARCH-FIRST TITLE", "ytSearch"), f("FRANK-FIRST TITLE", "ytFrank"),
+          f("DESCRIPTION", "ytDesc"), f("HASHTAGS", "ytHashtags"), f("TAGS", "ytTags"), f("THUMBNAIL OPTION 1", "ytThumb1"), f("THUMBNAIL OPTION 2", "ytThumb2"),
+          f("PINNED COMMENT", "ytPinned"), f("CATEGORY", "ytCategory"), f("FILENAME", "ytFilename"),
+          "------------------------------\nOTHER PLATFORMS\n------------------------------",
+          f("TIKTOK CAPTION", "soTikTok"), f("INSTAGRAM REELS CAPTION", "soInstagram"), f("THREADS POST", "soThreads"), f("LINKEDIN POST", "soLinkedIn")].join("\n\n");
+}
+
+// ---------- the episode, the counters and the outputs
+function episode() {
+  return {
+    number: Number($("number").value) || 1,
+    hook: hookQuestion($("hook").value.split("\n").map((s) => s.trim()).filter(Boolean)),
+    notes: [0, 1, 2].map((n) => [$(`nh${n}`).value.trim(), $(`nl${n}`).value.trim(), Number($(`nf${n}`).value)]),
+    re: $("re").value.trim(),
+    verdict: VERDICTS[$("verdict").value].lines,
+    verdict_face: Number($("vface").value),
+    reason: $("reason").value.trim(),
+    cheap_test: $("test").value.trim(),
+    ...(questionText() && questionText() !== QUESTIONS[0] ? { question: questionText() } : {}),
+    ...($("take").value.trim() ? { take: $("take").value.trim() } : {}),
+    ...($("ease").value ? { ease: $("ease").value } : {}),
+    ...($("firstDollar").value.trim() ? { first_dollar: $("firstDollar").value.trim() } : {}),
+    ...($("testCost").value.trim() ? { test_cost: $("testCost").value.trim() } : {}),
+    ...($("ytFilename") && $("ytFilename").value.trim() ? { filename: $("ytFilename").value.trim() } : {}),
+    category: $("category").value,
+    ...(lastReport ? { frank: lastReport } : {}),
+  };
+}
+// Only the last hook line ends with "?" (the Episode Desk's rule)
+function hookQuestion(lines) {
+  return lines.map((t, i) => { t = t.replace(/\?+$/, "").trimEnd(); return i === lines.length - 1 && t ? t + "?" : t; });
+}
+const pad = (n) => String(n).padStart(3, "0");
+const py = (s) => JSON.stringify(s);                 // a Python string literal (JSON strings are valid Python)
+function block(e) {
+  return `EPISODE = {
+    "number": ${e.number},
+    "hook": ${JSON.stringify(e.hook)},
+    "notes": [
+${e.notes.map(([h, l, f]) => `        (${py(h)}, ${py(l)}, ${f}),`).join("\n")}
+    ],
+    "re": ${py(e.re)},
+    "verdict": ${JSON.stringify(e.verdict)},
+    "verdict_face": ${e.verdict_face},
+    "reason": ${py(e.reason)},
+    "cheap_test": ${py(e.cheap_test)},
+${["question", "take", "ease", "first_dollar", "test_cost"].filter((k) => e[k]).map((k) => `    "${k}": ${py(e[k])},`).join("\n")}
+}`.replace(/\n\n}/, "\n}");
+}
+function autoFilename() {
+  const el = $("ytFilename");
+  if (!el || el.dataset.edited === "1") return;
+  el.value = `sidefrog-${pad(Number($("number").value) || 1)}-short-${slugify(cleanTopicName($("re").value || "side hustle"))}.mp4`;
+}
+function update() {
+  autoFilename();
+  document.querySelectorAll(".count[data-for]").forEach((c) => {
+    const el = $(c.dataset.for);
+    if (el.dataset.maxLine) {
+      const lines = el.value.split("\n").filter((s) => s.trim());
+      const longest = Math.max(0, ...lines.map((s) => s.trim().length));
+      const over = lines.length > 4 || longest > Number(el.dataset.maxLine);
+      c.textContent = `${lines.length} line${lines.length === 1 ? "" : "s"}, longest ${longest} characters` + (over ? " · long: the hook will shrink to fit" : "");
+      c.className = "count" + (over ? " over" : "");
+    } else {
+      const n = el.value.trim().length, max = Number(el.dataset.max);
+      c.textContent = `${n} / about ${max} characters` + (n > max ? " · long: it will shrink to fit, but shorter reads better" : "");
+      c.className = "count" + (n > max ? " over" : "");
+      // the reason has to explain the verdict, not repeat it (it goes on the verdict card, the description and the site)
+      if (el.id === "take" && copiedFromFrank(el.value)) {
+        c.textContent = "This mostly repeats Frank's AI answer. Say it the way you would: what would you tell a friend to do first?";
+        c.className = "count over";
+      }
+      if (el.id === "reason") {
+        const v = el.value.trim().replace(/[.!]$/, "").toLowerCase();
+        const labels = Object.values(VERDICTS).map((x) => x.label.toLowerCase());
+        if (!v || labels.includes(v) || v.split(/\s+/).length < 5) {
+          c.textContent = "This should say why, in a sentence (Frank's reason). Right now it doesn't explain the verdict.";
+          c.className = "count over";
+        }
+      }
+    }
+  });
+  const e = episode();
+  $("block").textContent = block(e);
+  $("command").textContent = `python video\\make_short.py latest\n\n(latest = the newest episode file in your Downloads folder, even if Chrome renamed it to episode-${pad(e.number)} (1).json)`;
+}
+document.addEventListener("input", update);
+document.addEventListener("change", update);
+
+function missing(e) {
+  const gaps = [];
+  if (!e.hook.length) gaps.push("the hook");
+  e.notes.forEach(([h, l], n) => { if (!h || !l) gaps.push(`note ${n + 1}`); });
+  ["re", "reason", "cheap_test"].forEach((k) => { if (!e[k]) gaps.push(k.replace("_", " ")); });
+  if (e.test_cost && !/\$/.test(e.test_cost)) gaps.push("the test cost as money (like $0 or about $40)");
+  if (!e.take) gaps.push("Frank's take (your own line of advice)");
+  else if (copiedFromFrank(e.take)) gaps.push("Frank's take in your own words (it mostly repeats Frank's AI answer)");
+  if ($("question").value === "custom" && !questionText()) gaps.push("your hook question");
+  return gaps;
+}
+$("download").onclick = () => {
+  const e = episode(), gaps = missing(e);
+  if (gaps.length) return status("Fill in: " + gaps.join(", "), "status2", true);
+  const a = document.createElement("a");
+  a.href = URL.createObjectURL(new Blob([JSON.stringify(e, null, 2)], { type: "application/json" }));
+  a.download = `episode-${pad(e.number)}.json`; a.click();
+  try { localStorage.setItem("studio-next-number", e.number + 1);
+        if ($("question").value !== "custom") localStorage.setItem("studio-last-question", $("question").value); } catch {}
+  status(`Saved episode-${pad(e.number)}.json to Downloads. Now run: python video\\make_short.py latest`, "status2");
+};
+$("savePlaybook").onclick = () => {
+  const e = episode(), gaps = [];
+  if (!lastReport) gaps.push("Frank's answer (Ask Frank or paste his JSON first)");
+  if (!e.re) gaps.push("the RE line");
+  if (!e.take) gaps.push("Frank's take (your own line of advice)");
+  else if (copiedFromFrank(e.take)) gaps.push("Frank's take in your own words (it mostly repeats Frank's AI answer)");
+  if (gaps.length) return status("Fill in: " + gaps.join(", "), "status2", true);
+  const page = { re: e.re, verdict: e.verdict, reason: e.reason, cheap_test: e.cheap_test, take: e.take, category: e.category,
+                 ...(e.ease ? { ease: e.ease } : {}), ...(e.first_dollar ? { first_dollar: e.first_dollar } : {}),
+                 ...(e.test_cost ? { test_cost: e.test_cost } : {}), frank: lastReport };
+  const a = document.createElement("a");
+  a.href = URL.createObjectURL(new Blob([JSON.stringify(page, null, 2)], { type: "application/json" }));
+  a.download = `playbook-idea-${slugify(e.re)}.json`; a.click();
+  status(`Saved playbook-idea-${slugify(e.re)}.json. The next "python video\\make_short.py playbook" picks it up from Downloads.`, "status2");
+};
+$("copy").onclick = async () => {
+  try { await navigator.clipboard.writeText(block(episode())); status("Copied. Paste it over the EPISODE block in make_short.py.", "status2"); }
+  catch { status("Couldn't copy; select the block below instead.", "status2", true); }
+};
+document.querySelectorAll("[data-copy]").forEach((b) => b.onclick = async () => {
+  try { await navigator.clipboard.writeText($(b.dataset.copy).value); status("Copied.", "status3"); }
+  catch { status("Couldn't copy; select the text instead.", "status3", true); }
+});
+document.querySelectorAll("[data-title]").forEach((el) => el.addEventListener("input", titleCounts));
+$("ytFilename").addEventListener("input", () => { $("ytFilename").dataset.edited = $("ytFilename").value.trim() ? "1" : ""; });
+$("ytRegen").onclick = () => { $("ytFilename").dataset.edited = ""; fillYoutube(); status("Rebuilt from the episode, YouTube and the other platforms.", "status3"); };
+$("ytCopyAll").onclick = async () => {
+  try { await navigator.clipboard.writeText(packageText()); status("The whole package is copied.", "status3"); }
+  catch { status("Couldn't copy.", "status3", true); }
+};
+$("ytSave").onclick = () => {
+  const e = episode();
+  const body = `SIDEFROG EPISODE ${e.number}\n\n${block(e)}\n\n------------------------------\nYOUTUBE SHORTS\n------------------------------\n\n${packageText()}\n`;
+  const a = document.createElement("a");
+  a.href = URL.createObjectURL(new Blob([body], { type: "text/plain" }));
+  a.download = `sidefrog-episode-${pad(e.number)}-package.txt`; a.click();
+  status(`Saved sidefrog-episode-${pad(e.number)}-package.txt to Downloads.`, "status3");
+};
+// ---------- ideas people already want checked (popular on other side-hustle channels)
+const BACKLOG = ["Getting paid for online surveys", "Pinterest affiliate links", "Personalized baby gifts on Etsy", "Notary loan signing agent",
+  "Selling home-baked cookies", "Renting out party gear", "Donating blood plasma for cash", "Virtual assistant for small businesses",
+  "Proofreading for self-published authors", "Selling digital planners", "Reselling clothes from your closet", "Mystery shopping",
+  "Pet sitting through Rover", "Testing websites for pay"];
+const doneKey = "studio-backlog-done";
+const doneSet = () => { try { return new Set(JSON.parse(localStorage.getItem(doneKey) || "[]")); } catch { return new Set(); } };
+function markDone(idea) {
+  const d = doneSet(); if (!BACKLOG.includes(idea)) return;
+  d.add(idea); try { localStorage.setItem(doneKey, JSON.stringify([...d])); } catch {}
+  drawBacklog();
+}
+function drawBacklog() {
+  const d = doneSet();
+  $("backlog").replaceChildren(...BACKLOG.map((idea) => {
+    const b = document.createElement("button"); b.type = "button"; b.textContent = idea;
+    if (d.has(idea)) { b.className = "done"; b.title = "Already asked Frank"; }
+    b.onclick = () => { $("idea").value = idea; $("idea").focus(); status(`"${idea}" is in the box. Click Ask Frank.`); };
+    return b;
+  }));
+}
+drawBacklog();
+// The package is drafted before you write your take: refresh it when the take changes, unless
+// you've already edited the package by hand (then Regenerate adds it).
+let packageEdited = false;
+document.querySelectorAll('[id^="yt"], [id^="so"]').forEach((el) => el.addEventListener("input", () => { if (el.id !== "ytFilename") packageEdited = true; }));
+$("take").addEventListener("change", () => {
+  if (!packageEdited) { fillYoutube(); status("Your take is in the YouTube package and captions.", "status3"); }
+  else status("You've edited the package: click \u201cRegenerate from episode\u201d to add your take.", "status3");
+});
+$("ytRegen").addEventListener("click", () => { packageEdited = false; });
+update();
+</script>
+</body>
+</html>

@@ -83,3 +83,21 @@ Built isn't the finish line. Before something ships:
 - Text next to Frank flows around his outline (shape-outside), never in a block beside him: the traced polygon for cutout Frank, a circle for round Frank.
 - Brand tagline: "For people who hate Mondays." (share cards, footer signature, About, video end card, social bios). Never explain it. "Free advice from a frog with no stake in your idea." stays where a reader needs to know what SideFrog is: page titles, search descriptions, the share-your-verdict image. Avoid "I hate Mondays" on merchandise (Garfield's line).
 - In the Shorts, Frank's faces are the traced originals on every screen; no moved-pupil variants.
+- Shorts use the "after hours" look: the site's colors on dark (ink #1F241F background, paper #FBF7EF text, avocado #8DAA3F numbers and labels, taupe #BEB49F secondary text), with the memo card and Frank's disc light. No new near-duplicate colors. The website and share images stay cream.
+- Shorts layout: sidefrog.com and the tagline in the masthead (set in from the left, clear of YouTube's back arrow); Frank above YouTube's channel/title band; the memo card clear of the button column; nothing essential in the bottom fifth.
+- A Short's verdict is SideFrog's real verdict. The Studio locks it to SideFrog's answer; overriding takes a deliberate checkbox and warns.
+- Approved Frank art also includes Mark's channel banner draft (video/art/banner-draft.png): Frank at his desk, chin on hand, with mug, notepad, "Ideas welcome" note, plant and filing cabinet. Use it for channel art and promos; the traced frames stay the source for the site and the Shorts.
+- SideFrog Shorts evaluate ideas ("is this worth my time?"), they don't teach how-to. The hook screen asks "Can this actually make money?" over the topic; the recommended title is "Can You Actually Make Money With …?"; Frank's real verdict answers it, including when the answer is no.
+- Dollar figures in Shorts titles and on screen are only what Frank's cheap test costs, never what an idea might earn.
+- Frank's scorecard (easy to start, first dollar in, the test costs) is Gemini's rough read, labeled plainly; the site and Shorts never present it as data.
+- Shorts end with a question anyone can answer in one word ("Would you try it? Yes or no.").
+- Every Short carries Mark's own take, in his words, on its own screen. The Studio requires it and rejects a take that mostly repeats Gemini's answer. Consistency is fine; interchangeable episodes are not (YouTube's inauthentic-content rule).
+- The hook question rotates between episodes; a voice intro on compilations is optional and never blocks publishing.
+- The Cheap Test Playbook: every page carries Mark's take; Frank's parts are labeled as an AI-assisted read; no earnings claims, and the only dollar figures are test costs. "final" won't build with a missing take. Honest pricing: real launch dates, no countdown timers, a 30-day refund.
+- Niche on the problem, not the age: no age qualifiers in titles, descriptions or the site ("If Monday feels heavier than it used to" is fine). Positioning: "Everybody tells you what a side hustle could make. SideFrog tells you whether it's worth doing."
+- Title claims must be checkable from the episodes themselves (verdicts, test costs, ease); never earnings.
+- The playbook may use takes drafted by Frank's service in Mark's voice (Mark's choice); his own Studio takes always win.
+- The Jumpstart never gives earning ranges; goal math is plain arithmetic, labeled as such. Mark reads every one before it's sent. Refund on request, no questions.
+- Frank isn't a dream crusher: competition is proof of demand. "Crowded pond" is only for online markets where a newcomer competes on price or ad spend against countless identical sellers, never for local services just because others offer them. Most verdicts should be "Surprisingly, yes" or "This could work". Check the mix with tools/verdict-check.py after any prompt change.
+- Never invent commenters or comments. When a real viewer's idea becomes an episode, credit them only with their permission.
+- Shorts motion: a code-made music loop at 120 BPM (no licensed music); every scene change, line and sound lands on a beat; lengths are whole bars (26 s Shorts, 10 s cheap tests) so they loop without a jump; text lands with a little overshoot.

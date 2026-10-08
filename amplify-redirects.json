@@ -126,8 +126,26 @@
     "condition": null
   },
   {
+    "source": "/break-room/franks-verdicts",
+    "target": "/break-room/franks-verdicts/",
+    "status": "301",
+    "condition": null
+  },
+  {
     "source": "/break-room",
     "target": "/break-room/",
+    "status": "301",
+    "condition": null
+  },
+  {
+    "source": "/jumpstart",
+    "target": "/jumpstart/",
+    "status": "301",
+    "condition": null
+  },
+  {
+    "source": "/jumpstart/thanks",
+    "target": "/jumpstart/thanks/",
     "status": "301",
     "condition": null
   },

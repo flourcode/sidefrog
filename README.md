@@ -432,6 +432,9 @@ curl -s -X POST "https://4s7uc7iyyeh7p4sknfpo6agllq0ahdff.lambda-url.us-east-1.o
     "sharpenedIdea": "Frozen meal packs for reps who live in hotels.",
     "whoPays": "Field sales reps, about $80 a week.",
     "firstMove": "Post a sign-up page in two sales subreddits.",
+    "easyToStart": "easy",
+    "firstDollar": "2 to 4 weeks",
+    "testCost": "about $20",
     "keywords": ["healthy meals for travel", "meal prep delivery for one"],
     "alternatives": ["...", "...", "..."],
     "names": [{ "name": "Roadfed", "domain": "roadfed.com", "status": "likely_available" }],
@@ -441,7 +444,7 @@ curl -s -X POST "https://4s7uc7iyyeh7p4sknfpo6agllq0ahdff.lambda-url.us-east-1.o
 }
 ```
 
-`verdict` is one of `great`, `worth_a_shot`, `crowded`, `nah`, `cant_help`. `yourName` is `null` when the idea doesn't mention a name. (The `yourName` values above are illustrative, not a real lookup.)
+`verdict` is one of `great`, `worth_a_shot`, `crowded`, `nah`, `cant_help`. `easyToStart` is `easy`, `some_setup` or `hard`; `firstDollar` is a time ("2 to 4 weeks"; anything that isn't a time is dropped); `testCost` is what the cheap test costs ("about $20"; anything without a dollar amount is dropped). All three are empty for `cant_help`, and the answer card hides the scorecard row when they're missing (an older Lambda). Lambda 3.2.0 added them. `yourName` is `null` when the idea doesn't mention a name. (The `yourName` values above are illustrative, not a real lookup.)
 
 Each name's `status` is one of:
 - `likely_available`: the registry has no record
@@ -484,7 +487,65 @@ Self-hosting the fonts is built and switched off (`SELF_HOST_FONTS = False`): `m
 
 
 ## Frank Reviews Your Side Hustle (YouTube Shorts)
-`video/make_short.py` renders a 1080x1920, 25.6-second Short from the `EPISODE` block at the top of the file: the hook (1 to 4 lines), three notes (heading, line, Frank's face), the RE line, the verdict (one of five, as two lines), Frank's face on the verdict card, the reason and the cheap test. Beats: hook (0-3.0s, the finished hook holds 1.6-3.0s as the thumbnail frame), sip, three notes (3s each), the stamped verdict, the cheap test, the ask; it ends on the opening frame so it loops. Every text block sizes itself to its space (full size when it fits, smaller when long); an overlong RE is trimmed with "…". The episode block is checked first, with plain-English errors. Frank's faces are the traced originals (pre-rendered in `video/frames/`; `--frames` regenerates them with cairosvg); the font is `fonts/src/Bricolage.ttf`. Needs Python with Pillow and NumPy, and ffmpeg. Outputs `frank-short-NNN.mp4`, `-cover.png` (pick the frame at 2.0s as the YouTube thumbnail) and `-verdict.png`. `sidefrog-shorts-kit.zip` holds just the script, frames and font.
+`video/make_short.py` renders a 1080x1920, 26-second Short (13 bars at 120 BPM) from the `EPISODE` block at the top of the file: the hook (1 to 4 lines), three notes (heading, line, Frank's face), the RE line, the verdict (one of five, as two lines), Frank's face on the verdict card, the reason and the cheap test. Beats: hook (0-3.0s: the recurring question "Can this actually make money?" over the topic in big type; lines land on the beat, the thumbnail frame is 2.5s), sip, three notes (3s each), the stamped verdict, the cheap test, the ask; it ends on the opening frame so it loops. Every text block sizes itself to its space (full size when it fits, smaller when long); an overlong RE is trimmed with "…". The episode block is checked first, with plain-English errors. The look is "after hours" (the site's colors on dark; memo card and Frank's disc light) so YouTube's and LinkedIn's white controls read clearly; sidefrog.com and the tagline sit in the masthead. Frank's faces are the traced originals (pre-rendered in `video/frames/`; `--frames` regenerates them with cairosvg); the font is `fonts/src/Bricolage.ttf`. Needs Python with Pillow and NumPy, and ffmpeg. Each run files the episode in its own folder beside the tool (`SideFrog/episodes/011-mobile-car-wash/`): the video, `-cover.png` (pick the frame at 2.5s as the YouTube thumbnail), `-verdict.png`, the episode file and the YouTube package (both moved out of Downloads), and updates `SideFrog/episode-log.csv` (one row per episode, keeping the Posted, YouTube link and Views columns Mark fills in). `python video/make_short.py latest` uses the newest episode file in Downloads. `sidefrog-shorts-kit.zip` holds just the script, frames and font.
 
 ## Frank on YouTube (@SideFrogTV)
 The Break Room's rail lists the latest Shorts (up to three, newest first) from `YOUTUBE_SHORTS` in make_pages.py, with a link to the channel; the footer links to the channel on every page. They're plain links, not embedded players: no security-policy change, no extra scripts slowing phones, no YouTube cookies. The cards say "Watch Frank's verdict" rather than giving it away. Clicks send `youtube_click` (video: the Short's id, or "channel"). To add an episode, put a line at the top of `YOUTUBE_SHORTS` (its title as on YouTube, its link) and rebuild. Build a full videos page at around 8 to 10 episodes.
+
+
+## The Short Studio (private)
+`tools/frank-short-studio.html` is a private page (never deployed; not in the site zip). Open it in Chrome on your desktop, type an idea and click Ask Frank (it calls the same service as the site) or paste Frank's JSON. It drafts the episode: the subject becomes the hook and the RE line; "who pays", "watch out"/"the catch" and "keep going if"/"rethink it if" become the three notes, with faces picked for the verdict; the verdict, reason and cheap test map straight across. Section 4 builds the YouTube upload package from the episode: a make-money title ("Can You Actually Make Money With a Mobile Car Wash?", the recommended title; "a"/"an" decided by the main noun, action-first topics read "Making Money Selling…" style without "With", brand names kept capitalized) plus the Episode Desk's rules (four titles, description, hashtags, tags, two thumbnail texts, pinned comment, category, file name), each copyable, with Regenerate, Copy all and Save package. The episode file carries the file name, and make_short.py names the video, cover and verdict images from it. The verdict is locked to SideFrog's answer (override only by ticking a box, with a warning). Edit anything else (counters flag long text), then download `episode-NNN.json` and run `python video/make_short.py path/to/episode-NNN.json`. If ALLOWED_ORIGINS is ever set on the service, add `http://localhost:8765` and open the Studio with `tools/start-studio.bat`; pasting JSON always works.
+
+
+## YouTube channel banner
+`video/make_banner.py` builds `video/sidefrog-youtube-banner.png` (2560x1440) from Mark's approved draft (`video/art/banner-draft.png`): the scene is scaled into the 1546x423 center phones show; the draft's text is erased and re-set in Bricolage in the exact after-hours colors; the plant and filing cabinet (cut off by the draft's edge) sit flush against the banner's right edge, which desktops and TVs show; the background is exact ink with a full-width desk line. `banner-check.png` shows the phone and desktop crops (reference only).
+
+
+## Frank's verdicts (the site side of the Shorts)
+`FRANK_VERDICTS` in make_pages.py lists the Shorts from October 6, 2026 on, newest first: number, idea, SideFrog's verdict key, reason, cheap test, the Short's YouTube id, the posted date and `public`. Only `public: True` entries appear: on `/break-room/franks-verdicts/` (one entry each, with a link to the Short; listed first in the Break Room) and as "Frank's latest" on the home page (the newest three, above the guides, linking to their entries; refreshed on every build between `<!-- franks-latest -->` markers). Flip `public` when an Unlisted Short goes Public. `YOUTUBE_SHORTS` (the Break Room rail) lists all posted Shorts, newest first. Monthly update: add new entries (from the episode files or YouTube Studio's list), rebuild, upload the site zip.
+
+
+## Other platforms and compilations
+The Short Studio's section 5 writes captions for TikTok, Instagram Reels, Threads and LinkedIn from the same episode (question, verdict, reason, cheap test), with tagged links (`utm_source=threads|linkedin`, `utm_campaign=episode-NNN`; TikTok and Instagram use tagged links in their bios). They're included in the saved package.
+
+`python video/make_short.py stitch [numbers]` runs `video/stitch.py`: it combines posted episodes (log rows with a YouTube link; default the latest 5) into one 16:9 video in `SideFrog/compilations/<date>-frank-reviews-N/`: a 3-second intro card, then each Short (trimmed before its ending question, except the last) centered between a lineup panel (verdict tags revealed when each is stamped) and a brand panel (sidefrog.com, no second Frank; no divider lines). It also writes a thumbnail and a YouTube package with chapters (the first at 0:00, each over 10 seconds, so YouTube shows them). Widescreen on purpose: vertical videos under 3 minutes count as Shorts.
+
+`python video/make_short.py cheaptest [number]` runs `video/cheaptest.py`: a 10-second, looping, beat-synced cutdown of an episode's cheap test (the topic and verdict tag throughout; the test pops in, holds about 6 seconds, then fades so the last frame matches the first; Frank slightly smaller and lower to give the text room). It reads the episode file from its folder and writes `-cheap-test.mp4`, `-cheap-test-cover.png` (pick 3.5s) and `-cheap-test-package.txt` (titles, description linking the full review from the log, and captions). An experiment: keep it only if it adds subscribers.
+
+## Frank's scorecard, the yes/no ending and the countdown
+
+- Every answer on the site shows a scorecard row between the verdict and the facts: Easy to start? (Easy, Some setup, Hard), First dollar in, and The test costs. It comes from Lambda 3.2.0 (`easyToStart`, `firstDollar`, `testCost`); an older Lambda just hides the row. Deploy the new `lambda/index.mjs` to turn it on.
+- Shorts carry the same scorecard under the stamped verdict (episode keys `ease`, `first_dollar`, `test_cost`, one item per beat at 16.0, 16.5 and 17.0 s), the cost in the cheap test's label, and end with "Would you try it? Yes or no. Tell Frank in the comments."
+- The Studio adds a test-cost title ("A $40 Test: Can You Make Money With …?"), a "Boring Side Hustle Check: …" title, the scorecard line and an audience line in the description, a yes/no pinned comment, and a list of topics people already want checked.
+- `python video/make_short.py stitch countdown [numbers]` orders episodes worst verdict to best (ties: the easier one later), numbers them #N to #1, hides ideas still to come, and teases #1 honestly.
+
+## Frank's take, rotating hooks and the optional voice intro
+
+- Episode key `take`: Mark's own line of advice, shown on its own screen (22 to 26 s) after the cheap test; Shorts with a take run 30 seconds (15 bars), older files without one stay 26. The Studio requires the take and blocks one that mostly repeats Gemini's answer (60% or more of its words found in a single field of the answer). This is the main guard against YouTube's inauthentic-content rule: the format stays consistent, but every episode carries a person's judgment.
+- Episode key `question`: the hook's question. The Studio rotates through five and remembers the last one used.
+- `stitch` (and `stitch countdown`) plays SideFrog/voice-intro.m4a (.mp3, .wav, .aac) over the intro card when it exists, holds the card for the recording's length, then moves the file into the compilation folder. No file, no change. Cut points: 26.0 s for 30-second Shorts, 22.0 for 26-second ones.
+
+## The Cheap Test Playbook (`video/make_playbook.py`)
+
+`python video/make_short.py playbook [final]` builds the paid book from `SideFrog/episodes/*/episode-*.json` (only files with Frank's full answer under `frank`, which the Studio now saves) and `SideFrog/playbook/ideas/*.json` (the Studio's "Save for the playbook"; moved out of Downloads automatically). Pages: cover, contents, Part 1 from `SideFrog/playbook/part-1.txt` (starting draft written on first run; `## ` = section, `---` = new page), one page per idea grouped by chapter (Local services, Selling things, Skills from home, Other ideas, then "Ones Frank says to skip" for nah/can't-help verdicts), and a test-log worksheet. Letter size, SideFrog cream and ink, Frank's verdict face per page, Mark's portrait beside his take (`mark-portrait.jpg` beside the kit; Frank if missing). A page without a take shows a dashed box and marks the book DRAFT; `final` refuses to build. Output: `SideFrog/playbook/the-cheap-test-playbook.html`, plus the PDF through Playwright when installed (it also warns about any page whose text runs into the take box).
+
+## Playbook auto-fill, list Shorts and checked titles
+
+- Lambda 3.3.0 adds `POST {"kind": "playbook", "idea": "...", "known": {"verdict", "reason", "test"}}` returning `{playbook: {...Frank's fields, category, take, bestFor, costAfterTest}}`. Known values are kept. The take is drafted in Mark's voice (plain, concrete, no dashes as punctuation, no stock phrases; cleaned again in code).
+- `make_playbook.py` asks it for any page missing pieces, 11 s apart, caches the answer under `playbook` in the episode or idea file, and builds with no input from Mark. Studio takes win over drafted ones. No portrait in the PDF. Pages show "Best for" and a "Past the test" cost; "Episode NNN on YouTube" only when the log has its link. `SIDEFROG_API` overrides the service URL (for testing).
+- `video/claims.py`: titles for multi-idea videos built only from what the episodes show (test costs, verdicts, ease). Used by `stitch.py` and `listshort.py`.
+- `video/listshort.py` (`make_short.py list [free|cheap|yes|easy|numbers]`): a 32-second, 16-bar Short of three ideas (title 0-4 s, 8 s per idea with a beat-stamped verdict, ask 28-32 s), saved to `SideFrog/lists/`.
+- Age qualifiers removed (About, Studio descriptions); positioning line: "Everybody tells you what a side hustle could make. SideFrog tells you whether it's worth doing."
+
+## The Jumpstart ($39)
+
+The one paid product: someone without an idea answers nine questions and gets three ranked side hustles that fit them, each with a cheap test, costs, a 7-day plan and goal math (arithmetic only), plus Mark's take. Setup, form questions, fulfillment steps, the five-day plan and the launch post are in `JUMPSTART-LAUNCH.txt`.
+
+- Site: `/jumpstart/` (offer, sample made from Mark's background, FAQ), `/jumpstart/thanks/` (noindex, not in the sitemap; Stripe redirects there; links to the form), a "Don't have an idea yet?" box on the home page (grid area `chips` on desktop, after the answer on phones), a nudge on "Keep your day job" answers, and the About line naming it as the one thing SideFrog sells. Links are `JUMPSTART_PAY` and `JUMPSTART_FORM` in `make_pages.py` (placeholders until set).
+- GA: `jumpstart_click {from}`, `jumpstart_checkout {from}`, `jumpstart_form_click`.
+- Lambda 3.4.0: `POST {"kind": "jumpstart", "answers": {name, email, goodAt, askedFor, hours, budget, where, refuse, goal}}` returns `{jumpstart: {summary, take, ideas: [3 x {idea, verdict, whyYou, whoPays, startCost, easyToStart, firstDollar, test, testCost, goodSign, rethinkIf, watchOut, goalMath, week[7]}]}}`. No earning ranges; goal math only when a goal is given. Request body limit raised to 8 KB.
+- `tools/jumpstart-desk.html` (private; open with `tools/start-jumpstart-desk.bat`): paste the form response, Fill in, Ask Frank, edit, Print / Save as PDF (cover with summary and take, one page per idea), Save order file.
+
+## Verdict calibration (Lambda 3.5.0)
+
+Too many ideas came back "Crowded pond" because the rule treated any competition as crowding. The prompt now decides in order (illegal? people already paying? first customer within a month for under $100?), reserves "crowded" for online markets where newcomers compete only on price or ads, says local services are almost never crowded, expects most verdicts to be great or worth_a_shot, and gives calibration examples (Rover dog walking = great, notary = worth_a_shot, dropshipping phone cases = crowded, turtle meal kits = nah). For great/worth_a_shot, the reason leads with what works, then the catch. The Jumpstart and playbook requests share this prompt. `tools/verdict-check.py` runs 16 reference ideas against the live service and prints the mix.
