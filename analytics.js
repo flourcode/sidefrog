@@ -59,7 +59,7 @@
     if (/calendly\.com/.test(h)) window.sfTrack("help_click", { via: "calendly" });
     else if (/linkedin\.com\/sharing/.test(h)) window.sfTrack("guide_share", { method: "linkedin" });
     else if (/linkedin\.com/.test(h)) window.sfTrack("help_click", { via: "linkedin" });
-    else if (/porkbun\.com|namecheap\.com|godaddy\.com|hostinger\.com/.test(h) && a.dataset.where) window.sfTrack("register_click", { where: a.dataset.where });   // names or alternative
+    else if (/namecheap\.pxf\.io|porkbun\.com|namecheap\.com|godaddy\.com|hostinger\.com/.test(h) && a.dataset.where) window.sfTrack("register_click", { where: a.dataset.where });   // names or alternative
     else if (/google\.com\/search/.test(h)) window.sfTrack("search_click");
     else if (/quotabird\.com/.test(h)) window.sfTrack("quotabird_click");
   }, true);

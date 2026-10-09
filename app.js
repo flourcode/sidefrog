@@ -3,15 +3,42 @@
 // Shared Lambda Function URL (the same Lambda also serves the Idea Sifter).
 const CHECK_API_URL = "https://4s7uc7iyyeh7p4sknfpo6agllq0ahdff.lambda-url.us-east-1.on.aws/";
 
+// SideFrog's Namecheap affiliate links (Impact): https://namecheap.pxf.io/c/3896185/<ad>/5618.
+// Every registrar link on the site goes through one. The everyday ad is 1632743; during a deal the
+// links use the deal's own ad, so Impact credits the sale to it.
+const AFF_NAMECHEAP_AD = "1632743";
+const affNamecheap = (ad) => `https://namecheap.pxf.io/c/3896185/${ad || AFF_NAMECHEAP_AD}/5618`;
+function activeDeal(domain) {
+  const d = CONFIG.registrarDeal, now = Date.now();
+  if (!d || now < Date.parse(d.starts) || now > Date.parse(d.ends)) return null;
+  if (domain && !d.tlds.includes(String(domain).split(".").pop().toLowerCase())) return null;
+  return d;
+}
 const CONFIG = {
   timeoutMs: 40000,
   minLength: 3,
   maxLength: 500,
   maxNames: 6, // show at most this many open .com names
-  // Plain, non-affiliate links.
-  // Porkbun, no affiliate. Check that ?q= pre-fills their search; if not, it still lands on Porkbun's search page.
-  registrarUrl: (domain) => `https://porkbun.com/checkout/search?q=${encodeURIComponent(domain)}`,
-  registrarAffiliate: false,   // set true once registrarUrl is an affiliate link (turns on the disclosure note)
+  // Namecheap, through SideFrog's Impact affiliate link. The link deep-links straight to Namecheap's
+  // search results for that exact domain (u=, percent-encoded), and subId1 says which spot on the page
+  // it came from, so Impact's reports show which placements earn.
+  registrarAffiliate: true,    // turns on the "Some links pay SideFrog" note and rel="sponsored"
+  registrarName: "Namecheap",
+  registrarUrl: (domain, where = "names") => {
+    const deal = activeDeal(domain);
+    return `${affNamecheap(deal && deal.ad)}?subId1=${encodeURIComponent("site-" + where)}&u=${encodeURIComponent(
+      "https://www.namecheap.com/domains/registration/results/?domain=" + domain)}`;
+  },
+  // The current Namecheap deal from Impact (Content > Ads, type Coupon). While it runs, a line about it
+  // shows under the open names, and Register links for those extensions use the deal's tracking ad.
+  // It switches itself off when it ends. For a new one, copy its ad number (the middle number of its
+  // tracking link), the dates, and say only what the deal says. Set to null when there isn't one.
+  registrarDeal: {
+    ad: "4076650",                                   // "Help Your Audience Save on .COM & .CO Domains Registrations"
+    tlds: ["com", "co"],
+    starts: "2026-10-06T07:00:00Z", ends: "2026-10-15T06:59:00Z",   // Oct 6 to Oct 14, 2026 (Pacific)
+    text: "Namecheap has a sale on new .com and .co registrations through October 14.",
+  },
   searchUrl: (q) => `https://www.google.com/search?q=${encodeURIComponent(q)}`,
 };
 
@@ -421,7 +448,7 @@ function renderAlts(r) {
     if (open) {
       const p = el("p", { className: "alt-name" });
       p.append(el("span", { className: "name-word" }, open.name), " ", el("span", { className: "name-domain" }, open.domain), " ");
-      p.append(el("a", { href: CONFIG.registrarUrl(open.domain), target: "_blank", rel: CONFIG.registrarAffiliate ? "noopener sponsored" : "noopener",
+      p.append(el("a", { href: CONFIG.registrarUrl(open.domain, "alternative"), target: "_blank", rel: CONFIG.registrarAffiliate ? "noopener sponsored" : "noopener",
                          "data-affiliate": CONFIG.registrarAffiliate ? "1" : "0", "data-where": "alternative",
                          "aria-label": `Register ${open.domain}${NEW_TAB}` }, "Register ↗"));
       li.append(p);
@@ -457,12 +484,13 @@ function renderYours(y) {
     el("span", { className: "sr-only" }, ", "),
   );
   if (y.status === "likely_available") {
-    box.append(el("a", { href: CONFIG.registrarUrl(y.domain), target: "_blank", rel: CONFIG.registrarAffiliate ? "noopener sponsored" : "noopener",
+    box.append(el("a", { href: CONFIG.registrarUrl(y.domain, "yours"), target: "_blank", rel: CONFIG.registrarAffiliate ? "noopener sponsored" : "noopener",
                          "data-affiliate": CONFIG.registrarAffiliate ? "1" : "0", "data-where": "yours", "aria-label": `Register ${y.domain}${NEW_TAB}` }, "Register it ↗"));
   } else if (y.status === "taken") {
     box.append(el("a", { href: `https://${y.domain}`, target: "_blank", rel: "noopener nofollow", "aria-label": `See who has ${y.domain}${NEW_TAB}` }, "See who has it ↗"));
   } else {
-    box.append(el("a", { href: CONFIG.registrarUrl(y.domain), target: "_blank", rel: "noopener", "aria-label": `Look up ${y.domain}${NEW_TAB}` }, "Look it up ↗"));
+    box.append(el("a", { href: CONFIG.registrarUrl(y.domain, "yours-check"), target: "_blank", rel: CONFIG.registrarAffiliate ? "noopener sponsored" : "noopener",
+                         "data-affiliate": CONFIG.registrarAffiliate ? "1" : "0", "data-where": "yours-check", "aria-label": `Look up ${y.domain}${NEW_TAB}` }, "Look it up ↗"));
   }
 
   const takenHint = y.status === "taken" ? " The open names below are close alternatives." : "";
@@ -694,7 +722,7 @@ function renderNames(names, verdict) {
     if (buyable) {
       const action = open.length ? "Register" : "Look it up";
       li.append(row("a",
-        { href: CONFIG.registrarUrl(n.domain), target: "_blank", rel: CONFIG.registrarAffiliate ? "noopener sponsored" : "noopener",
+        { href: CONFIG.registrarUrl(n.domain, "names"), target: "_blank", rel: CONFIG.registrarAffiliate ? "noopener sponsored" : "noopener",
           "data-affiliate": CONFIG.registrarAffiliate ? "1" : "0", "data-where": "names", "aria-label": `${action} ${n.domain}${NEW_TAB}` },
         parts, `${action} ↗`));
     } else {
@@ -721,6 +749,7 @@ function renderNames(names, verdict) {
     note.textContent = buyable
       ? `We came up with ${nameCount} and checked each .com live${takenText}. ${these} open when we checked. ${open.length === 1 ? "If it sticks" : "If one sticks"}, confirm it at the registrar before you get attached.`
       : `I wouldn't buy anything yet. ${these} open when we checked, if you want to keep one in mind.`;
+    if (buyable && open.some((n) => activeDeal(n.domain))) note.textContent += " " + CONFIG.registrarDeal.text;   // only while it runs
   }
 }
 
